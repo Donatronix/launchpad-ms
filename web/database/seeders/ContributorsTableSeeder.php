@@ -2,10 +2,10 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
+use App\Models\Contributor;
 use Illuminate\Database\Seeder;
 
-class UsersTableSeeder extends Seeder
+class ContributorsTableSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -15,15 +15,15 @@ class UsersTableSeeder extends Seeder
      */
     public function run(): void
     {
-        User::factory()->create([
+        Contributor::factory()->create([
             'id' => '00000000-1000-1000-1000-000000000000'
         ]);
 
-        User::factory()->create([
+        Contributor::factory()->create([
             'id' => '00000000-2000-2000-2000-000000000000'
         ]);
 
         // Other users
-        User::factory()->count(10)->create();
+        Contributor::factory()->count(10)->create();
     }
 }

@@ -9,6 +9,17 @@ $router->group([
     'middleware' => 'checkUser'
 ], function ($router) {
     /**
+     * Contributors (
+     */
+    $router->group([
+        'prefix' => 'contributors',
+    ], function ($router) {
+        $router->post('/{step:[a-z]{5,10}}', 'ContributorController@store');
+        $router->get('/{id:[a-fA-F0-9\-]{36}}', 'ContributorController@show');
+        $router->put('/{id:[a-fA-F0-9\-]{36}}', 'ContributorController@update');
+    });
+
+    /**
      * Transactions
      */
     $router->group([
@@ -25,5 +36,17 @@ $router->group([
         'namespace' => 'Admin',
         'middleware' => 'checkAdmin'
     ], function ($router) {
+        /**
+         * Contributors (
+         */
+        $router->group([
+            'prefix' => 'contributors',
+        ], function ($router) {
+            $router->get('/', 'ContributorController@index');
+            $router->post('/', 'ContributorController@store');
+            $router->get('/{id:[a-fA-F0-9\-]{36}}', 'ContributorController@show');
+            $router->put('/{id:[a-fA-F0-9\-]{36}}', 'ContributorController@update');
+            $router->delete('/{id:[a-fA-F0-9\-]{36}}', 'ContributorController@destroy');
+        });
     });
 });

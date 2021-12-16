@@ -17,11 +17,11 @@ class CreateTransactionsTable extends Migration
             $table->bigIncrements('id');
             $table->string('name', 50);
 
-            $table->unsignedBigInteger('sender_id');
-            $table->foreign('sender_id')->references('id')->on('users');
+//            $table->unsignedBigInteger('sender_id');
+//            $table->foreign('sender_id')->references('id')->on('users');
 
-            $table->unsignedBigInteger('receiver_id');
-            $table->foreign('receiver_id')->references('id')->on('users');
+//            $table->unsignedBigInteger('receiver_id');
+//            $table->foreign('receiver_id')->references('id')->on('users');
 
             $table->decimal('amount', 12);
 
