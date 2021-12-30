@@ -41,39 +41,39 @@ use JetBrains\PhpStorm\ArrayShape;
  *     ),
  *     @OA\Property(
  *         property="address",
- *         type="array",
+ *         type="object",
  *         description="Address of contributor",
  *
  *         @OA\Property(
- *                 property="country_id",
- *                 type="integer",
- *                 description="Country of contributor",
- *                 example=""
+ *             property="country_id",
+ *             type="integer",
+ *             description="Country of contributor",
+ *             example=""
  *         ),
  *         @OA\Property(
- *                 property="address_line1",
- *                 type="string",
- *                 description="Address line 1",
- *                 example=""
+ *             property="address_line1",
+ *             type="string",
+ *             description="Address line 1",
+ *             example=""
  *         ),
  *         @OA\Property(
- *                 property="address_line2",
- *                 type="string",
- *                 description="Address Line 2",
- *                 example=""
- *             ),
- *             @OA\Property(
- *                 property="city",
- *                 type="string",
- *                 description="City od contributor",
- *                 example=""
- *             ),
- *             @OA\Property(
- *                 property="zip",
- *                 type="string",
- *                 description="Post / zip code",
- *                 example=""
- *             )
+ *             property="address_line2",
+ *             type="string",
+ *             description="Address Line 2",
+ *             example=""
+ *         ),
+ *         @OA\Property(
+ *             property="city",
+ *             type="string",
+ *             description="City of contributor",
+ *             example=""
+ *         ),
+ *         @OA\Property(
+ *             property="zip",
+ *             type="string",
+ *             description="Post / zip code",
+ *             example=""
+ *         )
  *     )
  * )
  */
