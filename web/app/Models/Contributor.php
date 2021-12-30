@@ -30,19 +30,6 @@ use JetBrains\PhpStorm\ArrayShape;
  *         example="Smith"
  *     ),
  *     @OA\Property(
- *         property="gender",
- *         type="string",
- *         description="Gender of contributor",
- *         enum={"", "m", "f"},
- *         example="m"
- *     ),
- *     @OA\Property(
- *         property="date_birthday",
- *         type="date",
- *         description="Birthday date of contributor",
- *         example="1974-10-25"
- *     ),
- *     @OA\Property(
  *         property="phone",
  *         type="string",
  *         description="Contributor's phone",
@@ -51,11 +38,6 @@ use JetBrains\PhpStorm\ArrayShape;
  *         property="email",
  *         type="string",
  *         description="Contributor's email",
- *     ),
- *     @OA\Property(
- *         property="id_number",
- *         type="string",
- *         description="National identification number",
  *     ),
  *     @OA\Property(
  *         property="address",
@@ -98,6 +80,24 @@ use JetBrains\PhpStorm\ArrayShape;
  *         )
  *     ),
  *
+ *     @OA\Property(
+ *         property="id_number",
+ *         type="string",
+ *         description="National identification number",
+ *     ),
+ *     @OA\Property(
+ *         property="gender",
+ *         type="string",
+ *         description="Gender of contributor",
+ *         enum={"", "m", "f"},
+ *         example="m"
+ *     ),
+ *     @OA\Property(
+ *         property="date_birthday",
+ *         type="date",
+ *         description="Birthday date of contributor",
+ *         example="1974-10-25"
+ *     ),
  *     @OA\Property(
  *         property="document",
  *         type="array",
