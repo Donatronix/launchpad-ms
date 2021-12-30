@@ -10,12 +10,12 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use JetBrains\PhpStorm\ArrayShape;
 
 /**
- * Contributor Model
+ * Contributor Contributor Person Scheme
  *
  * @package App\Models
  *
  * @OA\Schema(
- *     schema="Contributor",
+ *     schema="ContributorPerson",
  *
  *     @OA\Property(
  *         property="first_name",
@@ -44,22 +44,19 @@ use JetBrains\PhpStorm\ArrayShape;
  *         type="array",
  *         description="Address of contributor",
  *
- *         @OA\Items(
- *             type="object",
- *
- *             @OA\Property(
+ *         @OA\Property(
  *                 property="country_id",
  *                 type="integer",
  *                 description="Country of contributor",
  *                 example=""
- *             ),
- *             @OA\Property(
+ *         ),
+ *         @OA\Property(
  *                 property="address_line1",
  *                 type="string",
  *                 description="Address line 1",
  *                 example=""
- *             ),
- *             @OA\Property(
+ *         ),
+ *         @OA\Property(
  *                 property="address_line2",
  *                 type="string",
  *                 description="Address Line 2",
@@ -77,8 +74,17 @@ use JetBrains\PhpStorm\ArrayShape;
  *                 description="Post / zip code",
  *                 example=""
  *             )
- *         )
- *     ),
+ *     )
+ * )
+ */
+
+/**
+ * Contributor Identify Scheme
+ *
+ * @package App\Models
+ *
+ * @OA\Schema(
+ *     schema="ContributorIdentify",
  *
  *     @OA\Property(
  *         property="id_number",
@@ -100,41 +106,37 @@ use JetBrains\PhpStorm\ArrayShape;
  *     ),
  *     @OA\Property(
  *         property="document",
- *         type="array",
+ *         type="object",
  *         description="Document of contributors",
  *
- *         @OA\Items(
- *             type="object",
- *
- *             @OA\Property(
- *                 property="number",
- *                 type="integer",
- *                 description="Document number",
- *                 example=""
- *             ),
- *             @OA\Property(
- *                 property="country",
- *                 type="string",
- *                 description="Document country",
- *                 example=""
- *             ),
- *             @OA\Property(
- *                 property="type",
- *                 type="string",
- *                 description="Document type",
- *                 example=""
- *             ),
- *             @OA\Property(
- *                 property="file",
- *                 type="string",
- *                 description="Document file",
- *                 example=""
- *             )
+ *         @OA\Property(
+ *             property="number",
+ *             type="integer",
+ *             description="Document number",
+ *             example="FG1452635"
+ *         ),
+ *         @OA\Property(
+ *             property="country",
+ *             type="string",
+ *             description="Document country",
+ *             example=""
+ *         ),
+ *         @OA\Property(
+ *             property="type",
+ *             type="string",
+ *             description="Document type (1 = PASSPORT, 2 = ID_CARD, 3 = DRIVERS_LICENSE, 4 = RESIDENCE_PERMIT)",
+ *             example="1"
+ *         ),
+ *         @OA\Property(
+ *             property="file",
+ *             type="string",
+ *             description="Document file",
+ *             example=""
  *         )
  *     )
  * )
  */
-class Contributor extends Model
+ class Contributor extends Model
 {
     use HasFactory;
     use SoftDeletes;
@@ -228,14 +230,6 @@ class Contributor extends Model
     ];
 
     /**
-     * @return array
-     */
-    public static function loginValidationRules(): array
-    {
-        return [];
-    }
-
-    /**
      * @return string[]
      */
     public static function personValidationRules(): array
@@ -243,11 +237,8 @@ class Contributor extends Model
         return [
             'first_name' => 'required|string|max:60',
             'last_name' => 'required|string|max:60',
-            'gender' => 'required|string',
-            'date_birthday' => 'required|string',
            // 'phone' => 'required|string|max:50',
             'email' => 'required|string|max:100',
-            'id_number' => 'required|string|max:100',
 
             'address' => 'required|array:country_id,address_line1,address_line2,city,zip',
             'address.country_id' => 'required|integer',
@@ -261,14 +252,17 @@ class Contributor extends Model
     /**
      * @return string[]
      */
-    #[ArrayShape(['document' => "string", 'document.number' => "string", 'document.country' => "string", 'document.type' => "string", 'document.file' => "string"])]
-    public static function documentValidationRules(): array
+    public static function identifyValidationRules(): array
     {
         return [
+            'gender' => 'required|string',
+            'date_birthday' => 'required|string',
+            'id_number' => 'required|string|max:100',
+
             'document' => 'required|array:number,country,type,file',
             'document.number' => 'required|string',
             'document.country' => 'required|string',
-            'document.type' => 'required|integer',
+            'document.type' => 'required|integer|min:1|max:4',
             'document.file' => 'required|string',
         ];
     }
