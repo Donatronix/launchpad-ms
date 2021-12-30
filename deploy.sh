@@ -25,7 +25,8 @@ push)
     echo "Deploy Name: $DEPLOY_NAME"
     echo "Branch: $BRANCH"
     echo "Rev: $REVISION"
-    docker push  $DOCKER_ECR_REPO_URL/$DEPLOY_NAME:$BRANCH-$REVISION
+   # docker tag $DEPLOY_NAME:latest $DOCKER_ECR_REPO_URL/$DEPLOY_NAME:$BRANCH-$REVISION
+    docker push $DOCKER_ECR_REPO_URL/$DEPLOY_NAME:$BRANCH-$REVISION
     ;;
 start)
     printf "%sGenerate docker-compose%s\n" "$GREEN" "$NC"

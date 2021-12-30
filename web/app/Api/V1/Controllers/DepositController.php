@@ -77,7 +77,7 @@ class DepositController extends Controller
      *
      *     @OA\RequestBody(
      *         required=true,
-     *         @OA\JsonContent(ref="#/components/schemas/Deposit")
+     *         @OA\JsonContent(ref="#/components/schemas/Contributor")
      *     ),
      *     @OA\Response(
      *         response="200",
@@ -260,7 +260,7 @@ class DepositController extends Controller
      *     ),
      *     @OA\RequestBody(
      *         required=true,
-     *         @OA\JsonContent(ref="#/components/schemas/Deposit")
+     *         @OA\JsonContent(ref="#/components/schemas/Contributor")
      *     ),
      *     @OA\Response(
      *         response="200",
