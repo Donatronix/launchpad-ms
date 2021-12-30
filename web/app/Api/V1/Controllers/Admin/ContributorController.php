@@ -22,7 +22,7 @@ class ContributorController extends Controller
     private Contributor $model;
 
     /**
-     * ContributorsController constructor.
+     * ContributorController constructor.
      *
      * @param Contributor $model
      */

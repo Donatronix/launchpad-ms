@@ -1,6 +1,8 @@
 <?php
 
-namespace App\Api\V1\Controllers;
+namespace App\Api\V1\Controllers\Admin;
+
+use App\Http\Controllers\Controller;
 
 class TransactionController extends Controller
 {
@@ -8,9 +10,9 @@ class TransactionController extends Controller
      * Method for list of un-approved user's transaction.
      *
      * @OA\Get(
-     *     path="/transactions",
+     *     path="/admin/transactions",
      *     description="Get list of un-approved user's transaction",
-     *     tags={"Moderator"},
+     *     tags={"Admin / Transactions"},
      *
      *     security={{
      *         "default": {
@@ -27,6 +29,7 @@ class TransactionController extends Controller
      *             "optional": "false"
      *         }
      *     },
+     * 
      *     @OA\Parameter(
      *         name="limit",
      *         description="Count of transactions in one page",
@@ -79,9 +82,9 @@ class TransactionController extends Controller
      * Method for show user's transaction
      *
      * @OA\Get(
-     *     path="/transactions/{transaction_id}",
+     *     path="/admin/transactions/{transaction_id}",
      *     description="Get transaction of user by transaction_id",
-     *     tags={"Moderator"},
+     *     tags={"Admin / Transactions"},
      *
      *     security={{
      *         "default": {
@@ -146,9 +149,9 @@ class TransactionController extends Controller
      * Method for approve user's transaction
      *
      * @OA\Patch(
-     *     path="/transactions/{transaction_id}",
+     *     path="/admin/transactions/{transaction_id}",
      *     description="Approve user's transaction",
-     *     tags={"Moderator"},
+     *     tags={"Admin / Transactions"},
      *
      *     security={{
      *         "default": {
@@ -214,9 +217,9 @@ class TransactionController extends Controller
      * Method for delete transaction by transaction_id
      *
      * @OA\Delete(
-     *     path="/transactions/{transaction_id}",
+     *     path="/admin/transactions/{transaction_id}",
      *     description="destroy user's transactions by transaction_id",
-     *     tags={"Moderator"},
+     *     tags={"Admin / Transactions"},
      *
      *     security={{
      *         "default": {

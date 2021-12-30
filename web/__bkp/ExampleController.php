@@ -10,10 +10,11 @@
 class ExampleController extends Controller
 {
     /**
-     * ContributorsController constructor.
+     * ExampleController constructor.
+     * 
      * @param Contributor $model
      */
-    public function __construct(Contributor $model)
+    public function __construct(Example $model)
     {
         $this->model = $model;
     }

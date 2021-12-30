@@ -2,9 +2,9 @@
 
 namespace App\Api\V1\Controllers;
 
-use App\Exceptions\ContributorRegistrationException;
+use App\Exceptions\DepositRegistrationException;
 use App\Http\Controllers\Controller;
-use App\Models\Contributor;
+use App\Models\Deposit;
 use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
@@ -14,25 +14,25 @@ use JetBrains\PhpStorm\ArrayShape;
 use Sumra\JsonApi\JsonApiResponse;
 
 /**
- * Class ContributorController
+ * Class DepositController
  *
  * @package App\Api\V1\Controllers
  */
-class ContributorController extends Controller
+class DepositController extends Controller
 {
     /**
      * The name of the factory's corresponding model.
      *
      * @var string
      */
-    protected $model = Contributor::class;
+    protected $model = Deposit::class;
 
     /**
-     * ContributorController constructor.
+     * DepositsController constructor.
      *
-     * @param Contributor $model
+     * @param Deposit $model
      */
-    public function __construct(Contributor $model)
+    public function __construct(Deposit $model)
     {
         $this->model = $model;
 
@@ -42,10 +42,10 @@ class ContributorController extends Controller
      * Save a new contributor data
      *
      * @OA\Post(
-     *     path="/contributors/{step}",
+     *     path="/deposits/{step}",
      *     summary="Save a new contributor data",
      *     description="Save a new contributor data",
-     *     tags={"Contributors"},
+     *     tags={"Deposits"},
      *
      *     security={{
      *         "default": {
@@ -77,7 +77,7 @@ class ContributorController extends Controller
      *
      *     @OA\RequestBody(
      *         required=true,
-     *         @OA\JsonContent(ref="#/components/schemas/Contributor")
+     *         @OA\JsonContent(ref="#/components/schemas/Deposit")
      *     ),
      *     @OA\Response(
      *         response="200",
@@ -85,7 +85,7 @@ class ContributorController extends Controller
      *     ),
      *     @OA\Response(
      *         response="201",
-     *         description="Contributor created"
+     *         description="Deposit created"
      *     ),
      *     @OA\Response(
      *         response=400,
@@ -151,10 +151,10 @@ class ContributorController extends Controller
      * Getting data already provided by the contributor
      *
      * @OA\Get(
-     *     path="/contributors/{id}",
+     *     path="/deposits/{id}",
      *     summary="Getting data already provided by the contributor",
      *     description="Getting data already provided by the contributor",
-     *     tags={"Contributors"},
+     *     tags={"Deposits"},
      *
      *     security={{
      *         "default": {
@@ -176,7 +176,7 @@ class ContributorController extends Controller
      *         name="id",
      *         in="path",
      *         required=true,
-     *         description="Contributors ID",
+     *         description="Deposits ID",
      *         @OA\Schema(
      *             type="string"
      *         )
@@ -187,7 +187,7 @@ class ContributorController extends Controller
      *     ),
      *     @OA\Response(
      *          response="404",
-     *          description="Contributor not found"
+     *          description="Deposit not found"
      *     )
      * )
      */
@@ -204,7 +204,7 @@ class ContributorController extends Controller
         $contributor->load([
             'phones',
             'emails',
-            'contributors',
+            'deposits',
             'works',
             'addresses',
             'sites',
@@ -217,8 +217,8 @@ class ContributorController extends Controller
 
         return response()->jsonApi([
             'type' => 'success',
-            'title' => 'Contributor details data',
-            'message' => "Contributor detail data has been received",
+            'title' => 'Deposit details data',
+            'message' => "Deposit detail data has been received",
             'data' => $contributor->toArray()
         ], 200);
     }
@@ -227,10 +227,10 @@ class ContributorController extends Controller
      * Update contributor data
      *
      * @OA\Put(
-     *     path="/contributors/{id}",
+     *     path="/deposits/{id}",
      *     summary="Update contributor data",
      *     description="Update contributor data",
-     *     tags={"Contributors"},
+     *     tags={"Deposits"},
      *
      *     security={{
      *         "default": {
@@ -251,7 +251,7 @@ class ContributorController extends Controller
      *     @OA\Parameter(
      *         name="id",
      *         in="path",
-     *         description="Contributor Id",
+     *         description="Deposit Id",
      *         example="0aa06e6b-35de-3235-b925-b0c43f8f7c75",
      *         required=true,
      *         @OA\Schema(
@@ -260,7 +260,7 @@ class ContributorController extends Controller
      *     ),
      *     @OA\RequestBody(
      *         required=true,
-     *         @OA\JsonContent(ref="#/components/schemas/Contributor")
+     *         @OA\JsonContent(ref="#/components/schemas/Deposit")
      *     ),
      *     @OA\Response(
      *         response="200",
@@ -294,7 +294,7 @@ class ContributorController extends Controller
             return response()->jsonApi([
                 'type' => 'success',
                 'title' => 'Changing contributor',
-                'message' => "Contributor {$contributor->phone} successfully updated",
+                'message' => "Deposit {$contributor->phone} successfully updated",
                 'data' => $contributor->toArray()
             ], 200);
         } catch (Exception $e) {
@@ -321,19 +321,19 @@ class ContributorController extends Controller
             return response()->jsonApi([
                 'type' => 'danger',
                 'title' => "Get contributor",
-                'message' => "Contributor with id #{$id} not found: {$e->getMessage()}",
+                'message' => "Deposit with id #{$id} not found: {$e->getMessage()}",
                 'data' => null
             ], 404);
         }
     }
 
     /**
-     * Contributor registration
+     * Deposit registration
      * Step 1. Create contributor object
      *
      * @param Request $request
      * @return array
-     * @throws ContributorRegistrationException
+     * @throws DepositRegistrationException
      */
     #[ArrayShape(['type' => "string", 'title' => "string", 'message' => "string", 'data' => "mixed"])]
     private function stepLogin(Request $request): array
@@ -343,104 +343,23 @@ class ContributorController extends Controller
             // Create new
             $contributor = $this->model::create([
                 'user_id' => Auth::user()->getAuthIdentifier(),
-                'status' => Contributor::STATUS_STEP_1
+                'status' => Deposit::STATUS_STEP_1
             ]);
 
             // Return response to client
             return [
                 'type' => 'success',
                 'title' => 'New contributor registration',
-                'message' => "Contributor object successfully created",
+                'message' => "Deposit object successfully created",
                 'data' => $contributor->toArray()
             ];
         } catch (Exception $e) {
-            throw new ContributorRegistrationException($e);
+            throw new DepositRegistrationException($e);
         }
     }
 
     /**
-     * Contributor registration
-     * Step 2. Saving contributor person detail
-     *
-     * @param Request $request
-     * @return array
-     * @throws ContributorRegistrationException
-     */
-    #[ArrayShape(['type' => "string", 'title' => "string", 'message' => "string", 'data' => "mixed"])]
-    private function stepPerson(Request $request): array
-    {
-        // Try to save received data
-        try {
-            $contributor_id = $request->get('id', null);
-
-            // Find Exist contributor
-            $contributor = $this->model::find($contributor_id);
-
-            if(!$contributor){
-                // Create new
-                $contributor = $this->model::create([
-                    'user_id' => Auth::user()->getAuthIdentifier()
-                ]);
-
-                unset($request->id);
-            }
-
-            $contributor->fill($request->all());
-            $contributor->fill($request->get('address'));
-
-            $contributor->status = Contributor::STATUS_STEP_2;
-            $contributor->save();
-
-            // Return response to client
-            return [
-                'type' => 'success',
-                'title' => 'New contributor registration',
-                'message' => "Contributor person detail successfully saved",
-                'data' => $contributor->toArray()
-            ];
-        } catch (Exception $e) {
-            throw new ContributorRegistrationException($e);
-        }
-    }
-
-    /**
-     * Contributor registration
-     * Step 3. Saving contributor document data
-     *
-     * @param Request $request
-     * @return array
-     * @throws ContributorRegistrationException
-     */
-    private function stepDocument(Request $request){
-       // Try to save received document data
-        try {
-            $contributor_id = $request->get('id', null);
-
-            // Find Exist contributor
-            $contributor = $this->model::find($contributor_id);
-
-            $document = [];
-            foreach($request->get('document') as $key => $value){
-                $document['document_' . $key] = $value;
-            }
-            $contributor->fill($document);
-            $contributor->status = Contributor::STATUS_STEP_3;
-            $contributor->save();
-
-            // Return response to client
-            return [
-                'type' => 'success',
-                'title' => 'New contributor registration',
-                'message' => "Contributor document successfully saved",
-                'data' => $contributor->toArray()
-            ];
-        } catch (Exception $e) {
-            throw new ContributorRegistrationException($e);
-        }
-    }
-
-    /**
-     * Contributor registration
+     * Deposit registration
      * Step 4. Saving contributor payment data and pay process
      *
      * @return void

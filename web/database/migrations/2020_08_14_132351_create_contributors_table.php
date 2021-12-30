@@ -14,7 +14,7 @@ class CreateContributorsTable extends Migration
     public function up()
     {
         Schema::create('contributors', function (Blueprint $table) {
-            $table->uuid('id')->index();
+            $table->uuid('id')->primary();
 
             /**
              * Contributor common data
