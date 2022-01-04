@@ -104,15 +104,15 @@ class ContributorController extends Controller
      *         description="Success send data"
      *     ),
      *     @OA\Response(
-     *         response=401,
+     *         response="401",
      *         description="Unauthorized"
      *     ),
      *     @OA\Response(
-     *         response=400,
+     *         response="400",
      *         description="Invalid request"
      *     ),
      *     @OA\Response(
-     *         response=404,
+     *         response="404",
      *         description="Not found"
      *     )
      * )
@@ -178,15 +178,15 @@ class ContributorController extends Controller
      *         description="Contributor created"
      *     ),
      *     @OA\Response(
-     *         response=400,
+     *         response="400",
      *         description="Invalid request"
      *     ),
      *     @OA\Response(
-     *         response=401,
+     *         response="401",
      *         description="Unauthorized"
      *     ),
      *     @OA\Response(
-     *         response=404,
+     *         response="404",
      *         description="not found"
      *     ),
      *     @OA\Response(

@@ -23,7 +23,7 @@ class ContributorsTableSeeder extends Seeder
             'id' => '00000000-2000-2000-2000-000000000000'
         ]);
 
-        // Other users
+        // Other contributors
         Contributor::factory()->count(10)->create();
     }
 }

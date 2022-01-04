@@ -7,10 +7,9 @@ use App\Traits\UuidTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use JetBrains\PhpStorm\ArrayShape;
 
 /**
- * Contributor Contributor Person Scheme
+ * Contributor Person Scheme
  *
  * @package App\Models
  *
@@ -213,6 +212,8 @@ use JetBrains\PhpStorm\ArrayShape;
         'document_country',
         'document_type',
         'document_file',
+
+        'is_agreement',
 
         'user_id',
         'status'

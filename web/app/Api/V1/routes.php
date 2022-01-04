@@ -14,10 +14,10 @@ $router->group([
     $router->group([
         'prefix' => 'contributors',
     ], function ($router) {
-        $router->post('/person', 'ContributorController@store');
-        $router->put('/identify/{id:[a-fA-F0-9\-]{36}}', 'ContributorController@update');
-
-        $router->get('/{id:[a-fA-F0-9\-]{36}}', 'ContributorController@show');
+        $router->get('/', 'ContributorController@show');
+        $router->post('/', 'ContributorController@store');
+        $router->put('/identify', 'ContributorController@update');
+        $router->patch('/agreement', 'ContributorController@agreement');
     });
 
     /**

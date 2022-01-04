@@ -49,11 +49,11 @@ class CreateContributorsTable extends Migration
             $table->tinyInteger('document_type')->default(0);  // Document type
             $table->text('document_file')->nullable();  // Document file
 
-            $table->uuid('user_id')->nullable()->index();
             $table->tinyInteger('status')->default(0);
+            $table->boolean('is_agreement')->default(0);
 
-            $table->softDeletes();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
