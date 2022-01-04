@@ -14,18 +14,27 @@ class CreateOrdersTable extends Migration
     public function up()
     {
         Schema::create('orders', function (Blueprint $table) {
-            $table->bigIncrements('id');
-            $table->string('gateway', 10);
-            $table->decimal('amount');
-            $table->unsignedTinyInteger('currency_id')->nullable();
+            $table->uuid('id')->primary();
 
-//            $table->unsignedBigInteger('user_id');
-//            $table->foreign('user_id')->references('id')->on('users');
+//            $table->tinyInteger('payment_method');
+//            $table->tinyInteger('payment_system');
+//            $table->unsignedTinyInteger('payment_currency_id')->nullable();
 
-            $table->tinyInteger('type');
+            $table->decimal('purchased_token_id');
+            $table->decimal('investment_amount');
+            $table->decimal('deposit_percentage');
+            $table->decimal('deposit_amount');
+
+            $table->foreignUuid('contributor_id')->constrained()
+                ->onUpdate('cascade')
+                ->onDelete('cascade');
+
             $table->smallInteger('status')->nullable();
+
             $table->text('payload')->nullable();
+
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
