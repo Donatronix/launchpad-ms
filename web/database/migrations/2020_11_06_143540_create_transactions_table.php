@@ -18,10 +18,10 @@ class CreateTransactionsTable extends Migration
             $table->string('name', 50);
 
 //            $table->unsignedBigInteger('sender_id');
-//            $table->foreign('sender_id')->references('id')->on('users');
+//            $table->foreign('sender_id')->references('id')->on('contributors');
 
 //            $table->unsignedBigInteger('receiver_id');
-//            $table->foreign('receiver_id')->references('id')->on('users');
+//            $table->foreign('receiver_id')->references('id')->on('contributors');
 
             $table->decimal('amount', 12);
 

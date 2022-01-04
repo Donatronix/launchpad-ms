@@ -149,7 +149,7 @@ class ExampleController extends Controller
      *         )
      *     ),
      *     @OA\Response(
-     *         response=404,
+     *         response="404",
      *         description="Contributor not found",
      *     ),
      *     @OA\Response(

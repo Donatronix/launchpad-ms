@@ -21,7 +21,7 @@ class CreateBalancesTable extends Migration
             $table->foreign('currency_id')->references('id')->on('currencies');
 
 //            $table->unsignedBigInteger('user_id');
-//            $table->foreign('user_id')->references('id')->on('users');
+//            $table->foreign('user_id')->references('id')->on('contributors');
 
             $table->timestamps();
         });
