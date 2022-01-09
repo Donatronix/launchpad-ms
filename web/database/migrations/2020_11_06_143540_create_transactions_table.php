@@ -26,7 +26,6 @@ class CreateTransactionsTable extends Migration
             $table->decimal('amount', 12);
 
             $table->unsignedTinyInteger('currency_id');
-            $table->foreign('currency_id')->references('id')->on('currencies');
 
             $table->smallInteger('status')->default('1');
 

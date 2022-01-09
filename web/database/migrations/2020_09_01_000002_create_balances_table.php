@@ -18,7 +18,6 @@ class CreateBalancesTable extends Migration
             $table->decimal('amount', 12, 2);
 
             $table->unsignedTinyInteger('currency_id');
-            $table->foreign('currency_id')->references('id')->on('currencies');
 
 //            $table->unsignedBigInteger('user_id');
 //            $table->foreign('user_id')->references('id')->on('contributors');
