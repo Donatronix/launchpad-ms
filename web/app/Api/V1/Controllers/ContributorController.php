@@ -109,7 +109,7 @@ class ContributorController extends Controller
         } catch (ValidationException $e) {
             return response()->jsonApi([
                 'type' => 'warning',
-                'title' => 'Contributor details data',
+                'title' => 'Contributor person details data',
                 'message' => "Validation error",
                 'data' => $e->getMessage()
             ], 400);
@@ -117,22 +117,29 @@ class ContributorController extends Controller
 
         // Try to save received data
         try {
+            // Get user_id as contributor_Id
             $contributor_id = Auth::user()->getAuthIdentifier();
 
-            // Find Exist contributor
+            // Find exist contributor
             $contributor = $this->model::find($contributor_id);
 
+            // If not exist, then to create it
             if (!$contributor) {
                 // Create new
                 $contributor = $this->model::create([
                     'id' => $contributor_id,
                     'status' => Contributor::STATUS_STEP_1
                 ]);
-
-                unset($request->id);
             }
 
-            $contributor->fill($request->all());
+            // Convert address field and save person data
+            $personData = $request->all();
+            foreach ($personData['address'] as $key => $value) {
+                $personData['address_' . $key] = $value;
+            }
+            unset($personData['address']);
+
+            $contributor->fill($personData);
             $contributor->status = Contributor::STATUS_STEP_2;
             $contributor->save();
 
@@ -140,7 +147,7 @@ class ContributorController extends Controller
             return [
                 'type' => 'success',
                 'title' => 'New contributor registration',
-                'message' => "Contributor person detail successfully saved",
+                'message' => "Contributor person detail data successfully saved",
                 'data' => []
             ];
         } catch (Exception $e) {
@@ -183,7 +190,7 @@ class ContributorController extends Controller
      *     )
      * )
      */
-    public function show()
+    public function show(): JsonApiResponse
     {
         // Get object
         $contributor = $this->getObject(Auth::user()->getAuthIdentifier());
@@ -225,7 +232,7 @@ class ContributorController extends Controller
      *             "optional": "false"
      *         }
      *     },
-     * 
+     *
      *     @OA\RequestBody(
      *         required=true,
      *         @OA\JsonContent(ref="#/components/schemas/ContributorIdentify")
@@ -259,12 +266,12 @@ class ContributorController extends Controller
      *         description="Unknown error"
      *     )
      * )
-     * 
+     *
      * @param Request $request
      * @return array
      * @throws ContributorRegistrationException
      */
-    public function update(Request $request)
+    public function update(Request $request): JsonApiResponse|array
     {
         // Validate input
         try {
@@ -272,7 +279,7 @@ class ContributorController extends Controller
         } catch (ValidationException $e) {
             return response()->jsonApi([
                 'type' => 'warning',
-                'title' => 'Contributor details data',
+                'title' => 'Contributor identify data',
                 'message' => "Validation error",
                 'data' => $e->getMessage()
             ], 400);
@@ -280,19 +287,20 @@ class ContributorController extends Controller
 
         // Try to save received document data
         try {
-            // Find Exist contributor
+            // Find exist contributor
             $contributor = $this->getObject(Auth::user()->getAuthIdentifier());
             if (is_a($contributor, 'Sumra\JsonApi\JsonApiResponse')) {
                 return $contributor;
             }
 
-            $contributor->fill($request->all());
-
-            $document = [];
-            foreach ($request->get('document') as $key => $value) {
-                $document['document_' . $key] = $value;
+            // Transform data and save
+            $identifyData = $request->all();
+            foreach ($identifyData['document'] as $key => $value) {
+                $identifyData['document_' . $key] = $value;
             }
-            $contributor->fill($document);
+            unset($identifyData['document']);
+
+            $contributor->fill($identifyData);
             $contributor->status = Contributor::STATUS_STEP_3;
             $contributor->save();
 
@@ -391,7 +399,7 @@ class ContributorController extends Controller
             if (is_a($contributor, 'Sumra\JsonApi\JsonApiResponse')) {
                 return $contributor;
             }
-            
+
             $contributor->fill($request->all());
             $contributor->status = Contributor::STATUS_STEP_4;
             $contributor->save();

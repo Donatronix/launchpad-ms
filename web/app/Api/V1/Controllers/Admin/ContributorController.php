@@ -218,14 +218,6 @@ class ContributorController extends Controller
 
         // Try to add new contributor
         try {
-            // Reset is_default for other emails
-            if ($request->boolean('is_default')) {
-                foreach ($contact->phones as $oldPhone) {
-                    $oldPhone->is_default = false;
-                    $oldPhone->save();
-                }
-            }
-
             // Create new
             $contributor = $this->model;
             $contributor->fill($request->all());
@@ -239,7 +231,7 @@ class ContributorController extends Controller
             return response()->jsonApi([
                 'type' => 'success',
                 'title' => 'New contributor registration',
-                'message' => "Contributor {$contributor->phone} successfully added",
+                'message' => "Contributor successfully added",
                 'data' => $contributor->toArray()
             ], 200);
         } catch (Exception $e) {
@@ -323,21 +315,6 @@ class ContributorController extends Controller
             return $contact;
         }
 
-        // Load linked relations data
-        $contact->load([
-            'phones',
-            'emails',
-            'contributors',
-            'works',
-            'addresses',
-            'sites',
-            'chats',
-            'relations'
-        ]);
-
-        // Read big size of avatar from storage
-        $contact->setAttribute('avatar', $this->getImagesFromRemote($id, 'big'));
-
         return response()->jsonApi([
             'type' => 'success',
             'title' => 'Contributor details',
@@ -408,14 +385,6 @@ class ContributorController extends Controller
 
         // Try update contributor data
         try {
-            // Reset is_default for other phones
-            if ($request->boolean('is_default') && $contributor->contact) {
-                foreach ($contributor->contact->phones as $oldPhone) {
-                    $oldPhone->is_default = false;
-                    $oldPhone->save();
-                }
-            }
-
             // Update data
             $contributor->fill($request->all());
             $contributor->save();
@@ -427,7 +396,7 @@ class ContributorController extends Controller
             return response()->jsonApi([
                 'type' => 'success',
                 'title' => 'Changing contributor',
-                'message' => "Contributor {$contributor->phone} successfully updated",
+                'message' => "Contributor successfully updated",
                 'data' => $contributor->toArray()
             ], 200);
         } catch (Exception $e) {
@@ -503,7 +472,7 @@ class ContributorController extends Controller
 
             return response()->jsonApi([
                 'type' => 'success',
-                'title' => "Delete of contact's phone",
+                'title' => "Delete contributor",
                 'message' => 'Contributor is successfully deleted',
                 'data' => null
             ], 200);

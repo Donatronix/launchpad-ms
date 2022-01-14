@@ -29,11 +29,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  *         example="Smith"
  *     ),
  *     @OA\Property(
- *         property="phone",
- *         type="string",
- *         description="Contributor's phone",
- *     ),
- *     @OA\Property(
  *         property="email",
  *         type="string",
  *         description="Contributor's email",
@@ -44,21 +39,21 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  *         description="Address of contributor",
  *
  *         @OA\Property(
- *             property="country_id",
- *             type="integer",
- *             description="Country of contributor",
- *             example=""
+ *             property="country",
+ *             type="string",
+ *             description="Country of contributor (ISO 3166-1 alpha-2 format)",
+ *             example="GB"
  *         ),
  *         @OA\Property(
- *             property="address_line1",
+ *             property="line1",
  *             type="string",
  *             description="Address line 1",
- *             example=""
+ *             example="My Big Avenue, 256"
  *         ),
  *         @OA\Property(
- *             property="address_line2",
+ *             property="line2",
  *             type="string",
- *             description="Address Line 2",
+ *             description="Address Line 2 (optional)",
  *             example=""
  *         ),
  *         @OA\Property(
@@ -70,8 +65,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  *         @OA\Property(
  *             property="zip",
  *             type="string",
- *             description="Post / zip code",
- *             example=""
+ *             description="Post / Zip code",
+ *             example="05123"
  *         )
  *     )
  * )
@@ -196,17 +191,14 @@ use Illuminate\Database\Eloquent\SoftDeletes;
         'last_name',
         'gender',
         'date_birthday',
-
-        //'phone',
-
         'email',
         'id_number',
 
-        'country_id',
+        'address_country',
         'address_line1',
         'address_line2',
-        'city',
-        'zip',
+        'address_city',
+        'address_zip',
 
         'document_number',
         'document_country',
@@ -214,8 +206,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
         'document_file',
 
         'is_agreement',
-
-        'user_id',
         'status'
     ];
 
@@ -238,15 +228,13 @@ use Illuminate\Database\Eloquent\SoftDeletes;
         return [
             'first_name' => 'required|string|max:60',
             'last_name' => 'required|string|max:60',
-           // 'phone' => 'required|string|max:50',
             'email' => 'required|string|max:100',
-
-            'address' => 'required|array:country_id,address_line1,address_line2,city,zip',
-            'address.country_id' => 'required|integer',
-            'address.address_line1' => 'string|max:150',
-            'address.address_line2' => 'string|max:100',
-            'address.city' => 'string|max:50',
-            'address.zip' => 'string|max:15',
+            'address' => 'required|array:country,line1,line2,city,zip',
+            'address.country' => 'required|string|max:3',
+            'address.line1' => 'required|string|max:150',
+            'address.line2' => 'string|max:100',
+            'address.city' => 'required|string|max:50',
+            'address.zip' => 'required|string|max:15',
         ];
     }
 
@@ -259,10 +247,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
             'gender' => 'required|string',
             'date_birthday' => 'required|string',
             'id_number' => 'required|string|max:100',
-
             'document' => 'required|array:number,country,type,file',
             'document.number' => 'required|string',
-            'document.country' => 'required|string',
+            'document.country' => 'required|string|max:3',
             'document.type' => 'required|integer|min:1|max:4',
             'document.file' => 'required|string',
         ];

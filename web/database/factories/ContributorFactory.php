@@ -4,7 +4,7 @@ namespace Database\Factories;
 
 use App\Models\Contributor;
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Illuminate\Support\Str;
+use Illuminate\Support\Arr;
 
 class ContributorFactory extends Factory
 {
@@ -24,9 +24,35 @@ class ContributorFactory extends Factory
     {
         $name = $this->faker->unique()->sentence(3);
         return [
-//            'display_name' => $this->faker->name,
-            'phone' => $this->faker->e164PhoneNumber,
-            'email' => $this->faker->unique()->safeEmail
+            /**
+             * Contributor common data
+             */
+            'first_name' => $this->faker->lastName(),
+            'last_name' => $this->faker->lastName(),
+            'gender' => '',
+            'date_birthday' => $this->faker->date(),
+            'email' => $this->faker->unique()->safeEmail,
+            'id_number' => '',
+
+            /**
+             * Contributor address
+             */
+            'address_country' => $this->faker->countryCode(),
+            'address_line1' => $this->faker->streetAddress(),
+            'address_line2' => $this->faker->secondaryAddress(),
+            'address_city' => $this->faker->city(),
+            'address_zip' => $this->faker->postcode(),
+
+            /**
+             * Contributor document
+             */
+            'document_number' => '',
+            'document_country' => $this->faker->countryCode(),
+            'document_type' => Arr::random(Contributor::$document_types),
+            'document_file' => '',
+
+            'status' => Contributor::STATUS_STEP_1,
+            'is_agreement' => $this->faker->boolean(),
         ];
     }
 }

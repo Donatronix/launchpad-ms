@@ -23,32 +23,29 @@ class CreateContributorsTable extends Migration
             $table->string('last_name', 60)->nullable();
             $table->enum('gender', [null, 'm', 'f'])->nullable();
             $table->date('date_birthday')->nullable(); // (YYYY-MM-DD) Date of birth
-
-            // ????? поле под вопросом
-            $table->string('phone', 50)->nullable();
-
             $table->string('email', 100)->nullable();
             $table->string('id_number')->nullable();        // National identification number
 
             /**
              * Contributor address
              */
-            $table->unsignedSmallInteger('country_id')->default(0);
-//            $table->foreign('country_id')->references('id')->on('countries');
-
+            $table->string('address_country', 3)->nullable();
             $table->string('address_line1', 150)->nullable();
             $table->string('address_line2', 100)->nullable();
-            $table->string('city', 50)->nullable();
-            $table->string('zip', 10)->nullable();
+            $table->string('address_city', 50)->nullable();
+            $table->string('address_zip', 10)->nullable();
 
             /**
              * Contributor document
              */
             $table->string('document_number')->nullable();  // Document number
-            $table->string('document_country')->nullable(); // ISO-2- String Country that issued the document
+            $table->string('document_country', 3)->nullable(); // ISO-2- String Country that issued the document
             $table->tinyInteger('document_type')->default(0);  // Document type
             $table->text('document_file')->nullable();  // Document file
 
+            /**
+             * Contributor status and agreement
+             */
             $table->tinyInteger('status')->default(0);
             $table->boolean('is_agreement')->default(0);
 
