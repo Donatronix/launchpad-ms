@@ -20,6 +20,8 @@ $router->group([
         $router->patch('/agreement', 'ContributorController@agreement');
     });
 
+    $router->get('identity-start', 'ContributorController@identity');
+
     /**
      * Transactions
      */

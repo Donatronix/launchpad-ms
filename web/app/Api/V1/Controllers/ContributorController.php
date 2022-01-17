@@ -5,7 +5,9 @@ namespace App\Api\V1\Controllers;
 use App\Exceptions\ContributorRegistrationException;
 use App\Http\Controllers\Controller;
 use App\Models\Contributor;
+use App\Services\IdentityVerification;
 use Exception;
+use GuzzleHttp\Client;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -342,6 +344,20 @@ class ContributorController extends Controller
      *         }
      *     },
      *
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             type="object",
+     *
+     *             @OA\Property(
+     *                 property="is_agreement",
+     *                 type="boolean",
+     *                 description="Email of contact",
+     *                 example="true"
+     *             )
+     *         )
+     *     ),
+     *
      *     @OA\Response(
      *         response="200",
      *         description="Successfully save"
@@ -434,5 +450,13 @@ class ContributorController extends Controller
                 'data' => null
             ], 404);
         }
+    }
+
+
+    public function identity(Request $request){
+
+        (new IdentityVerification($request))->verify();
+
+
     }
 }
