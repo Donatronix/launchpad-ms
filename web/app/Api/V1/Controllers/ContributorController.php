@@ -100,10 +100,10 @@ class ContributorController extends Controller
      * )
      *
      * @param Request $request
-     * @return array
+     * @return mixed
      * @throws ContributorRegistrationException
      */
-    public function store(Request $request): array
+    public function store(Request $request): mixed
     {
         // Validate input
         try {
@@ -270,10 +270,10 @@ class ContributorController extends Controller
      * )
      *
      * @param Request $request
-     * @return array
+     * @return mixed
      * @throws ContributorRegistrationException
      */
-    public function update(Request $request): JsonApiResponse|array
+    public function update(Request $request): mixed
     {
         // Validate input
         try {
@@ -389,10 +389,10 @@ class ContributorController extends Controller
      * )
      *
      * @param Request $request
-     * @return array
+     * @return mixed
      * @throws ContributorRegistrationException
      */
-    public function agreement(Request $request): array
+    public function agreement(Request $request): mixed
     {
         // Validate input
         try {
