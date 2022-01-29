@@ -126,6 +126,11 @@ $app->register(\Sumra\JsonApi\JsonApiServiceProvider::class);
 $app->configure('swagger-lume');
 $app->register(\SwaggerLume\ServiceProvider::class);
 
+/**
+ * Lumen Generator
+ */
+$app->register(Flipbox\LumenGenerator\LumenGeneratorServiceProvider::class);
+
 /*
 |--------------------------------------------------------------------------
 | Load The Application Routes
