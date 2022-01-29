@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * Contributor Person Scheme
@@ -17,7 +18,7 @@ use Illuminate\Database\Eloquent\Model;
  *         property="purchased_token_id",
  *         type="string",
  *         description="Purchased token",
- *         example="uttatoken"
+ *         example="utta"
  *     ),
  *     @OA\Property(
  *         property="investment_amount",
@@ -36,11 +37,6 @@ use Illuminate\Database\Eloquent\Model;
  *         type="number",
  *         description="Deposit amount",
  *         example="10000"
- *     ),
- *     @OA\Property(
- *         property="contributor_id",
- *         type="string",
- *         description="Contributor ID",
  *     )
  * )
  */
@@ -64,15 +60,11 @@ class Order extends Model
     const STATUS_FAILED = 5;
     const STATUS_CANCELED = 6;
 
-    /**
-     * Order status
-     */
-//    const STATUS_NEW = 1;
-//    const STATUS_INSUFFICIENT_FUNDS = 2;
-//    const STATUS_PAID = 3;
-//    const STATUS_COMPLETED = 4;
-//    const STATUS_FAILED = 5;
-//    const STATUS_CANCELED = 6;
+
+//s$SLAPA - Synthetic SLAPA Token
+//$SLAPA - SLAPA Token
+//$DIVIT - DIVIT Token
+//$UTTA - UTTA Token
 
     /**
      * Order statuses array
@@ -101,7 +93,13 @@ class Order extends Model
         'payload'
     ];
 
-    public function contributors(){
+    /**
+     * One Order has one Contributor relation
+     *
+     * @return BelongsTo
+     */
+    public function contributor(): BelongsTo
+    {
         return $this->belongsTo(Contributor::class);
     }
 }

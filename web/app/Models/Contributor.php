@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Sumra\SDK\Traits\OwnerTrait;
 use Sumra\SDK\Traits\UuidTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -253,5 +254,15 @@ use Illuminate\Database\Eloquent\SoftDeletes;
             'document.type' => 'required|integer|min:1|max:4',
             'document.file' => 'required|string',
         ];
+    }
+
+     /**
+      * One Contributor has many Orders relation
+      *
+      * @return HasMany
+      */
+    public function orders(): HasMany
+    {
+        return $this->hasMany(Order::class);
     }
 }

@@ -94,7 +94,7 @@ class OrderController extends Controller
      *     )
      * )
      */
-    public function store(string $step, Request $request)
+    public function store(Request $request)
     {
         // Validate input
         try {

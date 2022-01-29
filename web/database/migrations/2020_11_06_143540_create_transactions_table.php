@@ -17,6 +17,10 @@ class CreateTransactionsTable extends Migration
             $table->bigIncrements('id');
             $table->string('name', 50);
 
+            // $table->tinyInteger('payment_method');
+//            $table->tinyInteger('payment_system');
+//            $table->unsignedTinyInteger('payment_currency_id')->nullable();
+
 //            $table->unsignedBigInteger('sender_id');
 //            $table->foreign('sender_id')->references('id')->on('contributors');
 

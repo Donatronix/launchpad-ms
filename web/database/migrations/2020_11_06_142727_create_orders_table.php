@@ -15,11 +15,6 @@ class CreateOrdersTable extends Migration
     {
         Schema::create('orders', function (Blueprint $table) {
             $table->uuid('id')->primary();
-
-//            $table->tinyInteger('payment_method');
-//            $table->tinyInteger('payment_system');
-//            $table->unsignedTinyInteger('payment_currency_id')->nullable();
-
             $table->decimal('purchased_token_id');
             $table->decimal('investment_amount');
             $table->decimal('deposit_percentage');
