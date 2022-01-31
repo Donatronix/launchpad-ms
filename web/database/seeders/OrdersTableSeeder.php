@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Order;
+use App\Models\Product;
 use Illuminate\Database\Seeder;
 
 class OrdersTableSeeder extends Seeder
@@ -14,7 +15,14 @@ class OrdersTableSeeder extends Seeder
      */
     public function run()
     {
-        // Other contributors
-        Order::factory()->count(10)->create();
+        // Get products
+        $products = Product::all();
+
+        foreach($products as $product){
+            // Create orders
+            Order::factory()->count(10)->create([
+                'product_id' => $product->id
+            ]);
+        }
     }
 }

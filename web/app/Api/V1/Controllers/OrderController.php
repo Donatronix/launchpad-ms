@@ -2,12 +2,13 @@
 
 namespace App\Api\V1\Controllers;
 
-use App\Exceptions\OrderException;
 use App\Http\Controllers\Controller;
 use App\Models\Order;
+use App\Models\Product;
 use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
 use Sumra\JsonApi\JsonApiResponse;
 
@@ -36,12 +37,58 @@ class OrderController extends Controller
     }
 
     /**
-     * Save a new order data
+     * Getting created order by contributor if exist
+     *
+     * @OA\Get(
+     *     path="/orders",
+     *     summary="Getting created order by contributor if exist",
+     *     description="Getting created order by contributor if exist",
+     *     tags={"Orders"},
+     *
+     *     security={{
+     *         "default": {
+     *             "ManagerRead",
+     *             "User",
+     *             "ManagerWrite"
+     *         }
+     *     }},
+     *     x={
+     *         "auth-type": "Application & Application User",
+     *         "throttling-tier": "Unlimited",
+     *         "wso2-application-security": {
+     *             "security-types": {"oauth2"},
+     *             "optional": "false"
+     *         }
+     *     },
+     *
+     *     @OA\Response(
+     *          response="200",
+     *          description="Detail data of order"
+     *     )
+     * )
+     */
+    public function index(){
+        // Get order
+        $order = Order::where('contributor_id', Auth::user()->getAuthIdentifier())
+            ->where('status', Order::STATUS_NEW)
+            ->first();
+
+        return response()->jsonApi([
+            'type' => 'success',
+            'title' => 'Order details data',
+            'message' => "Order detail data has been received",
+            'data' => $order->toArray()
+        ], 200);
+    }
+
+
+    /**
+     * Create a new investment order
      *
      * @OA\Post(
      *     path="/orders",
-     *     summary="Save a new order data",
-     *     description="Save a new order data",
+     *     summary="Create a new investment order",
+     *     description="Create a new investment order",
      *     tags={"Orders"},
      *
      *     security={{
@@ -93,12 +140,14 @@ class OrderController extends Controller
      *         description="Unknown error"
      *     )
      * )
+     * @param Request $request
+     * @return mixed
      */
-    public function store(Request $request)
+    public function store(Request $request): mixed
     {
         // Validate input
         try {
-            $this->validate($request, $this->model::validationRules);
+            $this->validate($request, $this->model::validationRules());
         } catch (ValidationException $e){
             return response()->jsonApi([
                 'type' => 'warning',
@@ -108,18 +157,35 @@ class OrderController extends Controller
             ], 400);
         }
 
+        $product = Product::where('currency_code', $request->get('product'))->first();
+        if(!$product){
+            return response()->jsonApi([
+                'type' => 'warning',
+                'title' => 'New Order details data',
+                'message' => "This product does not exist",
+                'data' => []
+            ], 400);
+        }
+
         // Try to save received data
         try {
             // Create new
             $order = $this->model::create([
+                'product_id' => $product->id,
+                'investment_amount' => $request->get('investment_amount'),
+                'deposit_percentage' => $request->get('deposit_percentage'),
+                'deposit_amount' => $request->get('deposit_amount'),
+                'contributor_id' => Auth::user()->getAuthIdentifier(),
                 'status' => Order::STATUS_NEW
             ]);
 
-            $order->fill($request->all());
-            $order->save();
-
             // Return response to client
-            return response()->jsonApi($order, 200);
+            return response()->jsonApi([
+                'type' => 'success',
+                'title' => 'New order registration',
+                'message' => "New order has been created successfully",
+                'data' => $order->toArray()
+            ], 200);
         } catch (Exception $e) {
             return response()->jsonApi([
                 'type' => 'danger',
@@ -131,12 +197,12 @@ class OrderController extends Controller
     }
 
     /**
-     * Getting data about order
+     * Getting data about order by ORDER ID
      *
      * @OA\Get(
      *     path="/orders/{id}",
-     *     summary="Getting data about order",
-     *     description="Getting data about order",
+     *     summary="Getting data about order by ORDER ID",
+     *     description="Getting data about order by ORDER ID",
      *     tags={"Orders"},
      *
      *     security={{
@@ -185,7 +251,8 @@ class OrderController extends Controller
 
         // Load linked relations data
         $order->load([
-            'contributors'
+            'product',
+            'contributor'
         ]);
 
         return response()->jsonApi([

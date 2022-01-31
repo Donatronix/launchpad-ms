@@ -15,9 +15,11 @@ class CreateOrdersTable extends Migration
     {
         Schema::create('orders', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->decimal('purchased_token_id');
+
+            $table->string('product_id');
+
             $table->decimal('investment_amount');
-            $table->decimal('deposit_percentage');
+            $table->unsignedTinyInteger('deposit_percentage');
             $table->decimal('deposit_amount');
 
             $table->foreignUuid('contributor_id')->constrained()

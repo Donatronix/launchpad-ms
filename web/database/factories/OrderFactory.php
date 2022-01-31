@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\Order;
+use App\Models\Product;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class OrderFactory extends Factory
@@ -21,13 +22,17 @@ class OrderFactory extends Factory
      */
     public function definition(): array
     {
+        $investment = $this->faker->numberBetween(2500, 100000);
+        $percentage = $this->faker->numberBetween(10, 100);
+        $deposit = $investment * $percentage / 100;
+
     	return [
-            'purchased_token_id' => '',
-            'investment_amount' => '',
-            'deposit_percentage' => '',
-            'deposit_amount' => '',
-            'contributor_id' => '',
-            'status' => '',
+            'product_id' => $this->faker->randomElement(Product::all()),
+            'investment_amount' => $investment,
+            'deposit_percentage' => $percentage,
+            'deposit_amount' => $deposit,
+            'contributor_id' => $this->faker->randomElement(config('settings.default_users_ids')),
+            'status' => Order::STATUS_NEW,
             'payload' => ''
     	];
     }

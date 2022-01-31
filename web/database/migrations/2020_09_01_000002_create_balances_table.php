@@ -14,7 +14,7 @@ class CreateBalancesTable extends Migration
     public function up()
     {
         Schema::create('balances', function (Blueprint $table) {
-            $table->bigIncrements('id');
+            $table->uuid('id')->primary();
             $table->decimal('amount', 12, 2);
 
             $table->unsignedTinyInteger('currency_id');

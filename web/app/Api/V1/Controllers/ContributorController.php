@@ -7,12 +7,10 @@ use App\Http\Controllers\Controller;
 use App\Models\Contributor;
 use App\Services\IdentityVerification;
 use Exception;
-use GuzzleHttp\Client;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
-use JetBrains\PhpStorm\ArrayShape;
 use Sumra\JsonApi\JsonApiResponse;
 
 /**

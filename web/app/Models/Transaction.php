@@ -4,10 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Sumra\SDK\Traits\UuidTrait;
 
 class Transaction extends Model
 {
     use HasFactory;
+    use UuidTrait;
 
     /**
      * Transaction type
@@ -53,6 +55,17 @@ class Transaction extends Model
         'amount',
         'currency_id',
         'status'
+    ];
+
+    /**
+     * The attributes excluded from the model's JSON form.
+     *
+     * @var array
+     */
+    protected $hidden = [
+        'created_at',
+        'updated_at',
+        'deleted_at'
     ];
 
     /**

@@ -15,15 +15,11 @@ class ContributorsTableSeeder extends Seeder
      */
     public function run(): void
     {
-        Contributor::factory()->create([
-            'id' => '00000000-1000-1000-1000-000000000000'
-        ]);
-
-        Contributor::factory()->create([
-            'id' => '00000000-2000-2000-2000-000000000000'
-        ]);
-
-        // Other contributors
-        Contributor::factory()->count(10)->create();
+        // Generate default contributors
+        foreach(config('settings.default_users_ids') as $uuid){
+            Contributor::factory()->create([
+                'id' => $uuid
+            ]);
+        }
     }
 }

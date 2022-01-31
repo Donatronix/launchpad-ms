@@ -16,19 +16,27 @@ $router->group([
     ], function ($router) {
         $router->get('/', 'ContributorController@show');
         $router->post('/', 'ContributorController@store');
-
         $router->get('/identity-start', 'ContributorController@identity');
-
         $router->put('/identify', 'ContributorController@update');
-
         $router->patch('/agreement', 'ContributorController@agreement');
     });
 
     /**
      * Products
      */
-    $router->group(['prefix' => 'products'], function ($router) {
-        $router->get('/', 'ProductController@index');
+    $router->group([
+        'prefix' => 'products'
+    ], function ($router) {
+        $router->get('/', 'ProductController');
+    });
+
+    /**
+     * Prices
+     */
+    $router->group([
+        'prefix' => 'prices'
+    ], function ($router) {
+        $router->get('/', 'PriceController');
     });
 
     /**
@@ -37,7 +45,8 @@ $router->group([
     $router->group([
         'prefix' => 'orders',
     ], function ($router) {
-        $router->get('/', 'OrderController@show');
+        $router->get('/', 'OrderController@index');
+        $router->get('/{id}', 'OrderController@show');
         $router->post('/', 'OrderController@store');
     });
 

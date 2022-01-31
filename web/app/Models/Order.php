@@ -5,9 +5,10 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Sumra\SDK\Traits\UuidTrait;
 
 /**
- * Contributor Person Scheme
+ * Order Scheme
  *
  * @package App\Models
  *
@@ -15,10 +16,10 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  *     schema="Order",
  *
  *     @OA\Property(
- *         property="purchased_token_id",
+ *         property="product",
  *         type="string",
  *         description="Purchased token",
- *         example="utta"
+ *         example="$utta"
  *     ),
  *     @OA\Property(
  *         property="investment_amount",
@@ -41,7 +42,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * )
  */
 
- /**
+/**
  * Class Order
  *
  * @package App\Models
@@ -49,32 +50,25 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class Order extends Model
 {
     use HasFactory;
+    use UuidTrait;
 
     /**
      * Order status
      */
     const STATUS_NEW = 1;
-    const STATUS_INSUFFICIENT_FUNDS = 2;
-    const STATUS_PAID = 3;
-    const STATUS_COMPLETED = 4;
-    const STATUS_FAILED = 5;
-    const STATUS_CANCELED = 6;
-
-
-//s$SLAPA - Synthetic SLAPA Token
-//$SLAPA - SLAPA Token
-//$DIVIT - DIVIT Token
-//$UTTA - UTTA Token
+    const STATUS_PARTLY_PAID = 2;
+    const STATUS_COMPLETED = 3;
+    const STATUS_FAILED = 4;
+    const STATUS_CANCELED = 5;
 
     /**
      * Order statuses array
      *
      * @var int[]
      */
-    public static $statuses = [
+    public static array $statuses = [
         self::STATUS_NEW,
-        self::STATUS_INSUFFICIENT_FUNDS,
-        self::STATUS_PAID,
+        self::STATUS_PARTLY_PAID,
         self::STATUS_COMPLETED,
         self::STATUS_FAILED,
         self::STATUS_CANCELED
@@ -84,7 +78,7 @@ class Order extends Model
      * @var string[]
      */
     protected $fillable = [
-        'purchased_token_id',
+        'product_id',
         'investment_amount',
         'deposit_percentage',
         'deposit_amount',
@@ -94,12 +88,48 @@ class Order extends Model
     ];
 
     /**
-     * One Order has one Contributor relation
+     * The attributes excluded from the model's JSON form.
+     *
+     * @var array
+     */
+    protected $hidden = [
+        'created_at',
+        'updated_at',
+        'deleted_at'
+    ];
+
+    /**
+     * Order create rules
+     *
+     * @return string[]
+     */
+    public static function validationRules(): array
+    {
+        return [
+            'product' => 'required|string',
+            'investment_amount' => 'required|integer|min:2500',
+            'deposit_percentage' => 'required|integer|min:10|max:100',
+            'deposit_amount' => 'required|integer|min:250'
+        ];
+    }
+
+    /**
+     * One Order have One Contributor relation
      *
      * @return BelongsTo
      */
     public function contributor(): BelongsTo
     {
         return $this->belongsTo(Contributor::class);
+    }
+
+    /**
+     * One Order have One Product relation
+     *
+     * @return BelongsTo
+     */
+    public function product(): BelongsTo
+    {
+        return $this->belongsTo(Product::class);
     }
 }

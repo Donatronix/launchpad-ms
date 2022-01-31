@@ -14,7 +14,15 @@ class CreateProductsTable extends Migration
     public function up()
     {
         Schema::create('products', function (Blueprint $table) {
-            $table->id();
+            $table->uuid('id')->primary();
+
+            $table->string('title');
+            $table->string('currency_code',7);
+
+            $table->unsignedBigInteger('supply');
+            $table->unsignedTinyInteger('presale_percentage')->default(0);
+
+            $table->boolean('status')->default(true);
             $table->timestamps();
         });
     }

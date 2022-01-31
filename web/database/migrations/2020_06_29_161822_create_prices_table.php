@@ -14,7 +14,16 @@ class CreatePricesTable extends Migration
     public function up()
     {
         Schema::create('prices', function (Blueprint $table) {
-            $table->id();
+            $table->uuid('id')->primary();
+            $table->integer('stage')->default(0);
+            $table->double('price',9,6,true);
+            $table->unsignedBigInteger('amount');
+
+            $table->foreignUuid('product_id')->constrained()
+                ->onUpdate('cascade')
+                ->onDelete('cascade');
+
+            $table->boolean('status')->default(true);
             $table->timestamps();
         });
     }

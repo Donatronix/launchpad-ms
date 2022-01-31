@@ -12,7 +12,10 @@ class PriceFactory extends Factory
     public function definition(): array
     {
     	return [
-    	    //
+            'product_id' => 'slp',
+            'stage' => 1,
+            'price' => 0.001,
+            'amount' => 15750000
     	];
     }
 }

@@ -23,6 +23,7 @@ class ContributorFactory extends Factory
     public function definition(): array
     {
         $name = $this->faker->unique()->sentence(3);
+
         return [
             /**
              * Contributor common data
