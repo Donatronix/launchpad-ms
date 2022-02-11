@@ -77,13 +77,13 @@ $app->configure('identity');
 
 $app->middleware([
     \Fruitcake\Cors\HandleCors::class,
-    \App\Http\Middleware\TrimStrings::class,
+    \Sumra\SDK\Middleware\TrimStrings::class,
 ]);
 
 $app->routeMiddleware([
     //'auth' => App\Http\Middleware\Authenticate::class,
-    'checkUser' => App\Http\Middleware\CheckUserMiddleware::class,
-    'checkAdmin' => App\Http\Middleware\CheckAdminMiddleware::class,
+    'checkUser' => \Sumra\SDK\Middleware\CheckUserMiddleware::class,
+    'checkAdmin' => \Sumra\SDK\Middleware\CheckAdminMiddleware::class,
 ]);
 
 /*
@@ -127,7 +127,7 @@ $app->configure('swagger-lume');
 $app->register(\SwaggerLume\ServiceProvider::class);
 
 /**
- * Lumen Generator
+ * Artisan Commands Lumen Generator
  */
 $app->register(Flipbox\LumenGenerator\LumenGeneratorServiceProvider::class);
 
