@@ -18,6 +18,8 @@ class CreatePricesTable extends Migration
             $table->integer('stage')->default(0);
             $table->double('price',9,6,true);
             $table->unsignedBigInteger('amount');
+            $table->unsignedTinyInteger('period_in_days')->default(0);
+            $table->double('percent_profit',8,4,true)->default(0);
 
             $table->foreignUuid('product_id')->constrained()
                 ->onUpdate('cascade')

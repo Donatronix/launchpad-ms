@@ -7,6 +7,40 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Sumra\SDK\Traits\UuidTrait;
 
+/**
+ * Product Price Scheme
+ *
+ * @package App\Models
+ *
+ * @OA\Schema(
+ *     schema="ProductPrice",
+ *
+ *     @OA\Property(
+ *         property="stage",
+ *         type="integer",
+ *         description="Stage number",
+ *         example="1"
+ *     ),
+ *     @OA\Property(
+ *         property="price",
+ *         type="double",
+ *         description="Price per token",
+ *         example="0.005"
+ *     ),
+ *     @OA\Property(
+ *         property="amount",
+ *         type="integer",
+ *         description="Amount tokens supply",
+ *         example="1000000"
+ *     ),
+ *     @OA\Property(
+ *         property="period_in_days",
+ *         type="integer",
+ *         description="Period in days",
+ *         example="10"
+ *     )
+ * )
+ */
 class Price extends Model
 {
     use HasFactory;
@@ -29,5 +63,11 @@ class Price extends Model
     public function product(): BelongsTo
     {
         return $this->belongsTo(Product::class);
+    }
+
+    public static function validationRules(){
+        return [
+
+        ];
     }
 }

@@ -46,8 +46,9 @@ class CreateContributorsTable extends Migration
             /**
              * Contributor status and agreement
              */
-            $table->tinyInteger('status')->default(0);
             $table->boolean('is_agreement')->default(0);
+            $table->unsignedTinyInteger('status')->default(0);
+            $table->boolean('is_verified')->default(0);
 
             $table->timestamps();
             $table->softDeletes();

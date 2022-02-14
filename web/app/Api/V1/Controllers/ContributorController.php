@@ -144,12 +144,12 @@ class ContributorController extends Controller
             $contributor->save();
 
             // Return response to client
-            return [
+            return response()->jsonApi([
                 'type' => 'success',
                 'title' => 'New contributor registration',
                 'message' => "Contributor person detail data successfully saved",
-                'data' => []
-            ];
+                'data' => $contributor->toArray()
+            ], 200);
         } catch (Exception $e) {
             throw new ContributorRegistrationException($e);
         }
@@ -205,6 +205,109 @@ class ContributorController extends Controller
             'message' => "Contributor detail data has been received",
             'data' => $contributor->toArray()
         ], 200);
+    }
+
+    /**
+     * Contributor registration
+     * Step 3.1. Saving contributor Identify data and Init verify session
+     *
+     * @OA\Post(
+     *     path="/contributors/identify",
+     *     summary="Saving contributor person detail",
+     *     description="Saving contributor person detail",
+     *     description="Document type (1 = PASSPORT, 2 = ID_CARD, 3 = DRIVERS_LICENSE, 4 = RESIDENCE_PERMIT)",
+     *     tags={"Contributors"},
+     *
+     *     security={{
+     *         "default": {
+     *             "ManagerRead",
+     *             "User",
+     *             "ManagerWrite"
+     *         }
+     *     }},
+     *     x={
+     *         "auth-type": "Application & Application User",
+     *         "throttling-tier": "Unlimited",
+     *         "wso2-application-security": {
+     *             "security-types": {"oauth2"},
+     *             "optional": "false"
+     *         }
+     *     },
+     *
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             @OA\Property(
+     *                 property="document_type",
+     *                 type="string",
+     *                 description="Document type (1 = PASSPORT, 2 = ID_CARD, 3 = DRIVERS_LICENSE, 4 = RESIDENCE_PERMIT)",
+     *                 enum={"1", "2", "3", "4"},
+     *                 example="1"
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response="200",
+     *         description="Successfully save"
+     *     ),
+     *     @OA\Response(
+     *         response="201",
+     *         description="Contributor created"
+     *     ),
+     *     @OA\Response(
+     *         response="400",
+     *         description="Invalid request"
+     *     ),
+     *     @OA\Response(
+     *         response="401",
+     *         description="Unauthorized"
+     *     ),
+     *     @OA\Response(
+     *         response="404",
+     *         description="not found"
+     *     ),
+     *     @OA\Response(
+     *         response="422",
+     *         description="Validation failed"
+     *     ),
+     *     @OA\Response(
+     *         response="500",
+     *         description="Unknown error"
+     *     )
+     * )
+     * @param Request $request
+     * @return mixed
+     */
+    public function identifyStart(Request $request): mixed
+    {
+        // Get object
+        $contributor = $this->getObject(Auth::user()->getAuthIdentifier());
+
+        if ($contributor instanceof JsonApiResponse) {
+            return $contributor;
+        }
+
+        // Init verify session
+        $data = (new IdentityVerification())->startSession($contributor, $request);
+
+        // Return response to client
+        if($data->status === 'success'){
+            return response()->jsonApi([
+                'type' => 'success',
+                'title' => 'Start KYC verification',
+                'message' => "Session started successfully",
+                'data' => $data->verification
+            ], 200);
+        }else{
+            return response()->jsonApi([
+                'type' => 'danger',
+                'title' => 'Start KYC verification',
+                'message' => $data->message,
+                'data' => [
+                    'code' => $data->code ?? ''
+                ]
+            ], 400);
+        }
     }
 
     /**
@@ -305,12 +408,12 @@ class ContributorController extends Controller
             $contributor->save();
 
             // Return response to client
-            return [
+            return response()->jsonApi([
                 'type' => 'success',
                 'title' => 'New contributor registration',
                 'message' => "Contributor Identify data successfully saved",
                 'data' => []
-            ];
+            ], 200);
         } catch (Exception $e) {
             throw new ContributorRegistrationException($e);
         }
@@ -430,6 +533,16 @@ class ContributorController extends Controller
         }
     }
 
+
+    public function webhookEvents(Request $request){
+        (new IdentityVerification())->handleWebhook('events', $request);
+    }
+
+    public function webhookNotifications(Request $request){
+        (new IdentityVerification())->handleWebhook('notifications', $request);
+    }
+
+
     /**
      * Get contributor object
      *
@@ -448,13 +561,5 @@ class ContributorController extends Controller
                 'data' => null
             ], 404);
         }
-    }
-
-
-    public function identity(Request $request){
-
-        (new IdentityVerification($request))->verify();
-
-
     }
 }

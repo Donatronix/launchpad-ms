@@ -39,13 +39,15 @@ class PriceController extends Controller
      *     )
      * )
      *
+     * @param Request $request
      * @return mixed
      */
-    public function __invoke(Request $request)
+    public function __invoke(Request $request): mixed
     {
         // Get order
-        $order = Price::where('product_id', '')
-            ->where('status', true)
+        $order = Price::where('status', true)
+            ->select(['stage', 'price', 'period_in_days', 'percent_profit', 'amount'])
+            ->where('product_id', '957d387a-e1a3-44ef-af29-6ce9118d67b4')
             ->get();
 
         return response()->jsonApi([

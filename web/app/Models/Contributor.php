@@ -2,12 +2,12 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Sumra\SDK\Traits\OwnerTrait;
-use Sumra\SDK\Traits\UuidTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Sumra\SDK\Traits\OwnerTrait;
+use Sumra\SDK\Traits\UuidTrait;
 
 /**
  * Contributor Person Scheme
@@ -131,7 +131,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  *     )
  * )
  */
- class Contributor extends Model
+class Contributor extends Model
 {
     use HasFactory;
     use SoftDeletes;
@@ -162,10 +162,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
      * @var int[]
      */
     public static array $document_types = [
-        self::DOCUMENT_TYPES_PASSPORT,
-        self::DOCUMENT_TYPES_ID_CARD,
-        self::DOCUMENT_TYPES_DRIVERS_LICENSE,
-        self::DOCUMENT_TYPES_RESIDENCE_PERMIT
+        1 => self::DOCUMENT_TYPES_PASSPORT,
+        2 => self::DOCUMENT_TYPES_ID_CARD,
+        3 => self::DOCUMENT_TYPES_DRIVERS_LICENSE,
+        4 => self::DOCUMENT_TYPES_RESIDENCE_PERMIT
     ];
 
     /**
@@ -188,6 +188,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
      * @var array
      */
     protected $fillable = [
+        'id',
         'first_name',
         'last_name',
         'gender',
@@ -235,7 +236,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
             'address.line1' => 'required|string|max:150',
             'address.line2' => 'string|max:100',
             'address.city' => 'required|string|max:50',
-            'address.zip' => 'required|string|max:15',
+            'address.zip' => 'required|string|max:15'
         ];
     }
 
@@ -252,17 +253,27 @@ use Illuminate\Database\Eloquent\SoftDeletes;
             'document.number' => 'required|string',
             'document.country' => 'required|string|max:3',
             'document.type' => 'required|integer|min:1|max:4',
-            'document.file' => 'required|string',
+            'document.file' => 'required|string'
         ];
     }
 
-     /**
-      * One Contributor has many Orders relation
-      *
-      * @return HasMany
-      */
+    /**
+     * One Contributor has many Orders relation
+     *
+     * @return HasMany
+     */
     public function orders(): HasMany
     {
         return $this->hasMany(Order::class);
+    }
+
+    /**
+     * One Contributor has many Identification relation
+     *
+     * @return HasMany
+     */
+    public function identifications(): HasMany
+    {
+        return $this->hasMany(Identification::class);
     }
 }

@@ -19,8 +19,9 @@ class CreateBalancesTable extends Migration
 
             $table->unsignedTinyInteger('currency_id');
 
-//            $table->unsignedBigInteger('user_id');
-//            $table->foreign('user_id')->references('id')->on('contributors');
+            $table->foreignUuid('contributor_id')->constrained()
+                ->onUpdate('cascade')
+                ->onDelete('cascade');
 
             $table->timestamps();
         });

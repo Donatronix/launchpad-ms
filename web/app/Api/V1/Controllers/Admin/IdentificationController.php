@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Api\V1\Controllers\Admin;
 
+use App\Http\Controllers\Controller;
 use App\Models\Identification;
 use Illuminate\Http\Request;
 
