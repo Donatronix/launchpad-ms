@@ -27,7 +27,7 @@ class IdentityVerification
         4 => 'RESIDENCE_PERMIT'
     ];
 
-   // const STATUS_
+    // const STATUS_
 
     /**
      * IdentityVerification constructor.
@@ -108,39 +108,77 @@ class IdentityVerification
     }
 
     /**
+     * @param $type
      * @param Request $request
+     * @return mixed
      */
-    public function handleWebhook($type, Request $request)
+    public function handleWebhook($type, Request $request): mixed
     {
         // Get request headers
-        $headers = $request->headers->all();
+        $headers = $request->headers;
 
-        dd($headers);
-
-        if($headers->get('x-auth-client') !== config('identity.veriff.public_key')){
-            return response('Incorrect Public Key', 401);
+        // Set logging headers
+        if (env("APP_DEBUG", 0)) {
+            Log::info("Headers:\n{$headers}");
         }
 
+        // Check x-auth-client, some as public_key
+        if (!$headers->has('x-auth-client') || ($headers->get('x-auth-client') !== config('identity.veriff.public_key'))) {
+            return (object)[
+                'type' => 'danger',
+                'message' => 'Missing or Incorrect Public Key',
+                'code' => 401
+            ];
+        }
+
+        // Check if exist x-hmac-signature
+        if (!$headers->has('x-hmac-signature')) {
+            return (object)[
+                'type' => 'danger',
+                'message' => 'Missing HMAC Signature',
+                'code' => 401
+            ];
+        }
 
         // Get request data
         $payload = $request->all();
 
-        Log::info("Type: {$type}");
-        Log::info("Headers: ", $headers);
-        Log::info("Request: ", $payload);
-
-
+        // Generate signature hash by HMAC-SHA256
         $signature = strtolower(hash_hmac('sha256', json_encode($payload), config('identity.veriff.private_key')));
 
-        Log::info("Signature: {$signature}");
+        // Set logging generated signature
+        if (env("APP_DEBUG", 0)) {
+            Log::info("Signature: {$signature}");
+        }
 
-//
-//        $vendorData = json_decode($request['vendorData']);
-//
-//        Identification::create([
-//            'session_id' => $payload['id'],
-//            'contributor_id' => $vendorData->user_id,
-//            'status' => $payload['code']
-//        ]);
+        // Check if exist x-hmac-signature
+        if ($headers->has('x-hmac-signature') !== $signature) {
+//            return (object)[
+//                'type' => 'danger',
+//                'message' => 'Signatures is different',
+//                'code' => 401
+//            ];
+        }
+
+        // Set logging generated signature
+        if (env("APP_DEBUG", 0)) {
+            Log::info("Request: ", $payload);
+        }
+
+        // Get vendor Data from request
+        $vendorData = json_decode($payload['verification']['vendorData']);
+
+        // Save Veriff data
+        Identification::create([
+            'session_id' => $payload['verification']['id'],
+            'contributor_id' => $vendorData->user_id,
+            'status' => $payload['verification']['code'],
+            'payload' => $payload
+        ]);
+
+        return (object)[
+            'type' => 'success',
+            'contributor_id' => $vendorData->user_id,
+        ];
     }
 }

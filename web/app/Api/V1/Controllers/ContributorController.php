@@ -392,7 +392,7 @@ class ContributorController extends Controller
         try {
             // Find exist contributor
             $contributor = $this->getObject(Auth::user()->getAuthIdentifier());
-            if (is_a($contributor, 'Sumra\JsonApi\JsonApiResponse')) {
+            if ($contributor instanceof JsonApiResponse) {
                 return $contributor;
             }
 
@@ -513,7 +513,7 @@ class ContributorController extends Controller
         try {
             // Find Exist contributor
             $contributor = $this->getObject(Auth::user()->getAuthIdentifier());
-            if (is_a($contributor, 'Sumra\JsonApi\JsonApiResponse')) {
+            if ($contributor instanceof JsonApiResponse) {
                 return $contributor;
             }
 
@@ -522,26 +522,16 @@ class ContributorController extends Controller
             $contributor->save();
 
             // Return response to client
-            return [
+            return response()->jsonApi([
                 'type' => 'success',
                 'title' => 'New contributor registration',
                 'message' => "Contributor agreement set successfully",
                 'data' => []
-            ];
+            ], 200);
         } catch (Exception $e) {
             throw new ContributorRegistrationException($e);
         }
     }
-
-
-    public function webhookEvents(Request $request){
-        (new IdentityVerification())->handleWebhook('events', $request);
-    }
-
-    public function webhookNotifications(Request $request){
-        (new IdentityVerification())->handleWebhook('notifications', $request);
-    }
-
 
     /**
      * Get contributor object
@@ -549,7 +539,7 @@ class ContributorController extends Controller
      * @param $id
      * @return mixed
      */
-    private function getObject($id)
+    private function getObject($id): mixed
     {
         try {
             return $this->model::findOrFail($id);
@@ -558,7 +548,7 @@ class ContributorController extends Controller
                 'type' => 'danger',
                 'title' => "Get contributor",
                 'message' => "Contributor with id #{$id} not found: {$e->getMessage()}",
-                'data' => null
+                'data' => ''
             ], 404);
         }
     }

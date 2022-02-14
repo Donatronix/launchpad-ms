@@ -13,6 +13,26 @@ class Identification extends Model
     use UuidTrait;
 
     /**
+     * The attributes that should be cast.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'payload' => 'array',
+    ];
+
+    /**
+     * @var string[]
+     */
+    protected $fillable = [
+        'id',
+        'session_id',
+        'contributor_id',
+        'status',
+        'payload'
+    ];
+
+    /**
      * The attributes excluded from the model's JSON form.
      *
      * @var array

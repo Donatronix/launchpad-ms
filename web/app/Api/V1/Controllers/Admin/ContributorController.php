@@ -379,7 +379,7 @@ class ContributorController extends Controller
 
         // Read contributor model
         $contributor = $this->getObject($id);
-        if (is_a($contributor, 'Sumra\JsonApi\JsonApiResponse')) {
+        if ($contributor instanceof JsonApiResponse) {
             return $contributor;
         }
 
@@ -462,7 +462,7 @@ class ContributorController extends Controller
     {
         // Read contributor model
         $contributor = $this->getObject($id);
-        if (is_a($contributor, 'Sumra\JsonApi\JsonApiResponse')) {
+        if ($contributor instanceof JsonApiResponse) {
             return $contributor;
         }
 
@@ -492,7 +492,7 @@ class ContributorController extends Controller
      * @param $id
      * @return mixed
      */
-    private function getObject($id)
+    private function getObject($id): mixed
     {
         try {
             return $this->model::findOrFail($id);
@@ -501,7 +501,7 @@ class ContributorController extends Controller
                 'type' => 'danger',
                 'title' => "Get contributor",
                 'message' => "Contributor with id #{$id} not found: {$e->getMessage()}",
-                'data' => null
+                'data' => ''
             ], 404);
         }
     }

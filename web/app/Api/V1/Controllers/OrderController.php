@@ -269,7 +269,7 @@ class OrderController extends Controller
      * @param $id
      * @return mixed
      */
-    private function getObject($id)
+    private function getObject($id): mixed
     {
         try {
             return $this->model::findOrFail($id);
@@ -278,7 +278,7 @@ class OrderController extends Controller
                 'type' => 'danger',
                 'title' => "Get order",
                 'message' => "Order with id #{$id} not found: {$e->getMessage()}",
-                'data' => null
+                'data' => ''
             ], 404);
         }
     }

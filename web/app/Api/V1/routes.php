@@ -105,8 +105,8 @@ $router->group([
     $router->group([
         'prefix' => 'webhooks'
     ], function () use ($router) {
-        //$router->post('identify/{type}', 'ContributorController@handlerWebhook');
-        $router->post('identify/events', 'ContributorController@webhookEvents');
-        $router->post('identify/notifications', 'ContributorController@webhookNotifications');
+        $router->post('identify/{type}', 'IdentifyWebhookController');
+//        $router->post('identify/events', 'IdentifyWebhookController@webhookEvents');
+//        $router->post('identify/notifications', 'IdentifyWebhookController@webhookNotifications');
     });
 });

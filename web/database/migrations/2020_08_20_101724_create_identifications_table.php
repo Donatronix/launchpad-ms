@@ -15,18 +15,14 @@ class CreateIdentificationsTable extends Migration
     {
         Schema::create('identifications', function (Blueprint $table) {
             $table->uuid('id')->primary();
-
-
             $table->uuid('session_id')->index();
-
 
             $table->foreignUuid('contributor_id')->constrained()
                 ->onUpdate('cascade')
                 ->onDelete('cascade');
 
-
             $table->unsignedSmallInteger('status')->default(0);
-
+            $table->text('payload')->nullable();
             $table->timestamps();
         });
     }
