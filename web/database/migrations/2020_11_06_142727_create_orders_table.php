@@ -18,9 +18,9 @@ class CreateOrdersTable extends Migration
 
             $table->string('product_id');
 
-            $table->decimal('investment_amount');
+            $table->decimal('investment_amount', 12, 0);
             $table->unsignedTinyInteger('deposit_percentage');
-            $table->decimal('deposit_amount');
+            $table->decimal('deposit_amount', 12, 0);
 
             $table->foreignUuid('contributor_id')->constrained()
                 ->onUpdate('cascade')

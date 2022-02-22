@@ -65,7 +65,7 @@ $router->group([
             'middleware' => 'checkAdmin'
         ], function ($router) {
             /**
-             * Contributors (
+             * Contributors
              */
             $router->group([
                 'prefix' => 'contributors',
