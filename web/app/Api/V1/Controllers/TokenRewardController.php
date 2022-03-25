@@ -29,7 +29,7 @@ class TokenRewardController extends Controller
      *
      * @param Request $request
      *
-     * @return Response
+     * @return TokenRewardResource
      */
     public function store(Request $request)
     {
@@ -51,11 +51,10 @@ class TokenRewardController extends Controller
      * @param Request     $request
      * @param TokenReward $tokenReward
      *
-     * @return Response
+     * @return TokenRewardResource
      */
     public function update(Request $request, TokenReward $tokenReward)
     {
-        $tokenReward = $tokenReward;
         try {
             DB::transaction(function () use ($request, &$tokenReward) {
                 $tokenReward->update($request->all());
@@ -63,7 +62,7 @@ class TokenRewardController extends Controller
         } catch (Throwable $th) {
             return $th->getMessage();
         }
-        return $tokenReward;
+        return new TokenRewardResource($tokenReward);
     }
 
     /**
