@@ -29,7 +29,7 @@ class TransactionController extends Controller
      *             "optional": "false"
      *         }
      *     },
-     * 
+     *
      *     @OA\Parameter(
      *         name="limit",
      *         description="Count of transactions in one page",
@@ -50,7 +50,7 @@ class TransactionController extends Controller
      *
      * @param Request $request
      *
-     * @return \Sumra\JsonApi\
+     * @return \Sumra\SDK\
      *
      * @throws \Exception
      */
@@ -119,7 +119,7 @@ class TransactionController extends Controller
      *
      * @param         $transaction_id
      *
-     * @return \Sumra\JsonApi\
+     * @return \Sumra\SDK\
      */
     public function show($transaction_id)
     {

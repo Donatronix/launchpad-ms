@@ -7,7 +7,7 @@ use App\Models\Contributor;
 use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
-use Sumra\JsonApi\JsonApiResponse;
+use Sumra\SDK\JsonApiResponse;
 
 /**
  * Class ContributorController
