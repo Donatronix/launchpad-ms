@@ -5,14 +5,27 @@
  */
 $router->group([
     'prefix' => env('APP_API_VERSION', ''),
-    'namespace' => '\App\Api\V1\Controllers'
+    'namespace' => '\App\Api\V1\Controllers',
 ], function ($router) {
     /**
      * Internal access
      */
     $router->group([
-        'middleware' => 'checkUser'
+        'middleware' => 'checkUser',
     ], function ($router) {
+        /**
+         * Token Rewards (
+         */
+        $router->group([
+            'prefix' => 'token-rewards',
+        ], function ($router) {
+            $router->get('/', 'TokenRewardController@index');
+            $router->post('/', 'TokenRewardController@store');
+            $router->put('/', 'TokenRewardController@update');
+            $router->delete('/', 'TokenRewardController@destroy');
+
+        });
+
         /**
          * Contributors (
          */
@@ -31,7 +44,7 @@ $router->group([
          * Products
          */
         $router->group([
-            'prefix' => 'products'
+            'prefix' => 'products',
         ], function ($router) {
             $router->get('/', 'ProductController');
         });
@@ -40,7 +53,7 @@ $router->group([
          * Prices
          */
         $router->group([
-            'prefix' => 'prices'
+            'prefix' => 'prices',
         ], function ($router) {
             $router->get('/', 'PriceController');
         });
@@ -62,7 +75,7 @@ $router->group([
         $router->group([
             'prefix' => 'admin',
             'namespace' => 'Admin',
-            'middleware' => 'checkAdmin'
+            'middleware' => 'checkAdmin',
         ], function ($router) {
             /**
              * Contributors
@@ -103,7 +116,7 @@ $router->group([
      * Payments webhooks
      */
     $router->group([
-        'prefix' => 'webhooks'
+        'prefix' => 'webhooks',
     ], function () use ($router) {
         $router->post('identify/{type}', 'IdentifyWebhookController');
 //        $router->post('identify/events', 'IdentifyWebhookController@webhookEvents');
