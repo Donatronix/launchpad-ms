@@ -3,84 +3,74 @@
 namespace App\Api\V1\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\TokenRewardResource;
 use App\Models\TokenReward;
+use Exception;
 use Illuminate\Http\Request;
-use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
-use Illuminate\Http\Response;
-use Illuminate\Support\Facades\DB;
-use Throwable;
 
 class TokenRewardController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Method for list of user's tokenReward.
      *
-     * @return AnonymousResourceCollection
-     */
-    public function index()
-    {
-        return TokenRewardResource::collection(TokenReward::all());
-    }
-
-
-    /**
-     * Store a newly created resource in storage.
+     * @OA\Get(
+     *     path="/admin/token-rewards",
+     *     description="Get list of un-approved user's tokenReward",
+     *     tags={"Admin / TokenRewards"},
+     *
+     *     security={{
+     *         "default": {
+     *             "ManagerRead",
+     *             "User",
+     *             "ManagerWrite"
+     *         }
+     *     }},
+     *     x={
+     *         "auth-type": "Application & Application User",
+     *         "throttling-tier": "Unlimited",
+     *         "wso2-application-security": {
+     *             "security-types": {"oauth2"},
+     *             "optional": "false"
+     *         }
+     *     },
+     *
+     *     @OA\Parameter(
+     *         name="limit",
+     *         description="Count of token rewards in one page",
+     *         in="query",
+     *         required=false,
+     *         @OA\Schema(
+     *             type="integer",
+     *              default=20
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Success",
+     *     )
+     * )
+     *
+     * Method for list of token Reward of users.
      *
      * @param Request $request
      *
-     * @return TokenRewardResource
-     */
-    public function store(Request $request)
-    {
-        $tokenReward = null;
-        try {
-            DB::transaction(function () use ($request, &$tokenReward) {
-                $tokenReward = TokenReward::create($request->all());
-            });
-        } catch (Throwable $th) {
-            return $th->getMessage();
-        }
-        return new TokenRewardResource($tokenReward);
-    }
-
-
-    /**
-     * Update the specified resource in storage.
+     * @return
      *
-     * @param Request     $request
-     * @param TokenReward $tokenReward
-     *
-     * @return TokenRewardResource
+     * @throws Exception
      */
-    public function update(Request $request, TokenReward $tokenReward)
+    public function index(Request $request)
     {
         try {
-            DB::transaction(function () use ($request, &$tokenReward) {
-                $tokenReward->update($request->all());
-            });
-        } catch (Throwable $th) {
-            return $th->getMessage();
+            $result = TokenReward::paginate($request->get('limit', 20));
+
+            // Return response
+            return response()->jsonApi($result->toArray());
+        } catch (Exception $e) {
+            return response()->jsonApi([
+                'type' => 'danger',
+                'title' => 'Token rewards list',
+                'message' => $e->getMessage(),
+            ], 400);
         }
-        return new TokenRewardResource($tokenReward);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param TokenReward $tokenReward
-     *
-     * @return Response
-     */
-    public function destroy(TokenReward $tokenReward)
-    {
-        try {
-            DB::transaction(function () use ($tokenReward) {
-                $tokenReward->delete();
-            });
-        } catch (Throwable $th) {
-            return $th->getMessage();
-        }
-        return 'success';
-    }
 }
