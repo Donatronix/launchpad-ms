@@ -14,7 +14,19 @@ $router->group([
         'middleware' => 'checkUser'
     ], function ($router) {
         /**
-         * Contributors (
+         * Token Rewards
+         */
+        $router->group([
+            'prefix' => 'token-rewards',
+        ], function ($router) {
+            $router->get('/', 'TokenRewardController@index');
+            $router->post('/', 'TokenRewardController@store');
+            $router->put('/', 'TokenRewardController@update');
+            $router->delete('/', 'TokenRewardController@destroy');
+        });
+
+        /**
+         * Contributors
          */
         $router->group([
             'prefix' => 'contributors',
@@ -31,7 +43,7 @@ $router->group([
          * Products
          */
         $router->group([
-            'prefix' => 'products'
+            'prefix' => 'products',
         ], function ($router) {
             $router->get('/', 'ProductController');
         });
@@ -40,7 +52,7 @@ $router->group([
          * Prices
          */
         $router->group([
-            'prefix' => 'prices'
+            'prefix' => 'prices',
         ], function ($router) {
             $router->get('/', 'PriceController');
         });
@@ -55,47 +67,50 @@ $router->group([
             $router->get('/{id}', 'OrderController@show');
             $router->post('/', 'OrderController@store');
         });
+    });
 
+    /**
+     * ADMIN PANEL
+     */
+    $router->group([
+        'prefix' => 'admin',
+        'namespace' => 'Admin',
+        'middleware' => [
+            'checkUser',
+            'checkAdmin'
+        ]
+    ], function ($router) {
         /**
-         * ADMIN PANEL
+         * Contributors
          */
         $router->group([
-            'prefix' => 'admin',
-            'namespace' => 'Admin',
-            'middleware' => 'checkAdmin'
+            'prefix' => 'contributors',
         ], function ($router) {
-            /**
-             * Contributors
-             */
-            $router->group([
-                'prefix' => 'contributors',
-            ], function ($router) {
-                $router->get('/', 'ContributorController@index');
-                $router->post('/', 'ContributorController@store');
-                $router->get('/{id:[a-fA-F0-9\-]{36}}', 'ContributorController@show');
-                $router->put('/{id:[a-fA-F0-9\-]{36}}', 'ContributorController@update');
-                $router->delete('/{id:[a-fA-F0-9\-]{36}}', 'ContributorController@destroy');
-            });
+            $router->get('/', 'ContributorController@index');
+            $router->post('/', 'ContributorController@store');
+            $router->get('/{id:[a-fA-F0-9\-]{36}}', 'ContributorController@show');
+            $router->put('/{id:[a-fA-F0-9\-]{36}}', 'ContributorController@update');
+            $router->delete('/{id:[a-fA-F0-9\-]{36}}', 'ContributorController@destroy');
+        });
 
-            /**
-             * Products
-             */
-            $router->group(['prefix' => 'products'], function ($router) {
-                $router->get('/', 'ProductController@index');
-                $router->post('/', 'ProductController@store');
-                $router->get('/{id}', 'ProductController@show');
-                $router->patch('/{id}', 'ProductController@update');
-                $router->delete('/{id}', 'ProductController@destroy');
-            });
+        /**
+         * Products
+         */
+        $router->group(['prefix' => 'products'], function ($router) {
+            $router->get('/', 'ProductController@index');
+            $router->post('/', 'ProductController@store');
+            $router->get('/{id}', 'ProductController@show');
+            $router->patch('/{id}', 'ProductController@update');
+            $router->delete('/{id}', 'ProductController@destroy');
+        });
 
-            /**
-             * Transactions
-             */
-            $router->group([
-                'prefix' => 'transactions',
-            ], function ($router) {
-                $router->get('/', 'TransactionController');
-            });
+        /**
+         * Transactions
+         */
+        $router->group([
+            'prefix' => 'transactions',
+        ], function ($router) {
+            $router->get('/', 'TransactionController');
         });
     });
 
@@ -103,8 +118,8 @@ $router->group([
      * Payments webhooks
      */
     $router->group([
-        'prefix' => 'webhooks'
-    ], function () use ($router) {
+        'prefix' => 'webhooks',
+    ], function ($router) {
         $router->post('identify/{type}', 'IdentifyWebhookController');
 //        $router->post('identify/events', 'IdentifyWebhookController@webhookEvents');
 //        $router->post('identify/notifications', 'IdentifyWebhookController@webhookNotifications');
