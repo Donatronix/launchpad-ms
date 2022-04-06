@@ -29,28 +29,5 @@ class TokenReward extends Model
         });
     }
 
-    /**
-     * Get the token reward's deposit amount.
-     *
-     * @param int $value
-     *
-     * @return float|int
-     */
-    public function getDepositAmountAttribute(int $value): float|int
-    {
-        return $value / 100;
-    }
-
-    /**
-     * Set the user's first name.
-     *
-     * @param string $value
-     *
-     * @return void
-     */
-    public function setDepositAmountAttribute(string $value)
-    {
-        $this->attributes['deposit_amount'] = floatval($value) * 100;
-    }
 
 }

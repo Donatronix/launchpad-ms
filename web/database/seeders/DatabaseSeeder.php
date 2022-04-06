@@ -19,6 +19,7 @@ class DatabaseSeeder extends Seeder
             ProductsTableSeeder::class,
             PricesTableSeeder::class,
             OrdersTableSeeder::class,
+            TokenRewardSeeder::class,
         ]);
     }
 }
