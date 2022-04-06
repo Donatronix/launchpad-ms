@@ -13,7 +13,7 @@ class TokenRewardController extends Controller
      * Method for list of user's tokenReward.
      *
      * @OA\Get(
-     *     path="/admin/token-rewards",
+     *     path="/token-rewards",
      *     description="Get list of un-approved user's tokenReward",
      *     tags={"Admin / TokenRewards"},
      *
@@ -40,7 +40,7 @@ class TokenRewardController extends Controller
      *         required=false,
      *         @OA\Schema(
      *             type="integer",
-     *              default=20
+     *             default=20
      *         )
      *     ),
      *     @OA\Response(
