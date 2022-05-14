@@ -8,7 +8,11 @@ $router->group([
     'namespace' => '\App\Api\V1\Controllers'
 ], function ($router) {
     /**
-     * Internal access
+     * PUBLIC ACCESS
+     */
+
+    /**
+     * PRIVATE ACCESS
      */
     $router->group([
         'middleware' => 'checkUser'
@@ -70,7 +74,7 @@ $router->group([
     });
 
     /**
-     * ADMIN PANEL
+     * ADMIN PANEL ACCESS
      */
     $router->group([
         'prefix' => 'admin',
