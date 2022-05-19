@@ -15,7 +15,7 @@ class CreateTransactionsTable extends Migration
     {
         Schema::create('transactions', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->string('name', 50);
+//            $table->string('name', 50);
 
             // $table->tinyInteger('payment_method');
 //            $table->tinyInteger('payment_system');
@@ -26,17 +26,15 @@ class CreateTransactionsTable extends Migration
 
 //            $table->unsignedBigInteger('receiver_id');
 //            $table->foreign('receiver_id')->references('id')->on('contributors');
-
-            $table->decimal('amount', 12);
-
-            $table->unsignedTinyInteger('currency_id');
-
-            $table->smallInteger('status')->default('1');
-
-            $table->unsignedBigInteger('transactionable_id');
-            $table->unsignedTinyInteger('transactionable_type');
-
-            $table->timestamps();
+//
+//            $table->decimal('amount', 12);
+//
+//            $table->unsignedTinyInteger('currency_id');
+//
+//            $table->smallInteger('status')->default('1');
+//
+//            $table->unsignedBigInteger('transactionable_id');
+//            $table->unsignedTinyInteger('transactionable_type');
         });
     }
 

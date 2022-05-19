@@ -169,7 +169,7 @@ class OrderController extends Controller
 
         // Try to save received data
         try {
-            // Create new
+            // Create new order
             $order = $this->model::create([
                 'product_id' => $product->id,
                 'investment_amount' => $request->get('investment_amount'),
@@ -178,6 +178,11 @@ class OrderController extends Controller
                 'contributor_id' => Auth::user()->getAuthIdentifier(),
                 'status' => Order::STATUS_NEW
             ]);
+
+            // create new transaction
+            $transaction_params = [
+
+            ];
 
             // Return response to client
             return response()->jsonApi([
