@@ -180,8 +180,9 @@ class OrderController extends Controller
             ]);
 
             // create new transaction
-            $transaction_params = [
 
+            $transaction_params = [
+                    'paramsstest' => 'nil'
             ];
 
             // Return response to client
