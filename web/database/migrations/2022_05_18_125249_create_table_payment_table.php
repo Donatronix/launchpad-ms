@@ -33,8 +33,6 @@ class CreateTablePaymentTable extends Migration
      */
     public function down()
     {
-        Schema::table('payment_types', function (Blueprint $table) {
-            //
-        });
+        Schema::drop('payment_types');
     }
 }

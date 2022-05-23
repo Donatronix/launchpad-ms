@@ -49,12 +49,11 @@ class Transaction extends Model
      * @var array
      */
     protected $fillable = [
-        'name',
-        'sender_id',
-        'receiver_id',
-        'amount',
-        'currency_id',
-        'status'
+        'payment_type_id',
+        'total_amount',
+        'order_id',
+        'user_id',
+        'payment_system',
     ];
 
     /**

@@ -109,7 +109,9 @@ class Order extends Model
             'product' => 'required|string',
             'investment_amount' => 'required|integer|min:2500',
             'deposit_percentage' => 'required|integer|min:10|max:100',
-            'deposit_amount' => 'required|integer|min:250'
+            'deposit_amount' => 'required|integer|min:250',
+            'payment_type_id' => 'required|integer|exists:payment_types,id',
+            'wallet_address' => 'required',
         ];
     }
 
@@ -131,5 +133,15 @@ class Order extends Model
     public function product(): BelongsTo
     {
         return $this->belongsTo(Product::class);
+    }
+
+    /**
+     * One Order have One Transaction relation
+     *
+     * @return BelongsTo
+     */
+    public function transaction()
+    {
+        return $this->belongsTo(Transaction::class, 'id', 'order_id');
     }
 }

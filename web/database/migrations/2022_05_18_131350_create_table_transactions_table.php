@@ -21,11 +21,12 @@ class CreateTableTransactionsTable extends Migration
             $table->unsignedTinyInteger('payment_system');
             $table->string('wallet_address', 256)->nullable();
             $table->decimal('total_amount', 12);
-            $table->unsignedInteger('order_id');
+            $table->uuid('order_id');
             $table->uuid('user_id');
 
             $table->foreign('user_id')->references('id')->on('contributors');
             $table->foreign('payment_type_id')->references('id')->on('payment_types');
+            $table->foreign('order_id')->references('id')->on('orders');
 
             $table->timestamps();
         });

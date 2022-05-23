@@ -2,6 +2,7 @@
 
 namespace App\Api\V1\Controllers;
 
+use App\Api\V1\Services\TransactionService;
 use App\Http\Controllers\Controller;
 use App\Models\Order;
 use App\Models\Product;
@@ -180,10 +181,10 @@ class OrderController extends Controller
             ]);
 
             // create new transaction
-
-            $transaction_params = [
-                    'paramsstest' => 'nil'
-            ];
+            $paramsTransactions = $request->all();
+            $paramsTransactions['order_id'] = $order->id;
+            $transaction = (new TransactionService())->store($paramsTransactions);
+            $order->transaction;
 
             // Return response to client
             return response()->jsonApi([
