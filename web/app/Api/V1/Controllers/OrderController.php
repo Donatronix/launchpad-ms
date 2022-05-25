@@ -276,10 +276,10 @@ class OrderController extends Controller
     {
         try {
             $transaction = (new TransactionService())->getOne($transaction_id);
-            dd($transaction->order);
+//            dd($transaction->order);
 
-            $pdf = PDF::loadView('pdf.invoice', $transaction);
-            return $pdf->download('invoice.pdf');
+            $pdf = PDF::loadView('pdf.receipt.deposit-card', $transaction);
+            return $pdf->download('pdf.receipt.deposit-card');
 
 
             return response()->jsonApi([
