@@ -279,6 +279,7 @@ class OrderController extends Controller
             dd($transaction->order);
 
             $pdf = PDF::loadView('pdf.invoice', $transaction);
+            return $pdf->download('invoice.pdf');
 
 
             return response()->jsonApi([
