@@ -38,6 +38,18 @@ use Sumra\SDK\Traits\UuidTrait;
  *         type="number",
  *         description="Deposit amount",
  *         example="10000"
+ *     ),
+ *      @OA\Property(
+ *         property="payment_type_id",
+ *         type="number",
+ *         description="Payment Type ID, 1 - Fiat, 2 - Crypto",
+ *         example="1"
+ *     ),
+ *     @OA\Property(
+ *         property="wallet_address",
+ *         type="number",
+ *         description="Wallet address of the transaction",
+ *         example="576894-erjt-4059"
  *     )
  * )
  */

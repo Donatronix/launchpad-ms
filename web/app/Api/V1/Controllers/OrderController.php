@@ -12,6 +12,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
 use Sumra\SDK\JsonApiResponse;
+use Barryvdh\DomPDF\Facade\Pdf;
+
 
 /**
  * Class OrderController
@@ -268,6 +270,33 @@ class OrderController extends Controller
             'message' => "Order detail data has been received",
             'data' => $order->toArray()
         ], 200);
+    }
+
+    public function generatePdfForTransaction($transaction_id)
+    {
+        try {
+            $transaction = (new TransactionService())->getOne($transaction_id);
+            dd($transaction->order);
+
+            $pdf = PDF::loadView('pdf.invoice', $transaction);
+
+
+            return response()->jsonApi([
+                'type' => 'success',
+                'title' => 'Order details data',
+                'message' => "Order detail data has been received",
+                'data' => $transaction->toArray()
+            ], 200);
+
+        } Catch(ModelNotFoundException $e) {
+            return response()->jsonApi([
+                'type' => 'danger',
+                'title' => "Get order",
+                'message' => "Transaction with id #{$transaction_id} not found: {$e->getMessage()}",
+                'data' => ''
+            ], 404);
+        }
+
     }
 
     /**

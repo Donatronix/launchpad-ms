@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Sumra\SDK\Traits\UuidTrait;
 
 class Transaction extends Model
@@ -73,5 +74,15 @@ class Transaction extends Model
     public function transactionable()
     {
         return $this->morphTo();
+    }
+
+    /**
+     * One Transaction have One Order relation
+     *
+     * @return BelongsTo
+     */
+    public function order()
+    {
+        return $this->belongsTo(Order::class, 'order_id', 'id');
     }
 }

@@ -26,4 +26,9 @@ class TransactionService
 
         return $transaction;
     }
+
+    public function getOne($transaction_id)
+    {
+        return $this->model::findOrFail($transaction_id);
+    }
 }

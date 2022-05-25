@@ -129,6 +129,12 @@ $app->register(\SwaggerLume\ServiceProvider::class);
  */
 $app->register(Flipbox\LumenGenerator\LumenGeneratorServiceProvider::class);
 
+/**
+ * DOMPdf
+ */
+$app->configure('dompdf');
+$app->register(\Barryvdh\DomPDF\ServiceProvider::class);
+
 /*
 |--------------------------------------------------------------------------
 | Load The Application Routes

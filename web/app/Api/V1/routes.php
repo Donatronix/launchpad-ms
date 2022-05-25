@@ -70,6 +70,7 @@ $router->group([
             $router->get('/', 'OrderController@index');
             $router->get('/{id}', 'OrderController@show');
             $router->post('/', 'OrderController@store');
+            $router->get('/get-pdf/{transaction_id}', 'OrderController@generatePdfForTransaction');
         });
     });
 
