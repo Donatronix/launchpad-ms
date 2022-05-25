@@ -76,7 +76,7 @@
             </ul>
             <div>
                 <span class="transaction">Transaction ID</span>
-                <span class="block">{{$transaction->id}}</span>
+                <span class="block">{{$id}}</span>
             </div>
         </div>
         <div class="download">

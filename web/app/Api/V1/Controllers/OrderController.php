@@ -276,9 +276,9 @@ class OrderController extends Controller
     {
         try {
             $transaction = (new TransactionService())->getOne($transaction_id);
-//            dd($transaction->order);
+//            dd($transaction->order->toArray());
 
-            $pdf = PDF::loadView('pdf.receipt.deposit-card', $transaction);
+            $pdf = PDF::loadView('pdf.receipt.deposit-card', $transaction->toArray());
             return $pdf->download('pdf.receipt.deposit-card');
 
 
