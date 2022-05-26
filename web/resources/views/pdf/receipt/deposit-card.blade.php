@@ -59,7 +59,7 @@
                 </li>
                 <li class="list-group-item">
                     <span class="span-label">Total amount</span>
-                    <span style="float: right;">An item</span>
+                    <span style="float: right;">{{$total_amount}}</span>
                 </li>
                 <li class="list-group-item">
                     <span class="span-label">Time</span>

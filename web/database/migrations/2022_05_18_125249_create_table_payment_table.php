@@ -20,10 +20,6 @@ class CreateTablePaymentTable extends Migration
             $table->string('label', 50)->nullable();
         });
 
-        DB::table('payment_types')->insert([
-            ['id' => 1, 'name' => 'fiat', 'label' => 'Fiat'],
-            ['id' => 2, 'name' => 'crypto', 'label' => 'Crypto']
-        ]);
     }
 
     /**

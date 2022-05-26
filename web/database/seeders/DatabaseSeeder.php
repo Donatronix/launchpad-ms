@@ -20,6 +20,7 @@ class DatabaseSeeder extends Seeder
             PricesTableSeeder::class,
             OrdersTableSeeder::class,
             TokenRewardSeeder::class,
+            PaymentTypeSeeder::class,
         ]);
     }
 }
