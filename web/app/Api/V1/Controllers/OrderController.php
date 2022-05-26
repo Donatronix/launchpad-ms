@@ -2,6 +2,7 @@
 
 namespace App\Api\V1\Controllers;
 
+use App\Api\V1\Services\TransactionService;
 use App\Http\Controllers\Controller;
 use App\Models\Order;
 use App\Models\Product;
@@ -11,6 +12,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
 use Sumra\SDK\JsonApiResponse;
+use Barryvdh\DomPDF\Facade\Pdf;
+
 
 /**
  * Class OrderController
@@ -169,7 +172,7 @@ class OrderController extends Controller
 
         // Try to save received data
         try {
-            // Create new
+            // Create new order
             $order = $this->model::create([
                 'product_id' => $product->id,
                 'investment_amount' => $request->get('investment_amount'),
@@ -178,6 +181,12 @@ class OrderController extends Controller
                 'contributor_id' => Auth::user()->getAuthIdentifier(),
                 'status' => Order::STATUS_NEW
             ]);
+
+            // create new transaction
+            $paramsTransactions = $request->all();
+            $paramsTransactions['order_id'] = $order->id;
+            $transaction = (new TransactionService())->store($paramsTransactions);
+            $order->transaction;
 
             // Return response to client
             return response()->jsonApi([
@@ -261,6 +270,34 @@ class OrderController extends Controller
             'message' => "Order detail data has been received",
             'data' => $order->toArray()
         ], 200);
+    }
+
+    public function generatePdfForTransaction($transaction_id)
+    {
+        try {
+            $transaction = (new TransactionService())->getOne($transaction_id);
+//            dd($transaction->order->toArray());
+
+            $pdf = PDF::loadView('pdf.receipt.deposit-card', $transaction->toArray());
+            return $pdf->download('pdf.receipt.deposit-card');
+
+
+            return response()->jsonApi([
+                'type' => 'success',
+                'title' => 'Order details data',
+                'message' => "Order detail data has been received",
+                'data' => $transaction->toArray()
+            ], 200);
+
+        } Catch(ModelNotFoundException $e) {
+            return response()->jsonApi([
+                'type' => 'danger',
+                'title' => "Get order",
+                'message' => "Transaction with id #{$transaction_id} not found: {$e->getMessage()}",
+                'data' => ''
+            ], 404);
+        }
+
     }
 
     /**

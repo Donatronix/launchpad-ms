@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Sumra\SDK\Traits\UuidTrait;
 
 class Transaction extends Model
@@ -49,12 +50,11 @@ class Transaction extends Model
      * @var array
      */
     protected $fillable = [
-        'name',
-        'sender_id',
-        'receiver_id',
-        'amount',
-        'currency_id',
-        'status'
+        'payment_type_id',
+        'total_amount',
+        'order_id',
+        'user_id',
+        'payment_system',
     ];
 
     /**
@@ -74,5 +74,15 @@ class Transaction extends Model
     public function transactionable()
     {
         return $this->morphTo();
+    }
+
+    /**
+     * One Transaction have One Order relation
+     *
+     * @return BelongsTo
+     */
+    public function order()
+    {
+        return $this->belongsTo(Order::class, 'order_id', 'id');
     }
 }

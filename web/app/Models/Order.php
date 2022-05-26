@@ -38,6 +38,18 @@ use Sumra\SDK\Traits\UuidTrait;
  *         type="number",
  *         description="Deposit amount",
  *         example="10000"
+ *     ),
+ *      @OA\Property(
+ *         property="payment_type_id",
+ *         type="number",
+ *         description="Payment Type ID, 1 - Fiat, 2 - Crypto",
+ *         example="1"
+ *     ),
+ *     @OA\Property(
+ *         property="wallet_address",
+ *         type="number",
+ *         description="Wallet address of the transaction",
+ *         example="576894-erjt-4059"
  *     )
  * )
  */
@@ -109,7 +121,9 @@ class Order extends Model
             'product' => 'required|string',
             'investment_amount' => 'required|integer|min:2500',
             'deposit_percentage' => 'required|integer|min:10|max:100',
-            'deposit_amount' => 'required|integer|min:250'
+            'deposit_amount' => 'required|integer|min:250',
+            'payment_type_id' => 'required|integer|exists:payment_types,id',
+            'wallet_address' => 'required',
         ];
     }
 
@@ -131,5 +145,15 @@ class Order extends Model
     public function product(): BelongsTo
     {
         return $this->belongsTo(Product::class);
+    }
+
+    /**
+     * One Order have One Transaction relation
+     *
+     * @return BelongsTo
+     */
+    public function transaction()
+    {
+        return $this->belongsTo(Transaction::class, 'id', 'order_id');
     }
 }
