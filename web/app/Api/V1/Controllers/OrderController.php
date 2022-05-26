@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Order;
 use App\Models\PaymentType;
 use App\Models\Product;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
@@ -278,6 +279,7 @@ class OrderController extends Controller
         try {
             $transaction = (new TransactionService())->getOne($transaction_id);
             $order = $transaction->order;
+            $transaction->date =  $transaction->created_at->toDayDateTimeString();
 
             if($transaction->payment_type_id == PaymentType::DEBIT_CARD) {
                 $pdf = PDF::loadView('pdf.receipt.deposit-card', $transaction->toArray());

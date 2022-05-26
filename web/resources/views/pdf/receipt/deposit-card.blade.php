@@ -63,7 +63,7 @@
                 </li>
                 <li class="list-group-item">
                     <span class="span-label">Time</span>
-                    <span style="float: right;">January</span>
+                    <span style="float: right;">{{$date}}</span>
                 </li>
                 <li class="list-group-item">
                     <span class="span-label">Paid invoice confirmation for</span>
