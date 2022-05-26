@@ -5,6 +5,7 @@ namespace App\Api\V1\Controllers;
 use App\Api\V1\Services\TransactionService;
 use App\Http\Controllers\Controller;
 use App\Models\Order;
+use App\Models\PaymentType;
 use App\Models\Product;
 use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -276,11 +277,17 @@ class OrderController extends Controller
     {
         try {
             $transaction = (new TransactionService())->getOne($transaction_id);
-//            dd($transaction->order->toArray());
+            $order = $transaction->order;
 
-            $pdf = PDF::loadView('pdf.receipt.deposit-card', $transaction->toArray());
-            return $pdf->download('pdf.receipt.deposit-card');
-
+            if($transaction->payment_type_id == PaymentType::DEBIT_CARD) {
+                $pdf = PDF::loadView('pdf.receipt.deposit-card', $transaction->toArray());
+                return $pdf->download('pdf.receipt.deposit-card');
+            }
+            elseif ($transaction->payment_type_id == PaymentType::CRYPTO
+                || $transaction->payment_type_id == PaymentType::FIAT ){
+                $pdf = PDF::loadView('pdf.receipt.deposit-wallet', $transaction->toArray());
+                return $pdf->download('pdf.receipt.deposit-wallet');
+            }
 
             return response()->jsonApi([
                 'type' => 'success',

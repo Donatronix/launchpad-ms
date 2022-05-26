@@ -43,7 +43,7 @@
 <div class="wrapper">
     <div class="col-md-4 margin-middle" style="text-align: center;">
         <h2><b>Congrats!</b></h2>
-        <p>You successfully paid a deposit of <span class="amount">$10,000</span></p>
+        <p>You successfully paid a deposit of <span class="amount">${{$total_amount}}</span></p>
         <button class="btn btn-primary rounded-pill btn-blue">View Dashboard</button>
     </div>
     <div class="col-md-8 margin-middle" style="padding-top: 40px;">
@@ -51,11 +51,11 @@
             <ul class="list-group list-group-flush">
                 <li class="list-group-item">
                     <span class="span-label">Card Number</span>
-                    <span style="float: right;">An item</span>
+                    <span style="float: right;">{{$card_number}}</span>
                 </li>
                 <li class="list-group-item">
                     <span class="span-label">Credit card type</span>
-                    <span style="float: right;">An item</span>
+                    <span style="float: right;">{{$credit_card_type['label']}}</span>
                 </li>
                 <li class="list-group-item">
                     <span class="span-label">Total amount</span>
@@ -63,15 +63,15 @@
                 </li>
                 <li class="list-group-item">
                     <span class="span-label">Time</span>
-                    <span style="float: right;">An item</span>
+                    <span style="float: right;">January</span>
                 </li>
                 <li class="list-group-item">
                     <span class="span-label">Paid invoice confirmation for</span>
-                    <span style="float: right;">An item</span>
+                    <span style="float: right;">{{$user['first_name']}} {{$user['last_name']}}</span>
                 </li>
                 <li class="list-group-item">
                     <span class="span-label">Invoice</span>
-                    <span style="float: right;">An item</span>
+                    <span style="float: right;">{{$order['id']}}</span>
                 </li>
             </ul>
             <div>
