@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use App\Models\PaymentType;
+use \Illuminate\Support\Facades\DB;
 
 class PaymentTypeSeeder extends Seeder
 {
@@ -20,7 +21,8 @@ class PaymentTypeSeeder extends Seeder
         }
         DB::table('payment_types')->insert([
             ['id' => 1, 'name' => 'fiat', 'label' => 'Fiat'],
-            ['id' => 2, 'name' => 'crypto', 'label' => 'Crypto']
+            ['id' => 2, 'name' => 'crypto', 'label' => 'Crypto'],
+            ['id' => 3, 'name' => 'card', 'label' => 'Debit Card']
         ]);
     }
 }

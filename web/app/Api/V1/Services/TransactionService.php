@@ -17,11 +17,11 @@ class TransactionService
     {
         $transaction = $this->model::create([
             'payment_type_id' => $params['payment_type_id'],
-            'payment_system' => 1,
             'wallet_address' => $params['wallet_address'],
             'total_amount' => $params['investment_amount'],
             'order_id' => $params['order_id'],
-            'user_id' => Auth::user()->getAuthIdentifier()
+            'user_id' => Auth::user()->getAuthIdentifier(),
+            'credit_card_type_id' => $params['credit_card_type_id'] ?? 0
         ]);
 
         return $transaction;

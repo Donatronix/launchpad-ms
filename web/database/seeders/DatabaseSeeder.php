@@ -21,6 +21,7 @@ class DatabaseSeeder extends Seeder
             OrdersTableSeeder::class,
             TokenRewardSeeder::class,
             PaymentTypeSeeder::class,
+            CreditCardTypeSeeder::class,
         ]);
     }
 }
