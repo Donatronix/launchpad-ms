@@ -50,12 +50,8 @@
         <div class="content-cover">
             <ul class="list-group list-group-flush">
                 <li class="list-group-item">
-                    <span class="span-label">Card Number</span>
-                    <span style="float: right;">{{$card_number}}</span>
-                </li>
-                <li class="list-group-item">
-                    <span class="span-label">Credit card type</span>
-                    <span style="float: right;">{{$credit_card_type['label']}}</span>
+                    <span class="span-label">Wallet Address</span>
+                    <span style="float: right;">{{$wallet_address}}</span>
                 </li>
                 <li class="list-group-item">
                     <span class="span-label">Total amount</span>
