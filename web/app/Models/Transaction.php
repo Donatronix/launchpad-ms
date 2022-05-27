@@ -55,6 +55,7 @@ class Transaction extends Model
         'order_id',
         'user_id',
         'payment_system',
+        'credit_card_type_id'
     ];
 
     /**
@@ -67,6 +68,12 @@ class Transaction extends Model
         'updated_at',
         'deleted_at'
     ];
+
+    /**
+     * Auto relations for transaction Model
+     */
+
+    protected $with = ['creditCardType', 'user'];
 
     /**
      * Get the owning transactionable model.
@@ -84,5 +91,25 @@ class Transaction extends Model
     public function order()
     {
         return $this->belongsTo(Order::class, 'order_id', 'id');
+    }
+
+    /**
+     * One Transaction have One Credit Card Type relation
+     *
+     * @return BelongsTo
+     */
+    public function creditCardType()
+    {
+        return $this->belongsTo(CreditCardType::class, 'credit_card_type_id', 'id');
+    }
+
+    /**
+     * One Transaction have One Contributor relation
+     *
+     * @return BelongsTo
+     */
+    public function user()
+    {
+        return $this->belongsTo(Contributor::class, 'user_id', 'id');
     }
 }

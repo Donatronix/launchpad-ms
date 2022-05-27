@@ -18,11 +18,13 @@ class CreateTableTransactionsTable extends Migration
         Schema::create('transactions', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->unsignedTinyInteger('payment_type_id');  // fiat/crypto ID
-            $table->unsignedTinyInteger('payment_system');
             $table->string('wallet_address', 256)->nullable();
+            $table->string('card_number', 21)->nullable();
             $table->decimal('total_amount', 12);
             $table->uuid('order_id');
             $table->uuid('user_id');
+            $table->unsignedTinyInteger('credit_card_type_id')->default(0);
+
 
             $table->foreign('user_id')->references('id')->on('contributors');
             $table->foreign('payment_type_id')->references('id')->on('payment_types');

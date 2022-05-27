@@ -50,6 +50,12 @@ use Sumra\SDK\Traits\UuidTrait;
  *         type="number",
  *         description="Wallet address of the transaction",
  *         example="576894-erjt-4059"
+ *     ),
+ *     @OA\Property(
+ *         property="credit_card_type_id",
+ *         type="number",
+ *         description="Credit Card Type, Visa - 1, Master Card - 2",
+ *         example="1"
  *     )
  * )
  */
