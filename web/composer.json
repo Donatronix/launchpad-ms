@@ -1,6 +1,6 @@
 {
-    "name": "ultainfinity/crypto-presales-ms",
-    "description": "Ultainfinity Crypto Presales API Microservice",
+    "name": "kus/launchpad-ms",
+    "description": "Ultainfinity Launchpad API Microservice",
     "license": "MIT",
     "type": "project",
     "private": true,
