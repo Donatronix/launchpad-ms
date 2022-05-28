@@ -2,6 +2,7 @@
 
 namespace App\Api\V1\Controllers\Admin;
 
+use App\Api\V1\Services\TransactionService;
 use App\Http\Controllers\Controller;
 
 class TransactionController extends Controller
@@ -211,6 +212,21 @@ class TransactionController extends Controller
                 'error' => $e->getMessage()
             ], 400);
         }
+    }
+
+    public function store(Request $request)
+    {
+        // create new transaction
+        $paramsTransactions = $request->all();
+        $transaction = (new TransactionService())->store($paramsTransactions);
+
+        // Return response to client
+        return response()->jsonApi([
+            'type' => 'success',
+            'title' => 'New Transaction created',
+            'message' => "New Transaction has been created successfully",
+            'data' => $transaction->toArray()
+        ], 200);
     }
 
     /**
