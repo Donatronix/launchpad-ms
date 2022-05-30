@@ -116,6 +116,7 @@ $router->group([
             'prefix' => 'transactions',
         ], function ($router) {
             $router->get('/', 'TransactionController');
+            $router->post('/', 'TransactionController@store');
         });
     });
 
