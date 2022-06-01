@@ -76,7 +76,7 @@ class OrderController extends Controller
         // Get order
         $order = Order::where('contributor_id', Auth::user()->getAuthIdentifier())
             ->where('status', Order::STATUS_NEW)
-            ->first();
+            ->get();
 
         return response()->jsonApi([
             'type' => 'success',
