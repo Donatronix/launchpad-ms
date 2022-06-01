@@ -11,6 +11,20 @@ $router->group([
      * PUBLIC ACCESS
      */
 
+    $router->group([
+        'prefix' => 'public',
+    ], function ($router) {
+        /**
+         * Products for public access
+         */
+        $router->group([
+            'prefix'=> 'products',
+        ], function ($router) {
+            $router->get('/', 'ProductController');
+            $router->get('/{id}', 'ProductController@show');
+        });
+    });
+
     /**
      * PRIVATE ACCESS
      */
@@ -130,4 +144,10 @@ $router->group([
 //        $router->post('identify/events', 'IdentifyWebhookController@webhookEvents');
 //        $router->post('identify/notifications', 'IdentifyWebhookController@webhookNotifications');
     });
+
+    /**
+     * Products for public access
+     */
+
+
 });
