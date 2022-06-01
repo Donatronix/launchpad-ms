@@ -46,7 +46,7 @@ class ProductController extends Controller
         // Get order
         $order = Product::where('currency_code', '$utta')
             ->where('status', true)
-            ->first();
+            ->get();
 
         return response()->jsonApi([
             'type' => 'success',
