@@ -44,8 +44,7 @@ class ProductController extends Controller
     public function __invoke(Request $request)
     {
         // Get order
-        $order = Product::where('currency_code', '$utta')
-            ->where('status', true)
+        $order = Product::where('status', true)
             ->first();
 
         return response()->jsonApi([
