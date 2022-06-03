@@ -13,6 +13,7 @@ $router->group([
 
     $router->group([
         'prefix' => 'public',
+        'namespace '=>'public'
     ], function ($router) {
         /**
          * Products for public access
@@ -29,7 +30,8 @@ $router->group([
      * PRIVATE ACCESS
      */
     $router->group([
-        'middleware' => 'checkUser'
+        'middleware' => 'checkUser',
+        'namespace'=>'user'
     ], function ($router) {
         /**
          * Token Rewards

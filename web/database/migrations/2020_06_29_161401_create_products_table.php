@@ -17,7 +17,6 @@ class CreateProductsTable extends Migration
             $table->uuid('id')->primary();
 
             $table->string('title');
-            $table->string('currency_code',7);
 
             $table->unsignedBigInteger('supply');
             $table->unsignedTinyInteger('presale_percentage')->default(0);
