@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Sumra\SDK\Traits\UuidTrait;
+use App\Traits\RandomCharGeneratorTrait;
 
 /**
  * Order Scheme
@@ -69,6 +70,7 @@ class Order extends Model
 {
     use HasFactory;
     use UuidTrait;
+    use RandomCharGeneratorTrait;
 
     /**
      * Order status
@@ -78,6 +80,11 @@ class Order extends Model
     const STATUS_COMPLETED = 3;
     const STATUS_FAILED = 4;
     const STATUS_CANCELED = 5;
+
+    // prefixes
+    const ORD = "orders";
+    const DEP = "deposits";
+    const PRS = "purchases";
 
     /**
      * Order statuses array
@@ -102,7 +109,10 @@ class Order extends Model
         'deposit_amount',
         'contributor_id',
         'status',
-        'payload'
+        'payload',
+        'order_no',
+        'amount_token',
+        'amount_usd'
     ];
 
     /**
@@ -115,6 +125,24 @@ class Order extends Model
         'updated_at',
         'deleted_at'
     ];
+    
+    // run on model boot
+    protected static function boot()
+    {
+        parent::boot();
+
+        // generate the order numebr when creating a new order model
+        self::creating(function($model) {
+            $order_no = $model->getRandomChar(12);
+
+            // generate new order number while the generated one exists
+            while (Order::where('order_no', $order_no)->get()->count() > 0) {
+                $order_no = $model->getRandomChar(12);
+            }
+
+            $model->order_no = $order_no;
+        });
+    }
 
     /**
      * Order create rules
