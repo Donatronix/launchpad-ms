@@ -30,6 +30,7 @@ class OrderController extends Controller
      * @var string
      */
     protected $model = Order::class;
+    private const RECEIVER_LISTENER = 'ProductCreate';
 
     /**
      * OrderController constructor.
@@ -75,7 +76,9 @@ class OrderController extends Controller
     public function index(){
         // Get order
         $order = Order::where('contributor_id', Auth::user()->getAuthIdentifier())
-            ->where('status', Order::STATUS_NEW)
+            ->where('status', Order::STATUS_NEW)->with(['transaction' => function ($query) {
+                $query->select('id','order_id','wallet_address','payment_type_id');
+            },'transaction.payment_type'])
             ->get();
 
         return response()->jsonApi([
@@ -181,7 +184,9 @@ class OrderController extends Controller
                 'deposit_percentage' => $request->get('deposit_percentage'),
                 'deposit_amount' => $request->get('deposit_amount'),
                 'contributor_id' => Auth::user()->getAuthIdentifier(),
-                'status' => Order::STATUS_NEW
+                'status' => Order::STATUS_NEW,
+                'amount_token' => $request->get('investment_amount'),
+                'amount_usd' => $request->get('investment_amount'),
             ]);
 
             // create new transaction
@@ -189,6 +194,9 @@ class OrderController extends Controller
             $paramsTransactions['order_id'] = $order->id;
             $transaction = (new TransactionService())->store($paramsTransactions);
             $order->transaction;
+
+            \PubSub::transaction(function () {
+            })->publish(self::RECEIVER_LISTENER, array_merge($order->toArray(), ['currency_code' => $request->get('product')]), "ReferenceBooksMS");
 
             // Return response to client
             return response()->jsonApi([

@@ -55,7 +55,8 @@ class Transaction extends Model
         'order_id',
         'user_id',
         'payment_system',
-        'credit_card_type_id'
+        'credit_card_type_id',
+        'wallet_address'
     ];
 
     /**
@@ -91,6 +92,16 @@ class Transaction extends Model
     public function order()
     {
         return $this->belongsTo(Order::class, 'order_id', 'id');
+    }
+
+    /**
+     * One Transaction have One Payment Type relation
+     *
+     * @return BelongsTo
+     */
+    public function payment_type()
+    {
+        return $this->belongsTo(PaymentType::class, 'payment_type_id', 'id');
     }
 
     /**

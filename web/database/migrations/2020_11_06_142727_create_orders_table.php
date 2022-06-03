@@ -30,6 +30,11 @@ class CreateOrdersTable extends Migration
 
             $table->text('payload')->nullable();
 
+            $table->decimal('amount_token', 12, 2)->nullable();
+            $table->decimal('amount_usd', 12, 2)->nullable();
+            $table->string('order_no');
+            $table->timestamp('order_date')->useCurrent();
+
             $table->timestamps();
             $table->softDeletes();
         });
