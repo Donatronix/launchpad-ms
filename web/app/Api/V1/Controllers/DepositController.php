@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Api\V1\Controllers;
+namespace App\Http\Controllers;
 
 use App\Api\V1\Services\TransactionService;
 use App\Http\Controllers\Controller;
-use App\Models\Order;
+use App\Models\Deposit;
 use App\Models\PaymentType;
 use App\Models\Product;
 use Carbon\Carbon;
@@ -18,37 +18,38 @@ use Barryvdh\DomPDF\Facade\Pdf;
 
 
 /**
- * Class OrderController
+ * Class DepositController
  *
  * @package App\Api\V1\Controllers
  */
-class OrderController extends Controller
+
+class DepositController extends Controller
 {
     /**
      * The name of the factory's corresponding model.
      *
      * @var string
      */
-    protected $model = Order::class;
-    private const RECEIVER_LISTENER = 'ProductCreate';
+    protected $model = Deposit::class;
 
     /**
-     * OrderController constructor.
+     * DepositController constructor.
      *
-     * @param Order $model
+     * @param Deposit $model
      */
-    public function __construct(Order $model)
+    public function __construct(Deposit $model)
     {
         $this->model = $model;
     }
 
     /**
+     * Getting created deposit by contributor if exist
      *
      * @OA\Get(
-     *     path="/orders",
-     *     summary="Getting created order by contributor if exist",
-     *     description="Getting created order by contributor if exist",
-     *     tags={"Orders"},
+     *     path="/deposits",
+     *     summary="Getting created deposit by contributor if exist",
+     *     description="Getting created deposit by contributor if exist",
+     *     tags={"Deposits"},
      *
      *     security={{
      *         "default": {
@@ -68,35 +69,33 @@ class OrderController extends Controller
      *
      *     @OA\Response(
      *          response="200",
-     *          description="Detail data of order"
+     *          description="Detail data of deposit"
      *     )
      * )
      */
     public function index(){
-        // Get order
-        $order = Order::where('contributor_id', Auth::user()->getAuthIdentifier())
-            ->where('status', Order::STATUS_NEW)->with(['transaction' => function ($query) {
-                $query->select('id','order_id','wallet_address','payment_type_id');
-            },'transaction.payment_type'])
-            ->get();
+        // Get deposit
+        $deposit = Deposit::where('contributor_id', Auth::user()->getAuthIdentifier())
+            ->where('status', Deposit::STATUS_NEW)
+            ->first();
 
         return response()->jsonApi([
             'type' => 'success',
-            'title' => 'Order details data',
-            'message' => "Order detail data has been received",
-            'data' => $order->toArray()
+            'title' => 'Deposit details data',
+            'message' => "Deposit detail data has been received",
+            'data' => $deposit->toArray()
         ], 200);
     }
 
 
     /**
-     * Create a new investment order
+     * Create a new investment deposit
      *
      * @OA\Post(
-     *     path="/orders",
-     *     summary="Create a new investment order",
-     *     description="Create a new investment order",
-     *     tags={"Orders"},
+     *     path="/deposits",
+     *     summary="Create a new investment deposit",
+     *     description="Create a new investment deposit",
+     *     tags={"Deposits"},
      *
      *     security={{
      *         "default": {
@@ -116,7 +115,7 @@ class OrderController extends Controller
      *
      *     @OA\RequestBody(
      *         required=true,
-     *         @OA\JsonContent(ref="#/components/schemas/Order")
+     *         @OA\JsonContent(ref="#/components/schemas/Deposit")
      *     ),
      *     @OA\Response(
      *         response="200",
@@ -124,7 +123,7 @@ class OrderController extends Controller
      *     ),
      *     @OA\Response(
      *         response="201",
-     *         description="Order created"
+     *         description="Deposit created"
      *     ),
      *     @OA\Response(
      *         response="400",
@@ -158,7 +157,7 @@ class OrderController extends Controller
         } catch (ValidationException $e){
             return response()->jsonApi([
                 'type' => 'warning',
-                'title' => 'New Order details data',
+                'title' => 'New Deposit details data',
                 'message' => "Validation error",
                 'data' => $e->getMessage()
             ], 400);
@@ -168,7 +167,7 @@ class OrderController extends Controller
         if(!$product){
             return response()->jsonApi([
                 'type' => 'warning',
-                'title' => 'New Order details data',
+                'title' => 'New Deposit details data',
                 'message' => "This product does not exist",
                 'data' => []
             ], 400);
@@ -176,38 +175,33 @@ class OrderController extends Controller
 
         // Try to save received data
         try {
-            // Create new order
-            $order = $this->model::create([
+            // Create new deposit
+            $deposit = $this->model::create([
                 'product_id' => $product->id,
                 'investment_amount' => $request->get('investment_amount'),
                 'deposit_percentage' => $request->get('deposit_percentage'),
                 'deposit_amount' => $request->get('deposit_amount'),
                 'contributor_id' => Auth::user()->getAuthIdentifier(),
-                'status' => Order::STATUS_NEW,
-                'amount_token' => $request->get('investment_amount'),
-                'amount_usd' => $request->get('investment_amount'),
+                'status' => Deposit::STATUS_NEW
             ]);
 
             // create new transaction
             $paramsTransactions = $request->all();
-            $paramsTransactions['order_id'] = $order->id;
+            $paramsTransactions['order_id'] = $deposit->id;
             $transaction = (new TransactionService())->store($paramsTransactions);
-            $order->transaction;
-
-            \PubSub::transaction(function () {
-            })->publish(self::RECEIVER_LISTENER, array_merge($order->toArray(), ['currency_code' => $request->get('product')]), "ReferenceBooksMS");
+            $deposit->transaction;
 
             // Return response to client
             return response()->jsonApi([
                 'type' => 'success',
-                'title' => 'New order registration',
-                'message' => "New order has been created successfully",
-                'data' => $order->toArray()
+                'title' => 'New deposit registration',
+                'message' => "New deposit has been created successfully",
+                'data' => $deposit->toArray()
             ], 200);
         } catch (Exception $e) {
             return response()->jsonApi([
                 'type' => 'danger',
-                'title' => 'New order registration',
+                'title' => 'New deposit registration',
                 'message' => $e->getMessage(),
                 'data' => null
             ], 400);
@@ -215,13 +209,13 @@ class OrderController extends Controller
     }
 
     /**
-     * Getting data about order by ORDER ID
+     * Getting data about deposit by deposit ID
      *
      * @OA\Get(
-     *     path="/orders/{id}",
-     *     summary="Getting data about order by ORDER ID",
-     *     description="Getting data about order by ORDER ID",
-     *     tags={"Orders"},
+     *     path="/deposits/{id}",
+     *     summary="Getting data about deposit by deposit ID",
+     *     description="Getting data about deposit by deposit ID",
+     *     tags={"Deposits"},
      *
      *     security={{
      *         "default": {
@@ -243,41 +237,41 @@ class OrderController extends Controller
      *         name="id",
      *         in="path",
      *         required=true,
-     *         description="Orders ID",
+     *         description="Deposits ID",
      *         @OA\Schema(
      *             type="string"
      *         )
      *     ),
      *     @OA\Response(
      *          response="200",
-     *          description="Detail data of order"
+     *          description="Detail data of deposit"
      *     ),
      *     @OA\Response(
      *          response="404",
-     *          description="Order not found"
+     *          description="Deposit not found"
      *     )
      * )
      */
     public function show($id)
     {
         // Get object
-        $order = $this->getObject($id);
+        $deposit = $this->getObject($id);
 
-        if ($order instanceof JsonApiResponse) {
-            return $order;
+        if ($deposit instanceof JsonApiResponse) {
+            return $deposit;
         }
 
         // Load linked relations data
-        $order->load([
+        $deposit->load([
             'product',
             'contributor'
         ]);
 
         return response()->jsonApi([
             'type' => 'success',
-            'title' => 'Order details data',
-            'message' => "Order detail data has been received",
-            'data' => $order->toArray()
+            'title' => 'Deposit details data',
+            'message' => "Deposit detail data has been received",
+            'data' => $deposit->toArray()
         ], 200);
     }
 
@@ -285,7 +279,7 @@ class OrderController extends Controller
     {
         try {
             $transaction = (new TransactionService())->getOne($transaction_id);
-            $order = $transaction->order;
+            $deposit = $transaction->deposit;
             $transaction->date =  $transaction->created_at->toDayDateTimeString();
 
             if($transaction->payment_type_id == PaymentType::DEBIT_CARD) {
@@ -300,15 +294,15 @@ class OrderController extends Controller
 
             return response()->jsonApi([
                 'type' => 'success',
-                'title' => 'Order details data',
-                'message' => "Order detail data has been received",
+                'title' => 'Deposit details data',
+                'message' => "Deposit detail data has been received",
                 'data' => $transaction->toArray()
             ], 200);
 
         } Catch(ModelNotFoundException $e) {
             return response()->jsonApi([
                 'type' => 'danger',
-                'title' => "Get order",
+                'title' => "Get deposit",
                 'message' => "Transaction with id #{$transaction_id} not found: {$e->getMessage()}",
                 'data' => ''
             ], 404);
@@ -317,7 +311,7 @@ class OrderController extends Controller
     }
 
     /**
-     * Get order object
+     * Get deposit object
      *
      * @param $id
      * @return mixed
@@ -329,8 +323,8 @@ class OrderController extends Controller
         } catch (ModelNotFoundException $e) {
             return response()->jsonApi([
                 'type' => 'danger',
-                'title' => "Get order",
-                'message' => "Order with id #{$id} not found: {$e->getMessage()}",
+                'title' => "Get deposit",
+                'message' => "Deposit with id #{$id} not found: {$e->getMessage()}",
                 'data' => ''
             ], 404);
         }
