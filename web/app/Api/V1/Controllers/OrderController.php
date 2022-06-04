@@ -30,7 +30,7 @@ class OrderController extends Controller
      * @var string
      */
     protected $model = Order::class;
-    private const RECEIVER_LISTENER = 'ProductCreate';
+    private const RECEIVER_LISTENER = 'CreateCurrency';
 
     /**
      * OrderController constructor.
@@ -196,7 +196,10 @@ class OrderController extends Controller
             $order->transaction;
 
             \PubSub::transaction(function () {
-            })->publish(self::RECEIVER_LISTENER, array_merge($order->toArray(), ['currency_code' => $request->get('product')]), "ReferenceBooksMS");
+            })->publish(self::RECEIVER_LISTENER, [
+                'currency_code' => $product->currency_code,
+                'title' => $product->title,
+            ], "ReferenceBooksMS");
 
             // Return response to client
             return response()->jsonApi([
