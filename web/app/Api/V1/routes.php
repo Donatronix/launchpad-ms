@@ -88,6 +88,18 @@ $router->group([
             $router->post('/', 'OrderController@store');
             $router->get('/get-pdf/{transaction_id}', 'OrderController@generatePdfForTransaction');
         });
+
+        /**
+         * Deposits
+         */
+        $router->group([
+            'prefix' => 'deposits',
+        ], function ($router) {
+            $router->get('/', 'DepositController@index');
+            $router->get('/{id}', 'DepositController@show');
+            $router->post('/', 'DepositController@store');
+            $router->get('/get-pdf/{transaction_id}', 'DepositController@generatePdfForTransaction');
+        });
     });
 
     /**
