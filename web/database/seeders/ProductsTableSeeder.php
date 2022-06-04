@@ -17,12 +17,14 @@ class ProductsTableSeeder extends Seeder
         $list = [
             [
                 'title' => 'UTTA Token',
+                'currency_code' => 'utta',
                 'supply' => 100000000000,
                 //'presale_percentage' => '',
 
             ],
             [
                 'title' => 'DIVIT Token',
+                'currency_code' => 'divit',
                 'supply' => 1000000000000,
                 //'presale_percentage' => '',
             ]

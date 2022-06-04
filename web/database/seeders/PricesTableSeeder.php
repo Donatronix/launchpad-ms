@@ -16,7 +16,7 @@ class PricesTableSeeder extends Seeder
     public function run()
     {
         $pricesList = [
-            '$utta' => [
+            'utta' => [
                 [
                     'stage' => 1,
                     'price' => 0.001,
@@ -54,7 +54,7 @@ class PricesTableSeeder extends Seeder
                 ],
             ],
 
-            '$divit' => [
+            'divit' => [
                 [
                     'stage' => 1,
                     'price' => 0.0001,

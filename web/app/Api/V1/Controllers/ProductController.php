@@ -45,6 +45,7 @@ class ProductController extends Controller
     {
         // Get order
         $order = Product::where('status', true)
+            ->with('prices')
             ->first();
 
         return response()->jsonApi([
