@@ -15,6 +15,7 @@ class CreatePricesTable extends Migration
     {
         Schema::create('prices', function (Blueprint $table) {
             $table->uuid('id')->primary();
+
             $table->integer('stage')->default(0);
             $table->double('price',9,6,true);
             $table->unsignedBigInteger('amount');
