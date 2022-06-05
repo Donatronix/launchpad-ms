@@ -134,9 +134,6 @@ class PriceController extends Controller
                 'data' => $e->getMessage()
             ], 400);
         }
-
-
-
     }
 
     /**

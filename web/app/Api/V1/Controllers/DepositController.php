@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Api\V1\Controllers;
 
 use App\Api\V1\Services\TransactionService;
 use App\Http\Controllers\Controller;
@@ -22,7 +22,6 @@ use Barryvdh\DomPDF\Facade\Pdf;
  *
  * @package App\Api\V1\Controllers
  */
-
 class DepositController extends Controller
 {
     /**
@@ -163,7 +162,7 @@ class DepositController extends Controller
             ], 400);
         }
 
-        $product = Product::where('currency_code', $request->get('product'))->first();
+        $product = Product::where('ticker', $request->get('product'))->first();
         if(!$product){
             return response()->jsonApi([
                 'type' => 'warning',

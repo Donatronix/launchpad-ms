@@ -38,6 +38,12 @@ use Sumra\SDK\Traits\UuidTrait;
  *         type="integer",
  *         description="Period in days",
  *         example="10"
+ *     ),
+ *     @OA\Property(
+ *         property="status",
+ *         type="boolean",
+ *         description="Status On / Off",
+ *         example="true"
  *     )
  * )
  */
@@ -47,15 +53,32 @@ class Price extends Model
     use UuidTrait;
 
     /**
+     * @var string[]
+     */
+    protected $fillable = [
+        'stage',
+        'price',
+        'amount',
+        'period_in_days',
+        'percent_profit',
+        'status',
+    ];
+
+    /**
      * The attributes excluded from the model's JSON form.
      *
      * @var array
      */
     protected $hidden = [
         'created_at',
-        'updated_at',
-        'deleted_at'
+        'updated_at'
     ];
+
+    public static function validationRules()
+    {
+        return [
+        ];
+    }
 
     /**
      * @return BelongsTo
@@ -63,11 +86,5 @@ class Price extends Model
     public function product(): BelongsTo
     {
         return $this->belongsTo(Product::class);
-    }
-
-    public static function validationRules(){
-        return [
-
-        ];
     }
 }

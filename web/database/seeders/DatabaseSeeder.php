@@ -22,7 +22,6 @@ class DatabaseSeeder extends Seeder
             TokenRewardSeeder::class,
             PaymentTypeSeeder::class,
             CreditCardTypeSeeder::class,
-            DepositTableSeeder::class,
         ]);
 
 
@@ -31,6 +30,7 @@ class DatabaseSeeder extends Seeder
             $this->call([
                 ContributorsTableSeeder::class,
                 OrdersTableSeeder::class,
+                DepositsTableSeeder::class,
             ]);
         }
     }

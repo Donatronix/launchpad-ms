@@ -10,20 +10,15 @@ $router->group([
     /**
      * PUBLIC ACCESS
      */
-
+    /**
+     * Payments webhooks
+     */
     $router->group([
-        'prefix' => 'public',
-        'namespace '=>'public'
+        'prefix' => 'webhooks',
     ], function ($router) {
-        /**
-         * Products for public access
-         */
-        $router->group([
-            'prefix'=> 'products',
-        ], function ($router) {
-            $router->get('/', 'ProductController');
-            $router->get('/{id}', 'ProductController@show');
-        });
+        $router->post('identify/{type}', 'IdentifyWebhookController');
+//        $router->post('identify/events', 'IdentifyWebhookController@webhookEvents');
+//        $router->post('identify/notifications', 'IdentifyWebhookController@webhookNotifications');
     });
 
     /**
@@ -52,7 +47,6 @@ $router->group([
         ], function ($router) {
             $router->get('/', 'ContributorController@show');
             $router->post('/', 'ContributorController@store');
-
             $router->post('/identify', 'ContributorController@identifyStart');
             $router->put('/identify', 'ContributorController@update');
             $router->patch('/agreement', 'ContributorController@agreement');
@@ -62,9 +56,10 @@ $router->group([
          * Products
          */
         $router->group([
-            'prefix' => 'products',
+            'prefix'=> 'products',
         ], function ($router) {
-            $router->get('/', 'ProductController');
+            $router->get('/', 'ProductController@index');
+            $router->get('/{id}', 'ProductController@show');
         });
 
         /**
@@ -146,21 +141,4 @@ $router->group([
             $router->post('/', 'TransactionController@store');
         });
     });
-
-    /**
-     * Payments webhooks
-     */
-    $router->group([
-        'prefix' => 'webhooks',
-    ], function ($router) {
-        $router->post('identify/{type}', 'IdentifyWebhookController');
-//        $router->post('identify/events', 'IdentifyWebhookController@webhookEvents');
-//        $router->post('identify/notifications', 'IdentifyWebhookController@webhookNotifications');
-    });
-
-    /**
-     * Products for public access
-     */
-
-
 });

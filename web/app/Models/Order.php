@@ -2,11 +2,11 @@
 
 namespace App\Models;
 
+use App\Traits\RandomCharGeneratorTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Sumra\SDK\Traits\UuidTrait;
-use App\Traits\RandomCharGeneratorTrait;
 
 /**
  * Order Scheme
@@ -125,24 +125,8 @@ class Order extends Model
         'updated_at',
         'deleted_at'
     ];
-    
+
     // run on model boot
-    protected static function boot()
-    {
-        parent::boot();
-
-        // generate the order numebr when creating a new order model
-        self::creating(function($model) {
-            $order_no = $model->getRandomChar(12);
-
-            // generate new order number while the generated one exists
-            while (Order::where('order_no', $order_no)->get()->count() > 0) {
-                $order_no = $model->getRandomChar(12);
-            }
-
-            $model->order_no = $order_no;
-        });
-    }
 
     /**
      * Order create rules
@@ -159,6 +143,23 @@ class Order extends Model
             'payment_type_id' => 'required|integer|exists:payment_types,id',
             'wallet_address' => 'required',
         ];
+    }
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        // generate the order numebr when creating a new order model
+        self::creating(function ($model) {
+            $order_no = $model->getRandomChar(12);
+
+            // generate new order number while the generated one exists
+            while (Order::where('order_no', $order_no)->get()->count() > 0) {
+                $order_no = $model->getRandomChar(12);
+            }
+
+            $model->order_no = $order_no;
+        });
     }
 
     /**

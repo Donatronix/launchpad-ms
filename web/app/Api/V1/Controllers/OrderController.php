@@ -16,7 +16,6 @@ use Illuminate\Validation\ValidationException;
 use Sumra\SDK\JsonApiResponse;
 use Barryvdh\DomPDF\Facade\Pdf;
 
-
 /**
  * Class OrderController
  *
@@ -164,7 +163,7 @@ class OrderController extends Controller
             ], 400);
         }
 
-        $product = Product::where('currency_code', $request->get('product'))->first();
+        $product = Product::where('ticker', $request->get('product'))->first();
         if(!$product){
             return response()->jsonApi([
                 'type' => 'warning',
@@ -196,7 +195,7 @@ class OrderController extends Controller
 
             \PubSub::transaction(function () {
             })->publish(self::RECEIVER_LISTENER, [
-                'currency_code' => $product->currency_code,
+                'currency_code' => $product->ticker,
                 'title' => $product->title,
             ], "ReferenceBooksMS");
 

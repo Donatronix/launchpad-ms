@@ -6,7 +6,7 @@ use Illuminate\Database\Seeder;
 use App\Models\Deposit;
 use App\Models\Product;
 
-class DepositTableSeeder extends Seeder
+class DepositsTableSeeder extends Seeder
 {
     /**
      * Run the database seeds.

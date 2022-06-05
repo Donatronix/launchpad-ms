@@ -72,5 +72,4 @@ class TokenRewardController extends Controller
             ], 400);
         }
     }
-
 }

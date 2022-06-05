@@ -17,12 +17,14 @@ class CreateProductsTable extends Migration
             $table->uuid('id')->primary();
 
             $table->string('title');
-            $table->string('currency_code',7);
+            $table->string('ticker',7);
             $table->unsignedBigInteger('supply');
-            $table->unsignedTinyInteger('presale_percentage')->default(0);
+            $table->float('presale_percentage',3,2,true)->default(0);
+            $table->date('start_date')->nullable();
             $table->boolean('status')->default(true);
 
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

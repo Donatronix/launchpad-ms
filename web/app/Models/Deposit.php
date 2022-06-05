@@ -59,7 +59,6 @@ use Sumra\SDK\Traits\UuidTrait;
  *     )
  * )
  */
-
 class Deposit extends Model
 {
     use HasFactory;

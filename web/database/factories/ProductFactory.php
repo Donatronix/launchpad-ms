@@ -13,8 +13,11 @@ class ProductFactory extends Factory
     {
     	return [
             'title' => $this->faker->title(),
+            'ticker' => $this->faker->currencyCode(),
             'supply' => $this->faker->numberBetween(1000000, 1000000000000),
-            'presale_percentage' => 5,
+            'presale_percentage' => $this->faker->numberBetween(1, 10),
+            'start_date' => $this->faker->date(),
+            'status' => true,
     	];
     }
 }

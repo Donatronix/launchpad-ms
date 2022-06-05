@@ -95,9 +95,7 @@ class PricesTableSeeder extends Seeder
 
         // Create Prices
         foreach ($pricesList as $code => $prices) {
-            // $product = Product::where('currency_code', $code)->first();
-            // set product_id to random values between 1 and 2
-            $product = Product::inRandomOrder()->first();
+            $product = Product::where('ticker', $code)->first();
 
             foreach ($prices as $price){
                 Price::factory()->create(array_merge(['product_id' => $product->id], $price));

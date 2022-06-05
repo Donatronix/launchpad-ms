@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\Product;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Carbon;
 
 class ProductsTableSeeder extends Seeder
 {
@@ -17,16 +18,17 @@ class ProductsTableSeeder extends Seeder
         $list = [
             [
                 'title' => 'UTTA Token',
-                'currency_code' => 'utta',
+                'ticker' => 'utta',
                 'supply' => 100000000000,
-                //'presale_percentage' => '',
-
+                'presale_percentage' => '0.7',
+                'start_date' => Carbon::parse('7th June 2022'),
             ],
             [
                 'title' => 'DIVIT Token',
-                'currency_code' => 'divit',
+                'ticker' => 'divit',
                 'supply' => 1000000000000,
-                //'presale_percentage' => '',
+                'presale_percentage' => '0.7',
+                'start_date' => Carbon::parse('7th June 2022'),
             ]
         ];
 

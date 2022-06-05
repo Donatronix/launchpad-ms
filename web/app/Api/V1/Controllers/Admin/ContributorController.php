@@ -29,8 +29,6 @@ class ContributorController extends Controller
     public function __construct(Contributor $model)
     {
         $this->model = $model;
-
-        dd($this->model);
     }
 
     /**
