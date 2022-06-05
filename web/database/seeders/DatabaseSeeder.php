@@ -19,8 +19,8 @@ class DatabaseSeeder extends Seeder
         $this->call([
             ProductsTableSeeder::class,
             PricesTableSeeder::class,
-            TokenRewardSeeder::class,
-            PaymentTypeSeeder::class,
+            TokenRewardsTableSeeder::class,
+            PaymentTypesTableSeeder::class,
             CreditCardTypeSeeder::class,
         ]);
 

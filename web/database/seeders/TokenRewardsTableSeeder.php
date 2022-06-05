@@ -5,7 +5,7 @@ namespace Database\Seeders;
 use App\Models\TokenReward;
 use Illuminate\Database\Seeder;
 
-class TokenRewardSeeder extends Seeder
+class TokenRewardsTableSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -20,7 +20,7 @@ class TokenRewardSeeder extends Seeder
             'deposit_amount' => 1000,
             'reward_bonus' => 5,
         ]);
-        
+
         TokenReward::firstOrCreate([
             'purchase_band' => 2,
             'swap' => 1001,

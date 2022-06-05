@@ -6,7 +6,7 @@ use Illuminate\Database\Seeder;
 use App\Models\PaymentType;
 use \Illuminate\Support\Facades\DB;
 
-class PaymentTypeSeeder extends Seeder
+class PaymentTypesTableSeeder extends Seeder
 {
     /**
      * Run the database seeds.
