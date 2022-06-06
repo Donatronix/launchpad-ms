@@ -55,7 +55,7 @@ class ProductController extends Controller
 
                 $object->setAttribute('start_stage', $price->stage);
                 $object->setAttribute('start_price', $price->price);
-                $object->setAttribute('start_date', Carbon::create($object->start_date)->format('dS F Y'));
+                $object->setAttribute('start_date', Carbon::create($object->start_date)->format('jS F Y'));
             });
 
             // Return response
