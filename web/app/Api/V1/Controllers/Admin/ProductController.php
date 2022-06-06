@@ -18,6 +18,7 @@ class ProductController extends Controller
      * @param Product $model
      */
     private Product $model;
+    private const RECEIVER_LISTENER = 'CreateCurrency';
 
     public function __construct(Product $model)
     {
@@ -225,6 +226,13 @@ class ProductController extends Controller
             // Create new
             $product = $this->model->create($request->all());
 
+            // send product to the reference-books-ms
+            \PubSub::transaction(function () {
+            })->publish(self::RECEIVER_LISTENER, [
+                'currency_code' => $product->ticker,
+                'title' => $product->title,
+            ], "ReferenceBooksMS");
+
             // Return response to client
             return response()->jsonApi([
                 'type' => 'success',
@@ -247,8 +255,8 @@ class ProductController extends Controller
      *
      * @OA\Get(
      *     path="/admin/products/{id}",
-     *     summary="Getting product detail by ID or ticker",
-     *     description="Getting product detail by ID or ticker",
+     *     summary="Getting product detail by ID",
+     *     description="Getting product detail by ID",
      *     tags={"Admin / Products"},
      *
      *     security={{
@@ -434,8 +442,8 @@ class ProductController extends Controller
      *
      * @OA\Delete(
      *     path="/admin/products/{id}",
-     *     summary="Delete product from storage",
-     *     description="Delete product from storage",
+     *     summary="Delete product",
+     *     description="Delete product",
      *     tags={"Admin / Products"},
      *
      *     security={{

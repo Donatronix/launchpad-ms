@@ -193,12 +193,6 @@ class OrderController extends Controller
             $transaction = (new TransactionService())->store($paramsTransactions);
             $order->transaction;
 
-            \PubSub::transaction(function () {
-            })->publish(self::RECEIVER_LISTENER, [
-                'currency_code' => $product->ticker,
-                'title' => $product->title,
-            ], "ReferenceBooksMS");
-
             // Return response to client
             return response()->jsonApi([
                 'type' => 'success',
