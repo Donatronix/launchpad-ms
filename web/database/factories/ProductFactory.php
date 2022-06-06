@@ -17,7 +17,9 @@ class ProductFactory extends Factory
             'supply' => $this->faker->numberBetween(1000000, 1000000000000),
             'presale_percentage' => $this->faker->numberBetween(1, 10),
             'start_date' => $this->faker->date(),
+            'end_date' => $this->faker->date(),
             'status' => true,
+            'icon' => "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAC1JREFUWEft0EERAAAAAUH6lxbDZxU4s815PffjAAECBAgQIECAAAECBAgQIDAaPwAh6O5R/QAAAABJRU5ErkJggg==",
     	];
     }
 }

@@ -43,7 +43,7 @@ class ProductController extends Controller
     {
         try {
             // Get order
-            $products = Product::select(['id', 'title', 'ticker', 'start_date'])
+            $products = Product::select(['id', 'title', 'ticker', 'start_date', 'end_date', 'icon'])
                 ->where('status', true)
                 ->with('price')
                 ->get();
@@ -56,6 +56,7 @@ class ProductController extends Controller
                 $object->setAttribute('start_stage', $price->stage);
                 $object->setAttribute('start_price', $price->price);
                 $object->setAttribute('start_date', Carbon::create($object->start_date)->format('jS F Y'));
+                $object->setAttribute('end_date', Carbon::create($object->end_date)->format('jS F Y'));
             });
 
             // Return response

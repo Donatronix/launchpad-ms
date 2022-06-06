@@ -217,7 +217,8 @@ class ProductController extends Controller
         // transform the request object to format date 
         if ($request->has('start_date')) {
             $request->merge([
-                'start_date' => Carbon::parse($request->get('start_date'))
+                'start_date' => Carbon::parse($request->get('start_date')),
+                'end_date' => Carbon::parse($request->get('end_date')),
             ]);
         }
 
@@ -403,7 +404,8 @@ class ProductController extends Controller
         // transform the request object to format date 
         if ($request->has('start_date')) {
             $request->merge([
-                'start_date' => Carbon::parse($request->get('start_date'))
+                'start_date' => Carbon::parse($request->get('start_date')),
+                'end_date' => Carbon::parse($request->get('end_date')),
             ]);
         }
 

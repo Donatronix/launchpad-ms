@@ -43,9 +43,21 @@ use Sumra\SDK\Traits\UuidTrait;
  *     ),
  *     @OA\Property(
  *         property="start_date",
- *         type="number",
+ *         type="string",
  *         description="Start date",
  *         example="7th June 2022"
+ *     ),
+ *     @OA\Property(
+ *         property="end_date",
+ *         type="string",
+ *         description="End date",
+ *         example="20th June 2022"
+ *     ),
+ *     @OA\Property(
+ *         property="icon",
+ *         type="string",
+ *         description="Icon",
+ *         example="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAC1JREFUWEft0EERAAAAAUH6lxbDZxU4s815PffjAAECBAgQIECAAAECBAgQIDAaPwAh6O5R/QAAAABJRU5ErkJggg=="
  *     )
  * )
  */
@@ -61,10 +73,10 @@ class Product extends Model
     use UuidTrait;
     use SoftDeletes;
 
-//s$SLAPA - Synthetic SLAPA Token
-//$SLAPA - SLAPA Token
-//$DIVIT - DIVIT Token
-//$UTTA - UTTA Token
+    //s$SLAPA - Synthetic SLAPA Token
+    //$SLAPA - SLAPA Token
+    //$DIVIT - DIVIT Token
+    //$UTTA - UTTA Token
 
     /**
      * @var string[]
@@ -75,7 +87,9 @@ class Product extends Model
         'supply',
         'presale_percentage',
         'start_date',
+        'end_date',
         'status',
+        'icon',
     ];
 
     /**
@@ -102,6 +116,8 @@ class Product extends Model
             'supply' => 'required|integer',
             'presale_percentage' => 'required|string',
             'start_date' => 'required|string',
+            'end_date' => 'required|string',
+            'icon' => 'required|string',
         ];
     }
 
