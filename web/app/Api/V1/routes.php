@@ -22,6 +22,16 @@ $router->group([
     });
 
     /**
+     * Products
+     */
+    $router->group([
+        'prefix'=> 'products',
+    ], function ($router) {
+        $router->get('/', 'ProductController@index');
+        $router->get('/{id}', 'ProductController@show');
+    });
+
+    /**
      * PRIVATE ACCESS
      */
     $router->group([
@@ -50,16 +60,6 @@ $router->group([
             $router->post('/identify', 'ContributorController@identifyStart');
             $router->put('/identify', 'ContributorController@update');
             $router->patch('/agreement', 'ContributorController@agreement');
-        });
-
-        /**
-         * Products
-         */
-        $router->group([
-            'prefix'=> 'products',
-        ], function ($router) {
-            $router->get('/', 'ProductController@index');
-            $router->get('/{id}', 'ProductController@show');
         });
 
         /**
