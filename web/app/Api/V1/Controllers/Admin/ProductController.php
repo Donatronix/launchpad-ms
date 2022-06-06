@@ -9,6 +9,8 @@ use Illuminate\Http\Response;
 use Exception;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Carbon;
+use Sumra\SDK\JsonApiResponse;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class ProductController extends Controller
 {
@@ -121,8 +123,8 @@ class ProductController extends Controller
         try {
             // Get products
             $products = $this->model
-            ->orderBy($request->get('sort-by', 'created_at'), $request->get('sort-order', 'desc'))
-            ->paginate($request->get('limit', 20));
+                ->orderBy($request->get('sort-by', 'created_at'), $request->get('sort-order', 'desc'))
+                ->paginate($request->get('limit', 20));
 
             // Return response
             return response()->jsonApi([
@@ -207,21 +209,21 @@ class ProductController extends Controller
     {
         // Validate input
         $validator = Validator::make($request->all(), $this->model::validationRules());
-        if ($validator->fails()){
+        if ($validator->fails()) {
             throw new Exception($validator->errors()->first());
+        }
+
+        // transform the request object to format date 
+        if ($request->has('start_date')) {
+            $request->merge([
+                'start_date' => Carbon::parse($request->get('start_date'))
+            ]);
         }
 
         // Try to add new product
         try {
             // Create new
-            $request->start_date = Carbon::parse($request->start_date);
-            $product = $this->model->create([
-                'title' => $request->title,
-                'ticker' => $request->ticker,
-                'supply' => $request->supply,
-                'presale_percentage' => $request->presale_percentage,
-                'start_date' => Carbon::parse($request->start_date),
-            ]);
+            $product = $this->model->create($request->all());
 
             // Return response to client
             return response()->jsonApi([
@@ -233,7 +235,7 @@ class ProductController extends Controller
         } catch (Exception $e) {
             return response()->jsonApi([
                 'type' => 'danger',
-                'title' => 'New possible loan amount registration',
+                'title' => 'New product registration',
                 'message' => $e->getMessage(),
                 'data' => null
             ], 400);
@@ -241,36 +243,297 @@ class ProductController extends Controller
     }
 
     /**
-     * Display the specified resource.
+     * Getting product detail
      *
-     * @param Product $product
-     * @return Response
+     * @OA\Get(
+     *     path="/admin/products/{id}",
+     *     summary="Getting product detail by ID or ticker",
+     *     description="Getting product detail by ID or ticker",
+     *     tags={"Admin / Products"},
+     *
+     *     security={{
+     *         "default": {
+     *             "ManagerRead",
+     *             "User",
+     *             "ManagerWrite"
+     *         }
+     *     }},
+     *     x={
+     *         "auth-type": "Application & Application User",
+     *         "throttling-tier": "Unlimited",
+     *         "wso2-application-security": {
+     *             "security-types": {"oauth2"},
+     *             "optional": "false"
+     *         }
+     *     },
+     *
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="product Id",
+     *         example="0aa06e6b-35de-3235-b925-b0c43f8f7c75",
+     *         @OA\Schema(
+     *             type="string"
+     *         )
+     *     ),
+     *     @OA\Response(
+     *          response="200",
+     *          description="Getting product detail by platform"
+     *     )
+     * )
+     * @param $id
      */
-    public function show(Product $product)
+    public function show($id)
     {
-        //
+        try {
+            // Read product model
+            $product = $this->getObject($id);
+
+            if ($product instanceof JsonApiResponse) {
+                return $product;
+            }
+
+            return response()->jsonApi([
+                'type' => 'success',
+                'title' => 'Product detail',
+                'message' => "Product detail been received",
+                'data' => $product->toArray()
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->jsonApi([
+                'type' => 'danger',
+                'title' => 'Product detail',
+                'message' => $e->getMessage(),
+            ], 400);
+        }
     }
 
     /**
-     * Update the specified resource in storage.
+     * Update product data
      *
-     * @param Request $request
-     * @param Product $product
-     * @return Response
+     * @OA\Put(
+     *     path="/admin/products/{id}",
+     *     summary="Update product data",
+     *     description="Update product data",
+     *     tags={"Admin / Products"},
+     *
+     *     security={{
+     *         "default": {
+     *             "ManagerRead",
+     *             "User",
+     *             "ManagerWrite"
+     *         }
+     *     }},
+     *     x={
+     *         "auth-type": "Application & Application User",
+     *         "throttling-tier": "Unlimited",
+     *         "wso2-application-security": {
+     *             "security-types": {"oauth2"},
+     *             "optional": "false"
+     *         }
+     *     },
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         description="Product Id",
+     *         example="0aa06e6b-35de-3235-b925-b0c43f8f7c75",
+     *         required=true,
+     *         @OA\Schema(
+     *             type="string"
+     *         )
+     *     ),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(ref="#/components/schemas/Product")
+     *     ),
+     *     @OA\Response(
+     *         response="200",
+     *         description="Successfully save"
+     *     ),
+     *     @OA\Response(
+     *         response="400",
+     *         description="Invalid request"
+     *     ),
+     *     @OA\Response(
+     *         response="401",
+     *         description="Unauthorized"
+     *     ),
+     *     @OA\Response(
+     *         response="403",
+     *         description="Forbidden"
+     *     ),
+     *     @OA\Response(
+     *         response="404",
+     *         description="Not found"
+     *     ),
+     *     @OA\Response(
+     *         response="422",
+     *         description="Validation failed"
+     *     ),
+     *     @OA\Response(
+     *         response="500",
+     *         description="Internal server error"
+     *     )
+     * )
      */
-    public function update(Request $request, Product $product)
+    public function update(Request $request, $id)
     {
-        //
+        // Validate input
+        $validator = Validator::make($request->all(), [
+            'title' => 'string',
+            'ticker' => 'string|unique:products,ticker',
+            'supply' => 'integer',
+            'presale_percentage' => 'string',
+            'start_date' => 'string',
+        ]);
+
+        if ($validator->fails()) {
+            throw new Exception($validator->errors()->first());
+        }
+
+        // transform the request object to format date 
+        if ($request->has('start_date')) {
+            $request->merge([
+                'start_date' => Carbon::parse($request->get('start_date'))
+            ]);
+        }
+
+        // Read product model
+        $product = $this->getObject($id);
+
+        if ($product instanceof JsonApiResponse) {
+            return $product;
+        }
+
+
+        // Try update product data
+        try {
+            // Update data
+            $product->update($request->all());
+
+            // Return response to client
+            return response()->jsonApi([
+                'type' => 'success',
+                'title' => 'Changing product',
+                'message' => "product successfully updated",
+                'data' => $product->toArray()
+            ], 200);
+        } catch (Exception $e) {
+            return response()->jsonApi([
+                'type' => 'danger',
+                'title' => 'Change a product',
+                'message' => $e->getMessage(),
+                'data' => null
+            ], 400);
+        }
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Delete product from storage
      *
-     * @param Product $product
-     * @return Response
+     * @OA\Delete(
+     *     path="/admin/products/{id}",
+     *     summary="Delete product from storage",
+     *     description="Delete product from storage",
+     *     tags={"Admin / Products"},
+     *
+     *     security={{
+     *         "default": {
+     *             "ManagerRead",
+     *             "User",
+     *             "ManagerWrite"
+     *         }
+     *     }},
+     *     x={
+     *         "auth-type": "Application & Application User",
+     *         "throttling-tier": "Unlimited",
+     *         "wso2-application-security": {
+     *             "security-types": {"oauth2"},
+     *             "optional": "false"
+     *         }
+     *     },
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         description="product Id",
+     *         example="0aa06e6b-35de-3235-b925-b0c43f8f7c75",
+     *         required=true,
+     *         @OA\Schema(
+     *             type="string"
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response="200",
+     *         description="Successfully delete"
+     *     ),
+     *     @OA\Response(
+     *         response="400",
+     *         description="Invalid request"
+     *     ),
+     *     @OA\Response(
+     *         response="401",
+     *         description="Unauthorized"
+     *     ),
+     *     @OA\Response(
+     *         response="403",
+     *         description="Forbidden"
+     *     ),
+     *     @OA\Response(
+     *         response="404",
+     *         description="Not found"
+     *     ),
+     *     @OA\Response(
+     *         response="500",
+     *         description="Internal server error"
+     *     )
+     * )
      */
-    public function destroy(Product $product)
+    public function destroy($id)
     {
-        //
+        // Read product model
+        $product = $this->getObject($id);
+        if ($product instanceof JsonApiResponse) {
+            return $product;
+        }
+
+        // Try to delete product
+        try {
+            $product->delete();
+
+            return response()->jsonApi([
+                'type' => 'success',
+                'title' => "Delete product",
+                'message' => 'product is successfully deleted',
+                'data' => null
+            ], 200);
+        } catch (Exception $e) {
+            return response()->jsonApi([
+                'type' => 'danger',
+                'title' => "Delete of product",
+                'message' => $e->getMessage(),
+                'data' => null
+            ], 400);
+        }
+    }
+
+    /**
+     * Get product object
+     *
+     * @param $id
+     * @return mixed
+     */
+    private function getObject($id): mixed
+    {
+        try {
+            return $this->model::findOrFail($id);
+        } catch (ModelNotFoundException $e) {
+            return response()->jsonApi([
+                'type' => 'danger',
+                'title' => "Get product",
+                'message' => "Product with id #{$id} not found: {$e->getMessage()}",
+                'data' => ''
+            ], 404);
+        }
     }
 }
