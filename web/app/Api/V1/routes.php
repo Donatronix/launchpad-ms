@@ -126,9 +126,9 @@ $router->group([
         $router->group(['prefix' => 'products'], function ($router) {
             $router->get('/', 'ProductController@index');
             $router->post('/', 'ProductController@store');
-            $router->get('/{id}', 'ProductController@show');
-            $router->patch('/{id}', 'ProductController@update');
-            $router->delete('/{id}', 'ProductController@destroy');
+            $router->get('/{id:[a-fA-F0-9\-]{36}}', 'ProductController@show');
+            $router->put('/{id:[a-fA-F0-9\-]{36}}', 'ProductController@update');
+            $router->delete('/{id:[a-fA-F0-9\-]{36}}', 'ProductController@destroy');
         });
 
         /**
