@@ -17,7 +17,7 @@ class CreateTokenRewardsTable extends Migration
             $table->uuid('id')->primary();
             $table->integer('purchase_band');
             $table->string('swap');
-            $table->unsignedBigInteger('deposit_amount');
+            $table->string('deposit_amount');
             $table->unsignedBigInteger('reward_bonus');
             $table->timestamps();
         });
