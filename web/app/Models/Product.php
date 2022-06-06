@@ -9,6 +9,52 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Sumra\SDK\Traits\UuidTrait;
 
+/**
+ * Product Scheme
+ *
+ * @package App\Models
+ *
+ * @OA\Schema(
+ *     schema="Product",
+ *
+ *     @OA\Property(
+ *         property="title",
+ *         type="string",
+ *         description="Product title",
+ *         example="Utta Token"
+ *     ),
+ *     @OA\Property(
+ *         property="ticker",
+ *         type="string",
+ *         description="Product ticker",
+ *         example="utta"
+ *     ),
+ *     @OA\Property(
+ *         property="supply",
+ *         type="number",
+ *         description="Product supply",
+ *         example="100000000000"
+ *     ),
+ *     @OA\Property(
+ *         property="presale_percentage",
+ *         type="string",
+ *         description="Presale Percentage",
+ *         example="0.7"
+ *     ),
+ *     @OA\Property(
+ *         property="start_date",
+ *         type="number",
+ *         description="Start date",
+ *         example="7th June 2022"
+ *     )
+ * )
+ */
+
+/**
+ * Class PossibleLoanAmount
+ *
+ * @package App\Models
+ */
 class Product extends Model
 {
     use HasFactory;
@@ -42,6 +88,22 @@ class Product extends Model
         'updated_at',
         'deleted_at'
     ];
+
+    /**
+     * Product create rules
+     *
+     * @return string[]
+     */
+    public static function validationRules(): array
+    {
+        return [
+            'title' => 'required|string',
+            'ticker' => 'required|string|unique:products,ticker',
+            'supply' => 'required|integer',
+            'presale_percentage' => 'required|string',
+            'start_date' => 'required|string',
+        ];
+    }
 
     /**
      * @return HasMany

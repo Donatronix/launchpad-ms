@@ -7,6 +7,8 @@ use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Exception;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Carbon;
 
 class ProductController extends Controller
 {
@@ -140,14 +142,102 @@ class ProductController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Save a new product
      *
-     * @param Request $request
-     * @return Response
+     * @OA\Post(
+     *     path="/admin/products",
+     *     summary="Save a new product",
+     *     description="Save a new product",
+     *     tags={"Admin / Products"},
+     *
+     *     security={{
+     *         "default": {
+     *             "ManagerRead",
+     *             "User",
+     *             "ManagerWrite"
+     *         }
+     *     }},
+     *     x={
+     *         "auth-type": "Application & Application User",
+     *         "throttling-tier": "Unlimited",
+     *         "wso2-application-security": {
+     *             "security-types": {"oauth2"},
+     *             "optional": "false"
+     *         }
+     *     },
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(ref="#/components/schemas/Product")
+     *     ),
+     *     @OA\Response(
+     *         response="200",
+     *         description="Successfully save"
+     *     ),
+     *     @OA\Response(
+     *         response="201",
+     *         description="Successfully created"
+     *     ),
+     *     @OA\Response(
+     *         response="400",
+     *         description="Invalid request"
+     *     ),
+     *     @OA\Response(
+     *         response="401",
+     *         description="Unauthorized"
+     *     ),
+     *     @OA\Response(
+     *         response="403",
+     *         description="Forbidden"
+     *     ),
+     *     @OA\Response(
+     *         response="404",
+     *         description="Not found"
+     *     ),
+     *     @OA\Response(
+     *         response="422",
+     *         description="Validation failed"
+     *     ),
+     *     @OA\Response(
+     *         response="500",
+     *         description="Internal server error"
+     *     )
+     * )
      */
     public function store(Request $request)
     {
-        //
+        // Validate input
+        $validator = Validator::make($request->all(), $this->model::validationRules());
+        if ($validator->fails()){
+            throw new Exception($validator->errors()->first());
+        }
+
+        // Try to add new product
+        try {
+            // Create new
+            $request->start_date = Carbon::parse($request->start_date);
+            $product = $this->model->create([
+                'title' => $request->title,
+                'ticker' => $request->ticker,
+                'supply' => $request->supply,
+                'presale_percentage' => $request->presale_percentage,
+                'start_date' => Carbon::parse($request->start_date),
+            ]);
+
+            // Return response to client
+            return response()->jsonApi([
+                'type' => 'success',
+                'title' => 'New product registration',
+                'message' => "Product successfully added",
+                'data' => $product->toArray()
+            ], 200);
+        } catch (Exception $e) {
+            return response()->jsonApi([
+                'type' => 'danger',
+                'title' => 'New possible loan amount registration',
+                'message' => $e->getMessage(),
+                'data' => null
+            ], 400);
+        }
     }
 
     /**
