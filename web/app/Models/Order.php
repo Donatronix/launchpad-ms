@@ -57,6 +57,12 @@ use Sumra\SDK\Traits\UuidTrait;
  *         type="number",
  *         description="Credit Card Type, Visa - 1, Master Card - 2",
  *         example="1"
+ *     ),
+ *     @OA\Property(
+ *         property="currency_id",
+ *         type="string",
+ *         description="Deposit currency id",
+ *         example="967a6aac-b6dc-4aa7-a6cd-6a612e39d4ee"
  *     )
  * )
  */
@@ -142,6 +148,7 @@ class Order extends Model
             'deposit_amount' => 'required|integer|min:250',
             'payment_type_id' => 'required|integer|exists:payment_types,id',
             'wallet_address' => 'required',
+            'currency_id' => 'required|string',
         ];
     }
 
