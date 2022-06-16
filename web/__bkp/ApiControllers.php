@@ -8,7 +8,7 @@
 /**
  *
  * @OA\Info(title="Oetker code API challenge", version="1.0.0")
- * @OA\Server(url="localhost:8000/api/v1")
+ * @OA\Server(url="localhost:8000/v1")
  *
  * This class should be parent class for other API controllers
  * Class ApiController
