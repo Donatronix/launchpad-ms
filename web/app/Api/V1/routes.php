@@ -25,7 +25,7 @@ $router->group([
      * Products
      */
     $router->group([
-        'prefix'=> 'products',
+        'prefix' => 'products',
     ], function ($router) {
         $router->get('/', 'ProductController@index');
         $router->get('/{id}', 'ProductController@show');
