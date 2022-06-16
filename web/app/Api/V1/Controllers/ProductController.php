@@ -38,7 +38,7 @@ class ProductController extends Controller
      *     @OA\Parameter(
      *         name="status",
      *         in="query",
-     *         required=true,
+     *         required=false,
      *         description="Product attribute",
      *         @OA\Schema(
      *             type="bool"
@@ -65,16 +65,18 @@ class ProductController extends Controller
 
             $products = $query->get();
 
-            // Transform collection objects
-            $products->map(function ($object) {
-                $price = $object->price;
-                unset($object->price);
+            if ($request->has('status')) {
+                // Transform collection objects
+                $products->map(function ($object) {
+                    $price = $object->price;
+                    unset($object->price);
 
-                $object->setAttribute('start_stage', $price->stage);
-                $object->setAttribute('start_price', $price->price);
-                $object->setAttribute('start_date', Carbon::create($object->start_date)->format('jS F Y'));
-                $object->setAttribute('end_date', Carbon::create($object->end_date)->format('jS F Y'));
-            });
+                    $object->setAttribute('start_stage', $price->stage);
+                    $object->setAttribute('start_price', $price->price);
+                    $object->setAttribute('start_date', Carbon::create($object->start_date)->format('jS F Y'));
+                    $object->setAttribute('end_date', Carbon::create($object->end_date)->format('jS F Y'));
+                });
+            }
 
             // Return response
             return response()->jsonApi([
