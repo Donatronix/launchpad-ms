@@ -54,29 +54,26 @@ class ProductController extends Controller
     public function index(Request $request)
     {
         try {
-
             // Get products
             $query = Product::select(['id', 'title', 'ticker', 'start_date', 'end_date', 'icon'])
                 ->with('price');
 
             if ($request->has('status')) {
-                $query = $query->where('status', $request->status);
+                $query = $query->where('status', $request->get('status'));
             }
 
             $products = $query->get();
 
-            if ($request->has('status')) {
-                // Transform collection objects
-                $products->map(function ($object) {
-                    $price = $object->price;
-                    unset($object->price);
+            // Transform collection objects
+            $products->map(function ($object) {
+                $price = $object->price;
+                unset($object->price);
 
-                    $object->setAttribute('start_stage', $price->stage);
-                    $object->setAttribute('start_price', $price->price);
-                    $object->setAttribute('start_date', Carbon::create($object->start_date)->format('jS F Y'));
-                    $object->setAttribute('end_date', Carbon::create($object->end_date)->format('jS F Y'));
-                });
-            }
+                $object->setAttribute('start_stage', $price->stage);
+                $object->setAttribute('start_price', $price->price);
+                $object->setAttribute('start_date', Carbon::create($object->start_date)->format('jS F Y'));
+                $object->setAttribute('end_date', Carbon::create($object->end_date)->format('jS F Y'));
+            });
 
             // Return response
             return response()->jsonApi([
