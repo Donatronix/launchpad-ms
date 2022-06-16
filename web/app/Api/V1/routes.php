@@ -69,6 +69,7 @@ $router->group([
             'prefix' => 'prices',
         ], function ($router) {
             $router->get('/', 'PriceController');
+            $router->get('/{stage}', 'PriceController@getPriceByStage');
         });
 
         /**

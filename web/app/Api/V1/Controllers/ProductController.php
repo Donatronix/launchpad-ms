@@ -4,6 +4,8 @@ namespace App\Api\V1\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Models\Product;
+use Exception;
+use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 
 class ProductController extends Controller
@@ -33,20 +35,34 @@ class ProductController extends Controller
      *         }
      *     },
      *
+     *     @OA\Parameter(
+     *         name="status",
+     *         in="query",
+     *         required=false,
+     *         description="Product attribute",
+     *         @OA\Schema(
+     *             type="bool"
+     *         )
+     *     ),
+     *
      *     @OA\Response(
      *          response="200",
      *          description="Getting product list for start presale"
      *     )
      * )
      */
-    public function index()
+    public function index(Request $request)
     {
         try {
-            // Get order
-            $products = Product::select(['id', 'title', 'ticker', 'start_date', 'end_date', 'icon'])
-                ->where('status', true)
-                ->with('price')
-                ->get();
+            // Get products
+            $query = Product::select(['id', 'title', 'ticker', 'start_date', 'end_date', 'icon'])
+                ->with('price');
+
+            if ($request->has('status')) {
+                $query = $query->where('status', $request->get('status'));
+            }
+
+            $products = $query->get();
 
             // Transform collection objects
             $products->map(function ($object) {
@@ -64,9 +80,9 @@ class ProductController extends Controller
                 'type' => 'success',
                 'title' => 'Products list',
                 'message' => "Products list been received",
-                'data' => $products->toArray()
+                'data' => $products->toArray(),
             ], 200);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return response()->jsonApi([
                 'type' => 'danger',
                 'title' => 'Products list',
@@ -115,8 +131,10 @@ class ProductController extends Controller
      *     )
      * )
      * @param $id
+     *
+     * @return mixed
      */
-    public function show($id)
+    public function show($id): mixed
     {
         try {
             // Get order
@@ -130,9 +148,9 @@ class ProductController extends Controller
                 'type' => 'success',
                 'title' => 'Product detail',
                 'message' => "Product detail been received",
-                'data' => $product->toArray()
+                'data' => $product->toArray(),
             ], 200);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return response()->jsonApi([
                 'type' => 'danger',
                 'title' => 'Product detail',
