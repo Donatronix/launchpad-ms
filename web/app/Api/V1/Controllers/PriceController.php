@@ -4,6 +4,7 @@ namespace App\Api\V1\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Models\Price;
+use Exception;
 use Illuminate\Http\Request;
 
 class PriceController extends Controller
@@ -45,6 +46,7 @@ class PriceController extends Controller
      */
     public function __invoke(Request $request): mixed
     {
+
         // Get order
         $order = Price::where('status', true)
             ->select(['stage', 'price', 'period_in_days', 'percent_profit', 'amount'])
@@ -57,6 +59,7 @@ class PriceController extends Controller
             'message' => "Product prices list has been received",
             'data' => $order->toArray(),
         ], 200);
+
     }
 
     /**
@@ -108,15 +111,23 @@ class PriceController extends Controller
      */
     public function getPriceByStage(Request $request, int $stage): mixed
     {
-        // Get prices
-        $prices = Price::where('stage', $stage)
-            ->get();
+        try {
+            // Get prices
+            $prices = Price::where('stage', $stage)
+                ->get();
 
-        return response()->jsonApi([
-            'type' => 'success',
-            'title' => 'Product prices list by stage',
-            'message' => "Product prices list by stage has been received",
-            'data' => $prices->toArray(),
-        ], 200);
+            return response()->jsonApi([
+                'type' => 'success',
+                'title' => 'Product prices list by stage',
+                'message' => "Product prices list by stage has been received",
+                'data' => $prices->toArray(),
+            ], 200);
+        } catch (Exception $e) {
+            return response()->jsonApi([
+                'type' => 'danger',
+                'title' => 'Prices list',
+                'message' => $e->getMessage(),
+            ], 400);
+        }
     }
 }

@@ -36,7 +36,7 @@ class ProductController extends Controller
      *     },
      *
      *     @OA\Parameter(
-     *         name="attribute",
+     *         name="status",
      *         in="query",
      *         required=true,
      *         description="Product attribute",
@@ -54,11 +54,16 @@ class ProductController extends Controller
     public function index(Request $request)
     {
         try {
-            // Get order
-            $products = Product::select(['id', 'title', 'ticker', 'start_date', 'end_date', 'icon'])
-                ->where('status', true)
-                ->with('price')
-                ->get();
+
+            // Get products
+            $query = Product::select(['id', 'title', 'ticker', 'start_date', 'end_date', 'icon'])
+                ->with('price');
+
+            if ($request->has('status')) {
+                $query = $query->where('status', $request->status);
+            }
+
+            $products = $query->get();
 
             // Transform collection objects
             $products->map(function ($object) {
