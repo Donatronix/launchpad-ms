@@ -21,11 +21,9 @@ class CreateTransactionsTable extends Migration
 //            $table->tinyInteger('payment_system');
 //            $table->unsignedTinyInteger('payment_currency_id')->nullable();
 
-//            $table->unsignedBigInteger('sender_id');
-//            $table->foreign('sender_id')->references('id')->on('contributors');
+//            $table->uuid('sender_id');
 
-//            $table->unsignedBigInteger('receiver_id');
-//            $table->foreign('receiver_id')->references('id')->on('contributors');
+//            $table->uuid('receiver_id');
 //
 //            $table->decimal('amount', 12);
 //

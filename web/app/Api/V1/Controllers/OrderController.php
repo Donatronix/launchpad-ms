@@ -74,7 +74,7 @@ class OrderController extends Controller
      */
     public function index(){
         // Get order
-        $order = Order::where('contributor_id', Auth::user()->getAuthIdentifier())
+        $order = Order::where('user_id', Auth::user()->getAuthIdentifier())
             ->where('status', Order::STATUS_NEW)->with(['transaction' => function ($query) {
                 $query->select('id','order_id','wallet_address','payment_type_id');
             },'transaction.payment_type'])
@@ -182,7 +182,7 @@ class OrderController extends Controller
                 'investment_amount' => $request->get('investment_amount'),
                 'deposit_percentage' => $request->get('deposit_percentage'),
                 'deposit_amount' => $request->get('deposit_amount'),
-                'contributor_id' => Auth::user()->getAuthIdentifier(),
+                'user_id' => Auth::user()->getAuthIdentifier(),
                 'status' => Order::STATUS_NEW,
                 'amount_token' => $request->get('investment_amount'),
                 'amount_usd' => $request->get('investment_amount'),
@@ -196,7 +196,7 @@ class OrderController extends Controller
 
             // create deposit
             $depositObj = [
-                'contributor_id' => Auth::user()->getAuthIdentifier(),
+                'user_id' => Auth::user()->getAuthIdentifier(),
                 'deposit_amount' => $request->get('deposit_amount'),
                 'currency_id' => $request->get('currency_id'),
             ];
@@ -279,8 +279,7 @@ class OrderController extends Controller
 
         // Load linked relations data
         $order->load([
-            'product',
-            'contributor'
+            'product'
         ]);
 
         return response()->jsonApi([

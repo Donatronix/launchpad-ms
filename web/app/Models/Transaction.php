@@ -113,14 +113,4 @@ class Transaction extends Model
     {
         return $this->belongsTo(CreditCardType::class, 'credit_card_type_id', 'id');
     }
-
-    /**
-     * One Transaction have One Contributor relation
-     *
-     * @return BelongsTo
-     */
-    public function user()
-    {
-        return $this->belongsTo(Contributor::class, 'user_id', 'id');
-    }
 }

@@ -20,9 +20,7 @@ class CreateDepositsTable extends Migration
 
             $table->decimal('deposit_amount', 12, 0);
 
-            $table->foreignUuid('contributor_id')->constrained()
-                ->onUpdate('cascade')
-                ->onDelete('cascade');
+            $table->uuid('user_id');
 
             $table->string('order_id')->nullable();
 

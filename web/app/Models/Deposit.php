@@ -28,7 +28,7 @@ use Sumra\SDK\Traits\UuidTrait;
  *         example="100000"
  *     ),
  *     @OA\Property(
- *         property="contributor_id",
+ *         property="user_id",
  *         type="string",
  *         description="User id",
  *         example="967a6aac-b6dc-4aa7-a6cd-6a612e39d4ee"
@@ -46,7 +46,7 @@ class Deposit extends Model
     protected $fillable = [
         'currency_id',
         'deposit_amount',
-        'contributor_id',
+        'user_id',
         'status',
         'order_id',
     ];
@@ -73,16 +73,6 @@ class Deposit extends Model
             'currency_id' => 'required|string',
             'deposit_amount' => 'required|integer|min:250',
         ];
-    }
-
-    /**
-     * One Deposit have One Contributor relation
-     *
-     * @return BelongsTo
-     */
-    public function contributor(): BelongsTo
-    {
-        return $this->belongsTo(Contributor::class);
     }
 
     /**

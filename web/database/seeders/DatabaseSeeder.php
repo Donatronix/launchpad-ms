@@ -28,7 +28,6 @@ class DatabaseSeeder extends Seeder
         // Seeds for local and staging
         if (App::environment(['local', 'staging'])) {
             $this->call([
-                ContributorsTableSeeder::class,
                 OrdersTableSeeder::class,
                 DepositsTableSeeder::class,
             ]);

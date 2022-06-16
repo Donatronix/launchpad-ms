@@ -22,9 +22,7 @@ class CreateOrdersTable extends Migration
             $table->unsignedTinyInteger('deposit_percentage');
             $table->decimal('deposit_amount', 12, 0);
 
-            $table->foreignUuid('contributor_id')->constrained()
-                ->onUpdate('cascade')
-                ->onDelete('cascade');
+            $table->uuid('user_id');
 
             $table->smallInteger('status')->nullable();
 

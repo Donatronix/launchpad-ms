@@ -74,7 +74,7 @@ class DepositController extends Controller
      */
     public function index(){
         // Get deposit
-        $deposit = Deposit::where('contributor_id', Auth::user()->getAuthIdentifier())
+        $deposit = Deposit::where('user_id', Auth::user()->getAuthIdentifier())
             ->where('status', Deposit::STATUS_NEW)
             ->first();
 
@@ -85,7 +85,6 @@ class DepositController extends Controller
             'data' => $deposit->toArray()
         ], 200);
     }
-
 
     /**
      * Create a new investment deposit
@@ -180,7 +179,7 @@ class DepositController extends Controller
                 'investment_amount' => $request->get('investment_amount'),
                 'deposit_percentage' => $request->get('deposit_percentage'),
                 'deposit_amount' => $request->get('deposit_amount'),
-                'contributor_id' => Auth::user()->getAuthIdentifier(),
+                'user_id' => Auth::user()->getAuthIdentifier(),
                 'status' => Deposit::STATUS_NEW
             ]);
 
@@ -262,8 +261,7 @@ class DepositController extends Controller
 
         // Load linked relations data
         $deposit->load([
-            'product',
-            'contributor'
+            'product'
         ]);
 
         return response()->jsonApi([

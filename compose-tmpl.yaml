@@ -18,7 +18,7 @@ services:
       - PUBSUB_QUEUE=Local.CryptoLaunchpadMS
     volumes:
       - ./web:/var/www/html:rw
-      - ./logs:/var/log/nginx:rw
+#      - ./logs:/var/log/nginx:rw
 #     - ./xdebug.ini:/usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini:rw
 
 networks:

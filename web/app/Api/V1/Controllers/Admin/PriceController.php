@@ -94,7 +94,7 @@ class PriceController extends Controller
      *     ),
      *     @OA\Response(
      *         response="201",
-     *         description="Contributor created"
+     *         description="Price created"
      *     ),
      *     @OA\Response(
      *         response="400",
@@ -129,7 +129,7 @@ class PriceController extends Controller
         } catch (ValidationException $e) {
             return response()->jsonApi([
                 'type' => 'warning',
-                'title' => 'Contributor person details data',
+                'title' => 'Saving new stage price',
                 'message' => "Validation error",
                 'data' => $e->getMessage()
             ], 400);

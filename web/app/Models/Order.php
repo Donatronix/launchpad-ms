@@ -113,7 +113,7 @@ class Order extends Model
         'investment_amount',
         'deposit_percentage',
         'deposit_amount',
-        'contributor_id',
+        'user_id',
         'status',
         'payload',
         'order_no',
@@ -167,16 +167,6 @@ class Order extends Model
 
             $model->order_no = $order_no;
         });
-    }
-
-    /**
-     * One Order have One Contributor relation
-     *
-     * @return BelongsTo
-     */
-    public function contributor(): BelongsTo
-    {
-        return $this->belongsTo(Contributor::class);
     }
 
     /**

@@ -19,9 +19,7 @@ class CreateBalancesTable extends Migration
 
             $table->unsignedTinyInteger('currency_id');
 
-            $table->foreignUuid('contributor_id')->constrained()
-                ->onUpdate('cascade')
-                ->onDelete('cascade');
+            $table->uuid('user_id');
 
             $table->timestamps();
         });

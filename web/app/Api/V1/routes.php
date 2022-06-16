@@ -11,17 +11,6 @@ $router->group([
      * PUBLIC ACCESS
      */
     /**
-     * Payments webhooks
-     */
-    $router->group([
-        'prefix' => 'webhooks',
-    ], function ($router) {
-        $router->post('identify/{type}', 'IdentifyWebhookController');
-//        $router->post('identify/events', 'IdentifyWebhookController@webhookEvents');
-//        $router->post('identify/notifications', 'IdentifyWebhookController@webhookNotifications');
-    });
-
-    /**
      * Products
      */
     $router->group([
@@ -32,7 +21,7 @@ $router->group([
     });
 
     /**
-     * PRIVATE ACCESS
+     * USER APPLICATION ACCESS
      */
     $router->group([
         'middleware' => 'checkUser',
@@ -47,19 +36,6 @@ $router->group([
             $router->post('/', 'TokenRewardController@store');
             $router->put('/', 'TokenRewardController@update');
             $router->delete('/', 'TokenRewardController@destroy');
-        });
-
-        /**
-         * Contributors
-         */
-        $router->group([
-            'prefix' => 'contributors',
-        ], function ($router) {
-            $router->get('/', 'ContributorController@show');
-            $router->post('/', 'ContributorController@store');
-            $router->post('/identify', 'ContributorController@identifyStart');
-            $router->put('/identify', 'ContributorController@update');
-            $router->patch('/agreement', 'ContributorController@agreement');
         });
 
         /**
@@ -108,19 +84,6 @@ $router->group([
             'checkAdmin'
         ]
     ], function ($router) {
-        /**
-         * Contributors
-         */
-        $router->group([
-            'prefix' => 'contributors',
-        ], function ($router) {
-            $router->get('/', 'ContributorController@index');
-            $router->post('/', 'ContributorController@store');
-            $router->get('/{id:[a-fA-F0-9\-]{36}}', 'ContributorController@show');
-            $router->put('/{id:[a-fA-F0-9\-]{36}}', 'ContributorController@update');
-            $router->delete('/{id:[a-fA-F0-9\-]{36}}', 'ContributorController@destroy');
-        });
-
         /**
          * Products
          */
