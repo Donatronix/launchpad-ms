@@ -1,6 +1,6 @@
 {
-    "name": "kus/launchpad-ms",
-    "description": "Ultainfinity Launchpad API Microservice",
+    "name": "kus/crypto-launchpad-ms",
+    "description": "Crypto Launchpad API Microservice",
     "license": "MIT",
     "type": "project",
     "private": true,
