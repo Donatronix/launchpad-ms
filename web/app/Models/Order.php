@@ -6,6 +6,7 @@ use App\Traits\RandomCharGeneratorTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Sumra\SDK\Traits\OwnerTrait;
 use Sumra\SDK\Traits\UuidTrait;
 
 /**
@@ -77,6 +78,7 @@ class Order extends Model
     use HasFactory;
     use UuidTrait;
     use RandomCharGeneratorTrait;
+    use OwnerTrait;
 
     /**
      * Order status

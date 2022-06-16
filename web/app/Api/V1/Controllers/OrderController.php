@@ -29,6 +29,10 @@ class OrderController extends Controller
      * @var string
      */
     protected $model = Order::class;
+
+    /**
+     * @var Deposit
+     */
     protected Deposit $depositModel;
 
     /**
@@ -46,8 +50,8 @@ class OrderController extends Controller
      *
      * @OA\Get(
      *     path="/orders",
-     *     summary="Getting created order by contributor if exist",
-     *     description="Getting created order by contributor if exist",
+     *     summary="Getting created order by user if exist",
+     *     description="Getting created order by user if exist",
      *     tags={"Orders"},
      *
      *     security={{
@@ -74,7 +78,7 @@ class OrderController extends Controller
      */
     public function index(){
         // Get order
-        $order = Order::where('user_id', Auth::user()->getAuthIdentifier())
+        $order = Order::byOwner()
             ->where('status', Order::STATUS_NEW)->with(['transaction' => function ($query) {
                 $query->select('id','order_id','wallet_address','payment_type_id');
             },'transaction.payment_type'])
@@ -87,7 +91,6 @@ class OrderController extends Controller
             'data' => $order->toArray()
         ], 200);
     }
-
 
     /**
      * Create a new investment order

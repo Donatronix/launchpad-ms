@@ -143,7 +143,6 @@ class TokenRewardController extends Controller
         }
     }
 
-
     /**
      * Method for storage of user's token Reward.
      *

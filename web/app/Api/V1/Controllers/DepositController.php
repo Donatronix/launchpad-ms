@@ -42,12 +42,12 @@ class DepositController extends Controller
     }
 
     /**
-     * Getting created deposit by contributor if exist
+     * Getting created deposit by user if exist
      *
      * @OA\Get(
      *     path="/deposits",
-     *     summary="Getting created deposit by contributor if exist",
-     *     description="Getting created deposit by contributor if exist",
+     *     summary="Getting created deposit by user if exist",
+     *     description="Getting created deposit by user if exist",
      *     tags={"Deposits"},
      *
      *     security={{
@@ -74,7 +74,7 @@ class DepositController extends Controller
      */
     public function index(){
         // Get deposit
-        $deposit = Deposit::where('user_id', Auth::user()->getAuthIdentifier())
+        $deposit = Deposit::byOwner()
             ->where('status', Deposit::STATUS_NEW)
             ->first();
 
