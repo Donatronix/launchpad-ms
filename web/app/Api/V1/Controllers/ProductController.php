@@ -4,6 +4,8 @@ namespace App\Api\V1\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Models\Product;
+use Exception;
+use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 
 class ProductController extends Controller
@@ -33,13 +35,23 @@ class ProductController extends Controller
      *         }
      *     },
      *
+     *     @OA\Parameter(
+     *         name="attribute",
+     *         in="query",
+     *         required=true,
+     *         description="Product attribute",
+     *         @OA\Schema(
+     *             type="bool"
+     *         )
+     *     ),
+     *
      *     @OA\Response(
      *          response="200",
      *          description="Getting product list for start presale"
      *     )
      * )
      */
-    public function index()
+    public function index(Request $request)
     {
         try {
             // Get order
@@ -64,9 +76,9 @@ class ProductController extends Controller
                 'type' => 'success',
                 'title' => 'Products list',
                 'message' => "Products list been received",
-                'data' => $products->toArray()
+                'data' => $products->toArray(),
             ], 200);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return response()->jsonApi([
                 'type' => 'danger',
                 'title' => 'Products list',
@@ -115,8 +127,10 @@ class ProductController extends Controller
      *     )
      * )
      * @param $id
+     *
+     * @return mixed
      */
-    public function show($id)
+    public function show($id): mixed
     {
         try {
             // Get order
@@ -130,9 +144,9 @@ class ProductController extends Controller
                 'type' => 'success',
                 'title' => 'Product detail',
                 'message' => "Product detail been received",
-                'data' => $product->toArray()
+                'data' => $product->toArray(),
             ], 200);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return response()->jsonApi([
                 'type' => 'danger',
                 'title' => 'Product detail',
