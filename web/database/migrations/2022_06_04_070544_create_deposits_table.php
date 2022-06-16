@@ -16,19 +16,17 @@ class CreateDepositsTable extends Migration
         Schema::create('deposits', function (Blueprint $table) {
             $table->uuid('id')->primary();
 
-            $table->string('product_id');
+            $table->string('currency_id');
 
-            $table->decimal('investment_amount', 12, 0);
-            $table->unsignedTinyInteger('deposit_percentage');
             $table->decimal('deposit_amount', 12, 0);
 
             $table->foreignUuid('contributor_id')->constrained()
                 ->onUpdate('cascade')
                 ->onDelete('cascade');
 
-            $table->smallInteger('status')->nullable();
+            $table->string('order_id')->nullable();
 
-            $table->text('payload')->nullable();
+            $table->smallInteger('status')->nullable();
 
             $table->timestamps();
             $table->softDeletes();

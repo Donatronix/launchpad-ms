@@ -16,13 +16,13 @@ class DepositsTableSeeder extends Seeder
     public function run()
     {
          // Get products
-         $products = Product::all();
+        //  $products = Product::all();
 
-         foreach($products as $product){
-             // Create Deposits
-             Deposit::factory()->count(10)->create([
-                 'product_id' => $product->id
-             ]);
-         }
+        //  foreach($products as $product){
+        //      // Create Deposits
+        //      Deposit::factory()->count(10)->create([
+        //          'product_id' => $product->id
+        //      ]);
+        //  }
     }
 }

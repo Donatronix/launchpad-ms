@@ -5,9 +5,9 @@ namespace App\Api\V1\Controllers;
 use App\Api\V1\Services\TransactionService;
 use App\Http\Controllers\Controller;
 use App\Models\Order;
+use App\Models\Deposit;
 use App\Models\PaymentType;
 use App\Models\Product;
-use Carbon\Carbon;
 use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
@@ -29,16 +29,17 @@ class OrderController extends Controller
      * @var string
      */
     protected $model = Order::class;
-    private const RECEIVER_LISTENER = 'CreateCurrency';
+    protected Deposit $depositModel;
 
     /**
      * OrderController constructor.
      *
      * @param Order $model
      */
-    public function __construct(Order $model)
+    public function __construct(Order $model, Deposit $depositModel)
     {
         $this->model = $model;
+        $this->depositModel = $depositModel;
     }
 
     /**
@@ -193,6 +194,19 @@ class OrderController extends Controller
             $transaction = (new TransactionService())->store($paramsTransactions);
             $order->transaction;
 
+            // create deposit
+            $depositObj = [
+                'contributor_id' => Auth::user()->getAuthIdentifier(),
+                'deposit_amount' => $request->get('deposit_amount'),
+                'currency_id' => $request->get('currency_id'),
+            ];
+
+            $deposit = $this->createDeposit($depositObj);
+
+            if ($deposit instanceof JsonApiResponse) {
+                return $deposit;
+            }
+
             // Return response to client
             return response()->jsonApi([
                 'type' => 'success',
@@ -301,7 +315,7 @@ class OrderController extends Controller
                 'data' => $transaction->toArray()
             ], 200);
 
-        } Catch(ModelNotFoundException $e) {
+        } catch(ModelNotFoundException $e) {
             return response()->jsonApi([
                 'type' => 'danger',
                 'title' => "Get order",
@@ -329,6 +343,27 @@ class OrderController extends Controller
                 'message' => "Order with id #{$id} not found: {$e->getMessage()}",
                 'data' => ''
             ], 404);
+        }
+    }
+
+    /**
+     * Creates deposit
+     *
+     * @param $depositObj
+     * @return mixed
+     */
+    private function createDeposit($depositObj){
+        try{
+            // create deposit
+        $deposit = $this->depositModel->create($depositObj);
+        return $deposit;
+        } catch (Exception $e) {
+            return response()->jsonApi([
+                'type' => 'danger',
+                'title' => 'New Deposit',
+                'message' => $e->getMessage(),
+                'data' => null
+            ], 400);
         }
     }
 }
