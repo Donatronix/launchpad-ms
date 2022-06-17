@@ -12,12 +12,12 @@ class PriceFactory extends Factory
 
     public function definition(): array
     {
-    	return [
+        return [
             'product_id' => $this->faker->randomElement(Product::all()),
             'stage' => 1,
             'price' => 0.001,
             'amount' => 1000000000,
             'period_in_days' => 2
-    	];
+        ];
     }
 }

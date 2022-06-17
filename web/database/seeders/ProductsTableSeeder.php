@@ -37,7 +37,7 @@ class ProductsTableSeeder extends Seeder
         ];
 
         // Create Products
-        foreach ($list as $item){
+        foreach ($list as $item) {
             Product::factory()->create($item);
         }
     }

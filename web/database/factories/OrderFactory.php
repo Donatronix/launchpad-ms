@@ -26,7 +26,7 @@ class OrderFactory extends Factory
         $percentage = $this->faker->numberBetween(10, 100);
         $deposit = $investment * $percentage / 100;
 
-    	return [
+        return [
             'product_id' => $this->faker->randomElement(Product::all()),
             'investment_amount' => $investment,
             'deposit_percentage' => $percentage,
@@ -34,6 +34,6 @@ class OrderFactory extends Factory
             'user_id' => $this->faker->randomElement(config('settings.default_users_ids')),
             'status' => Order::STATUS_NEW,
             'payload' => ''
-    	];
+        ];
     }
 }

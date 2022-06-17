@@ -11,7 +11,7 @@ class ProductFactory extends Factory
 
     public function definition(): array
     {
-    	return [
+        return [
             'title' => $this->faker->title(),
             'ticker' => $this->faker->currencyCode(),
             'supply' => $this->faker->numberBetween(1000000, 1000000000000),
@@ -20,6 +20,6 @@ class ProductFactory extends Factory
             'end_date' => $this->faker->date(),
             'status' => true,
             'icon' => "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAC1JREFUWEft0EERAAAAAUH6lxbDZxU4s815PffjAAECBAgQIECAAAECBAgQIDAaPwAh6O5R/QAAAABJRU5ErkJggg==",
-    	];
+        ];
     }
 }

@@ -97,7 +97,7 @@ class PricesTableSeeder extends Seeder
         foreach ($pricesList as $code => $prices) {
             $product = Product::where('ticker', $code)->first();
 
-            foreach ($prices as $price){
+            foreach ($prices as $price) {
                 Price::factory()->create(array_merge(['product_id' => $product->id], $price));
             }
         }

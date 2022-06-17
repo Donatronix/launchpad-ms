@@ -18,7 +18,7 @@ class OrdersTableSeeder extends Seeder
         // Get products
         $products = Product::all();
 
-        foreach($products as $product){
+        foreach ($products as $product) {
             // Create orders
             Order::factory()->count(10)->create([
                 'product_id' => $product->id

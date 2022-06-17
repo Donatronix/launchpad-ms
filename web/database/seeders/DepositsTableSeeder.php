@@ -3,8 +3,6 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use App\Models\Deposit;
-use App\Models\Product;
 
 class DepositsTableSeeder extends Seeder
 {
@@ -15,7 +13,7 @@ class DepositsTableSeeder extends Seeder
      */
     public function run()
     {
-         // Get products
+        // Get products
         //  $products = Product::all();
 
         //  foreach($products as $product){
