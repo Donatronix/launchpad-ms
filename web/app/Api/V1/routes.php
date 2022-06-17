@@ -72,6 +72,16 @@ $router->group([
             $router->post('/', 'OrderController@store');
             $router->get('/get-pdf/{transaction_id}', 'OrderController@generatePdfForTransaction');
         });
+
+        /**
+         * Faqs
+         */
+        $router->group([
+            'prefix' => 'faqs',
+        ], function ($router) {
+            $router->get('/', 'FaqController@index');
+            $router->get('/{id}', 'FaqController@show');
+        });
     });
 
     /**
@@ -117,6 +127,20 @@ $router->group([
         ], function ($router) {
             $router->get('/', 'TransactionController');
             $router->post('/', 'TransactionController@store');
+        });
+
+        /**
+         * Faqs
+         */
+        $router->group([
+            'prefix' => 'faqs',
+        ], function ($router) {
+            $router->get('/', 'FaqController@index');
+            $router->post('/', 'FaqController@store');
+
+            $router->get('{id}', 'FaqController@show');
+            $router->put('{id}', 'FaqController@update');
+            $router->delete('{id}', 'FaqController@destroy');
         });
     });
 
