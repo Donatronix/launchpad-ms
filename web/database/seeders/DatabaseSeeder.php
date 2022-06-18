@@ -22,6 +22,7 @@ class DatabaseSeeder extends Seeder
             TokenRewardsTableSeeder::class,
             PaymentTypesTableSeeder::class,
             CreditCardTypeSeeder::class,
+            FaqSeeder::class,
         ]);
 
 
