@@ -145,6 +145,15 @@ $router->group([
             $router->get('/', 'TransactionController');
             $router->post('/', 'TransactionController@store');
         });
+        /**
+         * Price
+         */
+        $router->group(['prefix' => 'price'], function ($router) {
+            $router->post('/', 'PriceController@store');
+            $router->get('/{id}', 'PriceController@show');
+            $router->patch('/{id}', 'PriceController@update');
+            $router->delete('/{id}', 'PriceController@destroy');
+        });
     });
 
     /**

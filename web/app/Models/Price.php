@@ -67,7 +67,9 @@ class Price extends Model
 
     public static function validationRules(){
         return [
-
+            'price' => 'required',
+            'amount' => 'required',
+            'product_id'=> 'required'
         ];
     }
 }
