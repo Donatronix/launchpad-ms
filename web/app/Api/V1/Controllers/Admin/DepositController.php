@@ -471,4 +471,8 @@ class DepositController extends Controller
             ], 400);
         }
     }
+
+    public function destroy($id)
+    {
+    }
 }//end class
