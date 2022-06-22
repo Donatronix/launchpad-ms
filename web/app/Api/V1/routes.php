@@ -16,7 +16,7 @@ $router->group([
     $router->group([
         'prefix' => 'products',
     ], function ($router) {
-        $router->get('/', 'ProductController');
+        $router->get('/', 'ProductController@index');
         $router->get('/{id}', 'ProductController@show');
     });
 

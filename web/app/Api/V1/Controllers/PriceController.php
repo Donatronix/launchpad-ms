@@ -46,7 +46,6 @@ class PriceController extends Controller
      */
     public function __invoke(Request $request): mixed
     {
-
         // Get order
         $order = Price::where('status', true)
             ->select(['stage', 'price', 'period_in_days', 'percent_profit', 'amount'])
@@ -59,7 +58,6 @@ class PriceController extends Controller
             'message' => "Product prices list has been received",
             'data' => $order->toArray(),
         ], 200);
-
     }
 
     /**
