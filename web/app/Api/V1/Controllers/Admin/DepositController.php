@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Sumra\SDK\JsonApiResponse;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 
 /**
@@ -26,7 +27,7 @@ class DepositController extends Controller
      *
      * @OA\Get(
      *     path="/admin/deposits",
-     *     description="Getting all data about deposits for all user",
+     *     description="Getting all data about deposits for all users",
      *     tags={"Admin / Deposits"},
      *
      *      security={{
@@ -36,14 +37,7 @@ class DepositController extends Controller
      *             "ManagerWrite"
      *         }
      *      }},
-     *      x={
-     *         "auth-type": "Application & Application User",
-     *         "throttling-tier": "Unlimited",
-     *         "wso2-application-security": {
-     *             "security-types": {"oauth2"},
-     *             "optional": "false"
-     *         }
-     *      },
+     *
      *
      *       @OA\Parameter(
      *         name="limit",
@@ -118,14 +112,6 @@ class DepositController extends Controller
      *             "ManagerWrite"
      *         }
      *      }},
-     *      x={
-     *         "auth-type": "Application & Application User",
-     *         "throttling-tier": "Unlimited",
-     *         "wso2-application-security": {
-     *             "security-types": {"oauth2"},
-     *             "optional": "false"
-     *         }
-     *      },
      *
      *       @OA\RequestBody(
      *            @OA\JsonContent(
@@ -472,7 +458,62 @@ class DepositController extends Controller
         }
     }
 
+
+    /**
+     * Delete a single deposits
+     *
+     *
+     *  path="/admin/deposits/{id}",
+     *     description="Update one deposit",
+     *     tags={"Admin / Deposits"},
+     *
+     *
+     * @OA\Delete(
+     *    path="/admin/deposits/{id}",
+     *     description="deposits id",
+     *     tags={"Admin / Deposits"},
+     *
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="query",
+     *         description="deposits ID",
+     *         required=true,
+     *      ),
+     *
+     *     @OA\Response(
+     *         response="500",
+     *         description="Unknown error"
+     *     ),
+     *     @OA\Response(
+     *         response=400,
+     *         description="Invalid request"
+     *     ),
+     *
+     *     @OA\Response(
+     *         response=404,
+     *         description="Not Found"
+     *     ),
+     * )
+     *
+     * @param \Illuminate\Http\Request $request
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function destroy($id)
     {
+        try {
+            $resp['type']       = "Success";
+            $resp['title']      = "Soft delete deposit";
+            $resp['message']    = "Deleted successfully";
+            $resp['data']       = Deposit::findOrFail($id)->delete();
+            return response()->json($resp, 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'type'  => 'danger',
+                'title'  => 'Soft delete deposit',
+                'message' => 'Error in deleting deposit',
+                'data' => $e->getMessage()
+            ], 400);
+        }
     }
 }//end class
