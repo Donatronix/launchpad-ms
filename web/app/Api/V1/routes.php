@@ -149,5 +149,19 @@ $router->group([
             $router->put('{id}', 'FaqController@update');
             $router->delete('{id}', 'FaqController@destroy');
         });
+
+        /**
+         * Admin/Deposit
+         */
+        $router->group([
+            'prefix' => 'deposits',
+        ], function ($router) {
+            $router->get('/',       'DepositController@index');
+            $router->post('/',      'DepositController@store');
+
+            $router->get('{id}',    'DepositController@show');
+            $router->put('{id}',    'DepositController@update');
+            $router->delete('{id}', 'DepositController@destroy');
+        });
     });
 });
