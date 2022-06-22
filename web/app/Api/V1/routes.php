@@ -10,31 +10,14 @@ $router->group([
     /**
      * PUBLIC ACCESS
      */
-
-    $router->group([
-        'prefix' => 'public',
-        'namespace '=>'public'
-    ], function ($router) {
-        /**
-         * Products for public access
-         */
-        $router->group([
-            'prefix' => 'products',
-        ], function ($router) {
-            $router->get('/', 'ProductController@index');
-            $router->get('/{id}', 'ProductController@show');
-        });
-    });
-
     /**
-     * Payments webhooks
+     * Products for public access
      */
     $router->group([
-        'prefix' => 'webhooks',
+        'prefix' => 'products',
     ], function ($router) {
-        $router->post('identify/{type}', 'IdentifyWebhookController');
-//        $router->post('identify/events', 'IdentifyWebhookController@webhookEvents');
-//        $router->post('identify/notifications', 'IdentifyWebhookController@webhookNotifications');
+        $router->get('/', 'ProductController');
+        $router->get('/{id}', 'ProductController@show');
     });
 
     /**
@@ -54,6 +37,7 @@ $router->group([
             $router->put('/', 'TokenRewardController@update');
             $router->delete('/', 'TokenRewardController@destroy');
         });
+
         /**
          * Prices
          */
@@ -122,15 +106,6 @@ $router->group([
         });
 
         /**
-         * Transactions
-         */
-        $router->group([
-            'prefix' => 'transactions',
-        ], function ($router) {
-            $router->get('/', 'TransactionController');
-            $router->post('/', 'TransactionController@store');
-        });
-        /**
          * Price
          */
         $router->group(['prefix' => 'price'], function ($router) {
@@ -141,6 +116,28 @@ $router->group([
         });
 
         /**
+         * Token Rewards
+         */
+        $router->group([
+            'prefix' => 'token-rewards',
+        ], function ($router) {
+            $router->get('/', 'TokenRewardController@index');
+            $router->post('/', 'TokenRewardController@store');
+            $router->put('/', 'TokenRewardController@update');
+            $router->delete('/', 'TokenRewardController@destroy');
+        });
+
+        /**
+         * Transactions
+         */
+        $router->group([
+            'prefix' => 'transactions',
+        ], function ($router) {
+            $router->get('/', 'TransactionController');
+            $router->post('/', 'TransactionController@store');
+        });
+
+        /**
          * Faqs
          */
         $router->group([
@@ -148,7 +145,6 @@ $router->group([
         ], function ($router) {
             $router->get('/', 'FaqController@index');
             $router->post('/', 'FaqController@store');
-
             $router->get('{id}', 'FaqController@show');
             $router->put('{id}', 'FaqController@update');
             $router->delete('{id}', 'FaqController@destroy');
