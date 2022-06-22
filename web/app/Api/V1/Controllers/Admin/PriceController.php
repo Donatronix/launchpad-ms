@@ -126,6 +126,14 @@ class PriceController extends Controller
         // Validate input
         try {
             $this->validate($request, Price::validationRules());
+            $price = Price::create($request->all());
+            return response()->json([
+                'type' => 'success',
+                'title' => "Create new Price",
+                'message' => 'Price was successful created',
+                'data' => $price
+            ], 201);
+            
         } catch (ValidationException $e) {
             return response()->jsonApi([
                 'type' => 'warning',
@@ -136,6 +144,41 @@ class PriceController extends Controller
         }
     }
 
+        /**
+     * Getting a listing of product prices
+     *
+     * @OA\Get(
+     *     path="/admin/prices",
+     *     summary="Getting a listing of product prices",
+     *     description="Getting a listing of product prices",
+     *     tags={"Admin / Prices"},
+     *
+     *     security={{
+     *         "default": {
+     *             "ManagerRead",
+     *             "User",
+     *             "ManagerWrite"
+     *         }
+     *     }},
+     *     x={
+     *         "auth-type": "Application & Application User",
+     *         "throttling-tier": "Unlimited",
+     *         "wso2-application-security": {
+     *             "security-types": {"oauth2"},
+     *             "optional": "false"
+     *         }
+     *     },
+     *
+     *     @OA\Response(
+     *          response="200",
+     *          description="Getting a listing of product prices"
+     *     )
+     * )
+     *
+     * @param Request $request
+     * @return mixed
+     */
+
     /**
      * Display the specified resource.
      *
@@ -143,7 +186,11 @@ class PriceController extends Controller
      */
     public function show(Price $price)
     {
-        //
+        $price->load('product');
+        return response()->json([
+            'type' => 'success',
+            'data' => $price
+        ], 201);
     }
 
     /**
@@ -154,7 +201,25 @@ class PriceController extends Controller
      */
     public function update(Request $request, Price $price)
     {
-        //
+        try {
+            $this->validate($request, Price::validationRules());
+            $price = Price::update($request->all());
+            return response()->json([
+                'type' => 'success',
+                'title' => "Update Price",
+                'message' => 'Price was successful updated',
+                'data' => $price
+            ], 201);
+            
+        } catch (ValidationException $e) {
+            return response()->jsonApi([
+                'type' => 'warning',
+                'title' => 'Contributor person details data',
+                'message' => "Validation error",
+                'data' => $e->getMessage()
+            ], 400);
+        }
+
     }
 
     /**
@@ -165,6 +230,12 @@ class PriceController extends Controller
      */
     public function destroy(Price $price)
     {
-        //
+        $price->delete();
+        return response()->json([
+            'type' => 'success',
+            'title' => "Delete Price",
+            'message' => 'Price was successful deleted',
+        ], 201);
+
     }
 }

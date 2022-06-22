@@ -10,14 +10,31 @@ $router->group([
     /**
      * PUBLIC ACCESS
      */
+
+    $router->group([
+        'prefix' => 'public',
+        'namespace '=>'public'
+    ], function ($router) {
+        /**
+         * Products for public access
+         */
+        $router->group([
+            'prefix' => 'products',
+        ], function ($router) {
+            $router->get('/', 'ProductController@index');
+            $router->get('/{id}', 'ProductController@show');
+        });
+    });
+
     /**
-     * Products
+     * Payments webhooks
      */
     $router->group([
-        'prefix' => 'products',
+        'prefix' => 'webhooks',
     ], function ($router) {
-        $router->get('/', 'ProductController@index');
-        $router->get('/{id}', 'ProductController@show');
+        $router->post('identify/{type}', 'IdentifyWebhookController');
+//        $router->post('identify/events', 'IdentifyWebhookController@webhookEvents');
+//        $router->post('identify/notifications', 'IdentifyWebhookController@webhookNotifications');
     });
 
     /**
@@ -37,7 +54,6 @@ $router->group([
             $router->put('/', 'TokenRewardController@update');
             $router->delete('/', 'TokenRewardController@destroy');
         });
-
         /**
          * Prices
          */
@@ -113,6 +129,15 @@ $router->group([
         ], function ($router) {
             $router->get('/', 'TransactionController');
             $router->post('/', 'TransactionController@store');
+        });
+        /**
+         * Price
+         */
+        $router->group(['prefix' => 'price'], function ($router) {
+            $router->post('/', 'PriceController@store');
+            $router->get('/{id}', 'PriceController@show');
+            $router->patch('/{id}', 'PriceController@update');
+            $router->delete('/{id}', 'PriceController@destroy');
         });
 
         /**

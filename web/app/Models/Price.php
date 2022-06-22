@@ -71,12 +71,15 @@ class Price extends Model
      */
     protected $hidden = [
         'created_at',
-        'updated_at'
+        'updated_at',
+        'deleted_at'
     ];
 
-    public static function validationRules()
-    {
+    public static function validationRules(){
         return [
+            'price' => 'required',
+            'amount' => 'required',
+            'product_id'=> 'required'
         ];
     }
 
