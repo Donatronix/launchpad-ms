@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Sumra\SDK\Traits\OwnerTrait;
 use Sumra\SDK\Traits\UuidTrait;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * Deposit Scheme
@@ -41,6 +42,7 @@ class Deposit extends Model
     use HasFactory;
     use UuidTrait;
     use OwnerTrait;
+    use SoftDeletes;
 
     /**
      * @var string[]
