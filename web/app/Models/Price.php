@@ -59,6 +59,7 @@ class Price extends Model
         'stage',
         'price',
         'amount',
+        'product_id',
         'period_in_days',
         'percent_profit',
         'status',
@@ -79,7 +80,11 @@ class Price extends Model
         return [
             'price' => 'required',
             'amount' => 'required',
-            'product_id'=> 'required'
+            'product_id'=> 'required',
+            'stage' => 'required',
+            'period_in_days' => 'required',
+            'percent_profit' => 'required',
+            'status' => 'required',
         ];
     }
 

@@ -109,9 +109,10 @@ $router->group([
          * Price
          */
         $router->group(['prefix' => 'price'], function ($router) {
+            $router->get('/', 'PriceController@index');
             $router->post('/', 'PriceController@store');
             $router->get('/{id}', 'PriceController@show');
-            $router->patch('/{id}', 'PriceController@update');
+            $router->put('/{id}', 'PriceController@update');
             $router->delete('/{id}', 'PriceController@destroy');
         });
 
