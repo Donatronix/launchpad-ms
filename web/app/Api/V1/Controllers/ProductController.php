@@ -26,14 +26,6 @@ class ProductController extends Controller
      *             "ManagerWrite"
      *         }
      *     }},
-     *     x={
-     *         "auth-type": "Application & Application User",
-     *         "throttling-tier": "Unlimited",
-     *         "wso2-application-security": {
-     *             "security-types": {"oauth2"},
-     *             "optional": "false"
-     *         }
-     *     },
      *
      *     @OA\Parameter(
      *         name="status",
@@ -107,14 +99,7 @@ class ProductController extends Controller
      *             "ManagerWrite"
      *         }
      *     }},
-     *     x={
-     *         "auth-type": "Application & Application User",
-     *         "throttling-tier": "Unlimited",
-     *         "wso2-application-security": {
-     *             "security-types": {"oauth2"},
-     *             "optional": "false"
-     *         }
-     *     },
+
      *
      *     @OA\Parameter(
      *         name="id",
@@ -138,10 +123,11 @@ class ProductController extends Controller
     {
         try {
             // Get order
-            $product = Product::where('status', true)
+            $product = Product::query()
+                ->with('prices')
                 ->where('ticker', $id)
                 ->orWhere('id', $id)
-                ->with('prices')
+                ->where('status', true)
                 ->get();
 
             return response()->jsonApi([

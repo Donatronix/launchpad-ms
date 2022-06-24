@@ -25,14 +25,6 @@ class PriceController extends Controller
      *             "ManagerWrite"
      *         }
      *     }},
-     *     x={
-     *         "auth-type": "Application & Application User",
-     *         "throttling-tier": "Unlimited",
-     *         "wso2-application-security": {
-     *             "security-types": {"oauth2"},
-     *             "optional": "false"
-     *         }
-     *     },
      *
      *     @OA\Response(
      *          response="200",
@@ -45,18 +37,27 @@ class PriceController extends Controller
      */
     public function index(Request $request): mixed
     {
-        // Get order
-        $order = Price::where('status', true)
-            ->select(['stage', 'price', 'period_in_days', 'percent_profit', 'amount'])
-            ->where('product_id', '957d387a-e1a3-44ef-af29-6ce9118d67b4')
-            ->get();
+        try{
+            // Get order
+            $order = Price::where('status', true)
+                ->select(['stage', 'price', 'period_in_days', 'percent_profit', 'amount'])
+                ->where('product_id', '957d387a-e1a3-44ef-af29-6ce9118d67b4')
+                ->get();
 
-        return response()->jsonApi([
-            'type' => 'success',
-            'title' => 'Product prices list',
-            'message' => "Product prices list has been received",
-            'data' => $order->toArray()
-        ], 200);
+            return response()->jsonApi([
+                'type' => 'success',
+                'title' => 'Product prices list',
+                'message' => "Product prices list has been received",
+                'data' => $order->toArray()
+            ], 200);
+        }catch (ValidationException $e) {
+            return response()->jsonApi([
+                'type' => 'warning',
+                'title' => 'Product price list ',
+                'message' => "Validation error",
+                'data' => $e->getMessage()
+            ], 400);
+        }
     }
 
     /**
@@ -75,14 +76,6 @@ class PriceController extends Controller
      *             "ManagerWrite"
      *         }
      *     }},
-     *     x={
-     *         "auth-type": "Application & Application User",
-     *         "throttling-tier": "Unlimited",
-     *         "wso2-application-security": {
-     *             "security-types": {"oauth2"},
-     *             "optional": "false"
-     *         }
-     *     },
      *
      *     @OA\RequestBody(
      *         required=true,
@@ -133,7 +126,7 @@ class PriceController extends Controller
                 'message' => 'Price was successful created',
                 'data' => $price
             ], 201);
-            
+
         } catch (ValidationException $e) {
             return response()->jsonApi([
                 'type' => 'warning',
@@ -148,7 +141,7 @@ class PriceController extends Controller
      * Getting a listing of product prices
      *
      * @OA\Get(
-     *     path="/admin/prices",
+     *     path="/admin/prices/{id}",
      *     summary="Getting a listing of product prices",
      *     description="Getting a listing of product prices",
      *     tags={"Admin / Prices"},
@@ -160,14 +153,6 @@ class PriceController extends Controller
      *             "ManagerWrite"
      *         }
      *     }},
-     *     x={
-     *         "auth-type": "Application & Application User",
-     *         "throttling-tier": "Unlimited",
-     *         "wso2-application-security": {
-     *             "security-types": {"oauth2"},
-     *             "optional": "false"
-     *         }
-     *     },
      *
      *     @OA\Response(
      *          response="200",
@@ -186,12 +171,77 @@ class PriceController extends Controller
      */
     public function show(Price $price)
     {
-        $price->load('product');
-        return response()->json([
-            'type' => 'success',
-            'data' => $price
-        ], 201);
+        try{
+            $price->load('product');
+            return response()->json([
+                'type' => 'success',
+                'title' => 'Price Product List',
+                'data' => $price
+            ], 200);
+        }catch (ValidationException $e) {
+            return response()->jsonApi([
+                'type' => 'warning',
+                'title' => 'Price Product List',
+                'message' => "Validation error",
+                'data' => $e->getMessage()
+            ], 400);
+        }
     }
+
+        /**
+     * Store a newly stage price in storage.
+     *
+     * @OA\Put(
+     *     path="/admin/prices",
+     *     summary="Saving new stage price",
+     *     description="Saving new stage price",
+     *     tags={"Admin / Prices"},
+     *
+     *     security={{
+     *         "default": {
+     *             "ManagerRead",
+     *             "User",
+     *             "ManagerWrite"
+     *         }
+     *     }},
+     *
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(ref="#/components/schemas/ProductPrice")
+     *     ),
+     *     @OA\Response(
+     *         response="200",
+     *         description="Successfully save"
+     *     ),
+     *     @OA\Response(
+     *         response="201",
+     *         description="Price created"
+     *     ),
+     *     @OA\Response(
+     *         response="400",
+     *         description="Invalid request"
+     *     ),
+     *     @OA\Response(
+     *         response="401",
+     *         description="Unauthorized"
+     *     ),
+     *     @OA\Response(
+     *         response="404",
+     *         description="not found"
+     *     ),
+     *     @OA\Response(
+     *         response="422",
+     *         description="Validation failed"
+     *     ),
+     *     @OA\Response(
+     *         response="500",
+     *         description="Unknown error"
+     *     )
+     * )
+     *
+     * @param Request $request
+     * @return mixed
+     */
 
     /**
      * Update the specified resource in storage.
@@ -210,17 +260,61 @@ class PriceController extends Controller
                 'message' => 'Price was successful updated',
                 'data' => $price
             ], 201);
-            
+
         } catch (ValidationException $e) {
             return response()->jsonApi([
                 'type' => 'warning',
-                'title' => 'Contributor person details data',
+                'title' => 'Update Price',
                 'message' => "Validation error",
                 'data' => $e->getMessage()
             ], 400);
         }
 
     }
+
+        /**
+     * Delete a particular Price based on ID.
+     *
+     * @OA\Delete(
+     *     path="/admin/price/{id}",
+     *     description="Get a price",
+     *     tags={"Admin / price"},
+     *
+     *     security={{
+     *         "default": {
+     *             "ManagerRead",
+     *             "User",
+     *             "ManagerWrite"
+     *         }
+     *     }},
+     *
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         description="price ID",
+     *         @OA\Schema(
+     *             type="string"
+     *         )
+     *     ),
+     *
+     *     @OA\Response(
+     *         response="200",
+     *         description="Success"
+     *     ),
+     *     @OA\Response(
+     *         response="401",
+     *         description="Unauthorized"
+     *     ),
+     *     @OA\Response(
+     *         response="400",
+     *         description="Invalid request"
+     *     ),
+     *     @OA\Response(
+     *         response="404",
+     *         description="Not found"
+     *     )
+     * )
+     */
 
     /**
      * Remove the specified resource from storage.
@@ -230,12 +324,22 @@ class PriceController extends Controller
      */
     public function destroy(Price $price)
     {
-        $price->delete();
-        return response()->json([
-            'type' => 'success',
-            'title' => "Delete Price",
-            'message' => 'Price was successful deleted',
-        ], 201);
+        try{
+            $price->delete();
+            return response()->json([
+                'type' => 'success',
+                'title' => "Delete Price",
+                'message' => 'Price was successful deleted',
+            ], 201);
+        } catch (ValidationException $e) {
+            return response()->jsonApi([
+                'type' => 'warning',
+                'title' => 'Delete Price',
+                'message' => "Validation error",
+                'data' => $e->getMessage()
+            ], 400);
+        }
+
 
     }
 }

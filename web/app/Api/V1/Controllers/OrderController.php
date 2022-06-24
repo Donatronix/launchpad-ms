@@ -61,14 +61,8 @@ class OrderController extends Controller
      *             "ManagerWrite"
      *         }
      *     }},
-     *     x={
-     *         "auth-type": "Application & Application User",
-     *         "throttling-tier": "Unlimited",
-     *         "wso2-application-security": {
-     *             "security-types": {"oauth2"},
-     *             "optional": "false"
-     *         }
-     *     },
+
+     *
      *
      *     @OA\Response(
      *          response="200",
@@ -108,14 +102,7 @@ class OrderController extends Controller
      *             "ManagerWrite"
      *         }
      *     }},
-     *     x={
-     *         "auth-type": "Application & Application User",
-     *         "throttling-tier": "Unlimited",
-     *         "wso2-application-security": {
-     *             "security-types": {"oauth2"},
-     *             "optional": "false"
-     *         }
-     *     },
+
      *
      *     @OA\RequestBody(
      *         required=true,
@@ -155,30 +142,23 @@ class OrderController extends Controller
      */
     public function store(Request $request): mixed
     {
-        // Validate input
-        try {
-            $this->validate($request, $this->model::validationRules());
-        } catch (ValidationException $e){
-            return response()->jsonApi([
-                'type' => 'warning',
-                'title' => 'New Order details data',
-                'message' => "Validation error",
-                'data' => $e->getMessage()
-            ], 400);
-        }
-
-        $product = Product::where('ticker', $request->get('product'))->first();
-        if(!$product){
-            return response()->jsonApi([
-                'type' => 'warning',
-                'title' => 'New Order details data',
-                'message' => "This product does not exist",
-                'data' => []
-            ], 400);
-        }
-
         // Try to save received data
         try {
+            // Validate input
+            $this->validate($request, $this->model::validationRules());
+
+            $product = Product::findOrFail($request->get('product_id', config('settings.empty_uuid')));
+
+            if(!$product){
+                return response()->jsonApi([
+                    'type' => 'warning',
+                    'title' => 'New Order details data',
+                    'message' => "This product does not exist",
+                    'data' => []
+                ], 400);
+            }
+
+
             // Create new order
             $order = $this->model::create([
                 'product_id' => $product->id,
@@ -217,7 +197,18 @@ class OrderController extends Controller
                 'message' => "New order has been created successfully",
                 'data' => $order->toArray()
             ], 200);
-        } catch (Exception $e) {
+        }
+
+        catch (ValidationException $e){
+            return response()->jsonApi([
+                'type' => 'warning',
+                'title' => 'New Order details data',
+                'message' => "Validation error",
+                'data' => $e->getMessage()
+            ], 400);
+        }
+
+        catch (Exception $e) {
             return response()->jsonApi([
                 'type' => 'danger',
                 'title' => 'New order registration',
@@ -243,14 +234,6 @@ class OrderController extends Controller
      *             "ManagerWrite"
      *         }
      *     }},
-     *     x={
-     *         "auth-type": "Application & Application User",
-     *         "throttling-tier": "Unlimited",
-     *         "wso2-application-security": {
-     *             "security-types": {"oauth2"},
-     *             "optional": "false"
-     *         }
-     *     },
      *
      *     @OA\Parameter(
      *         name="id",

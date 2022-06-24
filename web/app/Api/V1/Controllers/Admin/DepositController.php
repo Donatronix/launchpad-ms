@@ -13,7 +13,6 @@ use Illuminate\Support\Facades\Auth;
 use Sumra\SDK\JsonApiResponse;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-
 /**
  * Class DepositController
  *
@@ -21,7 +20,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 class DepositController extends Controller
 {
-
     /**
      * Display list of all deposits
      *
@@ -30,46 +28,39 @@ class DepositController extends Controller
      *     description="Getting all data about deposits for all users",
      *     tags={"Admin / Deposits"},
      *
-     *      security={{
+     *     security={{
      *         "default": {
      *             "ManagerRead",
      *             "User",
      *             "ManagerWrite"
      *         }
-     *      }},
+     *     }},
      *
-     *
-     *       @OA\Parameter(
+     *     @OA\Parameter(
      *         name="limit",
      *         description="Count of deposits in response",
      *         in="query",
      *         required=false,
      *         @OA\Schema(
-     *              type="integer",
-     *              default=20,
+     *             type="integer",
+     *             default=20,
      *         )
-     *      ),
+     *     ),
      *     @OA\Parameter(
      *         name="page",
      *         description="Page of list",
      *         in="query",
      *         required=false,
      *         @OA\Schema(
-     *              type="integer",
-     *              default=1,
+     *             type="integer",
+     *             default=1,
      *         )
      *     ),
      *
      *     @OA\Response(
-     *          response="200",
-     *          description="Success",
-     *          @OA\JsonContent(
-     *              type="array",
-     *              @OA\Items(
-     *
-     *              )
-     *          ),
-     *     ),
+     *         response="200",
+     *         description="Success"
+     *     )
      * )
      *
      * @param \Illuminate\Http\Request $request
@@ -95,7 +86,6 @@ class DepositController extends Controller
             ], 400);
         }
     }
-
 
     /**
      * Create new deposit
@@ -192,7 +182,6 @@ class DepositController extends Controller
         }
     }
 
-
     /**
      * Display a single Deposit
      *
@@ -206,47 +195,11 @@ class DepositController extends Controller
      *         in="query",
      *         description="deposit ID",
      *         required=true,
-     *      ),
+     *     ),
      *
-     *      @OA\Response(
-     *          response="200",
-     *          description="Success",
-     *          @OA\JsonContent(
-     *              type="array",
-     *              @OA\Items(
-     *
-     *             @OA\Property(
-     *                  property="id",
-     *                  type="string",
-     *                  description="deposit's id",
-     *                  example="90000009-9009-9009-9009-900000000009"
-     *              ),
-     *              @OA\Property(
-     *                  property="currency_id",
-     *                  type="string",
-     *                  description="currency id",
-     *                  example="90000009-9009-9009-9009-900000000"
-     *              ),
-     *              @OA\Property(
-     *                  property="deposit_amount",
-     *                  type="decimal",
-     *                  description="deposit amount",
-     *                  example="100.00"
-     *              ),
-     *              @OA\Property(
-     *                  property="user_id",
-     *                  type="string",
-     *                  description="user id",
-     *                  example="90000009-9009-9009-9009-900000000
-     *              ),
-     *              @OA\Property(
-     *                  property="order_id",
-     *                  type="string",
-     *                  description="order id",
-     *                  example="20000-90000000-3009-900"
-     *              ),
-     *              )
-     *          )
+     *     @OA\Response(
+     *         response="200",
+     *         description="Success"
      *     ),
      *
      *     @OA\Response(
@@ -254,12 +207,12 @@ class DepositController extends Controller
      *         description="Unknown error"
      *     ),
      *     @OA\Response(
-     *         response=400,
+     *         response="400",
      *         description="Invalid request"
      *     ),
      *
      *     @OA\Response(
-     *         response=404,
+     *         response="404",
      *         description="Not Found"
      *     ),
      * )
@@ -270,7 +223,6 @@ class DepositController extends Controller
      */
     public function show($id): JsonResponse
     {
-
         try {
             $deposit = Deposit::findOrFail($id);
 
@@ -289,12 +241,11 @@ class DepositController extends Controller
         }
     }
 
-
     /**
      * Update a single Deposit
      *
      * @OA\Put(
-     *      path="/admin/deposits/{id}",
+     *     path="/admin/deposits/{id}",
      *     description="Update one deposit",
      *     tags={"Admin / Deposits"},
      *
@@ -303,93 +254,55 @@ class DepositController extends Controller
      *         in="query",
      *         description="Deposit id",
      *         required=true,
-     *      ),
+     *     ),
      *
      *     @OA\RequestBody(
-     *            @OA\JsonContent(
-     *                type="object",
-     *                @OA\Property(
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(
      *                    property="currency_id",
      *                    type="string",
      *                    description="currency id",
      *                    example="8000000-3000000-20000"
-     *                ),
-     *                @OA\Property(
+     *             ),
+     *             @OA\Property(
      *                    property="deposit_amount",
      *                    type="decimal",
      *                    description="amount to deposit",
      *                    example="100.00"
-     *                ),
-     *                @OA\Property(
+     *             ),
+     *             @OA\Property(
      *                    property="user_id",
      *                    type="string",
      *                    description="user id",
      *                    example="90000-8000000-2290000"
-     *                ),
-     *                @OA\Property(
+     *             ),
+     *             @OA\Property(
      *                    property="order_id",
      *                    type="string",
      *                    description="order id",
      *                    example="490000-9800000-38380000"
-     *                ),
-     *           ),
-     *       ),
+     *             ),
+     *         ),
+     *     ),
      *
      *
      *     @OA\Response(
-     *          response="200",
-     *          description="Success",
-     *          @OA\JsonContent(
-     *              type="array",
-     *              @OA\Items(
-     *
-     *             @OA\Property(
-     *                  property="id",
-     *                  type="string",
-     *                  description="deposit's id",
-     *                  example="90000009-9009-9009-9009-900000000009"
-     *              ),
-     *              @OA\Property(
-     *                  property="currency_id",
-     *                  type="string",
-     *                  description="currency id",
-     *                  example="90000009-9009-9009-9009-900000000"
-     *              ),
-     *              @OA\Property(
-     *                  property="deposit_amount",
-     *                  type="decimal",
-     *                  description="deposit amount",
-     *                  example="100.00"
-     *              ),
-     *              @OA\Property(
-     *                  property="user_id",
-     *                  type="string",
-     *                  description="user id",
-     *                  example="90000009-9009-9009-9009-900000000
-     *              ),
-     *              @OA\Property(
-     *                  property="order_id",
-     *                  type="string",
-     *                  description="order id",
-     *                  example="20000-90000000-3009-900"
-     *              ),
-     *              )
-     *          )
+     *         response="200",
+     *         description="Success"
      *     ),
-     *
      *     @OA\Response(
      *         response="500",
      *         description="Unknown error"
      *     ),
      *     @OA\Response(
-     *         response=400,
+     *         response="400",
      *         description="Invalid request"
      *     ),
-     *
      *     @OA\Response(
-     *         response=404,
+     *         response="404",
      *         description="Not Found"
-     *     ),
+     *     )
      * )
      *
      * @param \Illuminate\Http\Request $request
@@ -434,12 +347,11 @@ class DepositController extends Controller
         }
     }
 
-
     /**
      * Delete a single deposits
      *
      * @OA\Delete(
-     *    path="/admin/deposits/{id}",
+     *     path="/admin/deposits/{id}",
      *     description="deposits id",
      *     tags={"Admin / Deposits"},
      *
@@ -448,19 +360,19 @@ class DepositController extends Controller
      *         in="query",
      *         description="deposits ID",
      *         required=true,
-     *      ),
+     *     ),
      *
      *     @OA\Response(
      *         response="500",
      *         description="Unknown error"
      *     ),
      *     @OA\Response(
-     *         response=400,
+     *         response="400",
      *         description="Invalid request"
      *     ),
      *
      *     @OA\Response(
-     *         response=404,
+     *         response="404",
      *         description="Not Found"
      *     ),
      * )
@@ -487,4 +399,4 @@ class DepositController extends Controller
             ], 400);
         }
     }
-}//end class
+}

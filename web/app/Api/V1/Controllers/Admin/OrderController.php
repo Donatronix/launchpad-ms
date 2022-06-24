@@ -20,7 +20,6 @@ use Sumra\SDK\JsonApiResponse;
  */
 class OrderController extends Controller
 {
-
     /**
      * Display list of all orders
      *
@@ -296,7 +295,7 @@ class OrderController extends Controller
      *     ),
      *
      *     @OA\Response(
-     *         response=404,
+     *         response="404",
      *         description="Not Found"
      *     ),
      * )
