@@ -21,7 +21,7 @@ $router->group([
     });
 
     /**
-     * USER APPLICATION ACCESS
+     * USER APPLICATION PRIVATE ACCESS
      */
     $router->group([
         'middleware' => 'checkUser'
