@@ -164,5 +164,19 @@ $router->group([
             $router->put('{id}',    'DepositController@update');
             $router->delete('{id}', 'DepositController@destroy');
         });
+
+        /**
+         * Admin/Order
+         */
+        $router->group([
+            'prefix' => 'orders',
+        ], function ($router) {
+            $router->get('/',       'OrderController@index');
+            $router->post('/',      'OrderController@store');
+
+            $router->get('{id}',    'OrderController@show');
+            $router->put('{id}',    'OrderController@update');
+            $router->delete('{id}', 'OrderController@destroy');
+        });
     });
 });
