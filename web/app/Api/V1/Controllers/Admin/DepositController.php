@@ -137,30 +137,6 @@ class DepositController extends Controller
      *         response="200",
      *         description="Successfully saved"
      *     ),
-     *     @OA\Response(
-     *         response="201",
-     *         description="Deposit created"
-     *     ),
-     *     @OA\Response(
-     *         response="400",
-     *         description="Invalid request"
-     *     ),
-     *     @OA\Response(
-     *         response="401",
-     *         description="Unauthorized"
-     *     ),
-     *     @OA\Response(
-     *         response="404",
-     *         description="not found"
-     *     ),
-     *     @OA\Response(
-     *         response="422",
-     *         description="Validation failed"
-     *     ),
-     *     @OA\Response(
-     *         response="500",
-     *         description="Unknown error"
-     *     )
      * )
      *
      * @param \Illuminate\Http\Request $request
@@ -191,7 +167,7 @@ class DepositController extends Controller
             return response()->json($resp, 200);
         } catch (ValidationException $e) {
             return response()->json([
-                'type'  => 'danger',
+                'type'  => 'warning',
                 'title'  => 'Create new deposit',
                 'message' => 'Error occurred when creating new deposit',
                 'data' => $e->getMessage()
@@ -356,7 +332,7 @@ class DepositController extends Controller
             return response()->json($resp, 200);
         } catch (ValidationException $e) {
             return response()->json([
-                'type'  => 'danger',
+                'type'  => 'warning',
                 'title'  => 'Update deposit',
                 'message' => 'Error occurred when updating deposit',
                 'data' => $e->getMessage()
@@ -408,10 +384,11 @@ class DepositController extends Controller
     public function destroy($id)
     {
         try {
+            $deleteRecord = Deposit::findOrFail($id)->delete();
             $resp['type']       = "Success";
             $resp['title']      = "Soft delete deposit";
             $resp['message']    = "Deleted successfully";
-            $resp['data']       = Deposit::findOrFail($id)->delete();
+            $resp['data']       = $deleteRecord;
             return response()->json($resp, 200);
         } catch (\Exception $e) {
             return response()->json([
