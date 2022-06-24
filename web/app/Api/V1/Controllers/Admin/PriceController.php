@@ -126,7 +126,7 @@ class PriceController extends Controller
                 'message' => 'Price was successful created',
                 'data' => $price
             ], 201);
-            
+
         } catch (ValidationException $e) {
             return response()->jsonApi([
                 'type' => 'warning',
@@ -141,7 +141,7 @@ class PriceController extends Controller
      * Getting a listing of product prices
      *
      * @OA\Get(
-     *     path="/admin/prices",
+     *     path="/admin/prices/{id}",
      *     summary="Getting a listing of product prices",
      *     description="Getting a listing of product prices",
      *     tags={"Admin / Prices"},
@@ -260,7 +260,7 @@ class PriceController extends Controller
                 'message' => 'Price was successful updated',
                 'data' => $price
             ], 201);
-            
+
         } catch (ValidationException $e) {
             return response()->jsonApi([
                 'type' => 'warning',

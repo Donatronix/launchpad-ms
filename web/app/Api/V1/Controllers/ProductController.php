@@ -123,10 +123,11 @@ class ProductController extends Controller
     {
         try {
             // Get order
-            $product = Product::where('status', true)
+            $product = Product::query()
+                ->with('prices')
                 ->where('ticker', $id)
                 ->orWhere('id', $id)
-                ->with('prices')
+                ->where('status', true)
                 ->get();
 
             return response()->jsonApi([

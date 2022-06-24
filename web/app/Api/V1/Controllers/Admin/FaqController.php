@@ -26,7 +26,7 @@ class FaqController extends Controller
      *             "ManagerWrite"
      *         }
      *     }},
- 
+
      *
      *     @OA\Parameter(
      *         name="limit",
@@ -254,8 +254,8 @@ class FaqController extends Controller
      *             "ManagerWrite"
      *         }
      *     }},
-   
-     *     
+
+     *
      *
      *     @OA\Parameter(
      *         name="id",

@@ -19,10 +19,10 @@ use Sumra\SDK\Traits\UuidTrait;
  *     schema="Order",
  *
  *     @OA\Property(
- *         property="product",
+ *         property="product_id",
  *         type="string",
- *         description="Purchased token",
- *         example="$utta"
+ *         description="Product ID",
+ *         example="9a778e5d-61aa-4a2b-b511-b445f6a67909"
  *     ),
  *     @OA\Property(
  *         property="investment_amount",

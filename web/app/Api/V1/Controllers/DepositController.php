@@ -147,7 +147,7 @@ class DepositController extends Controller
             ], 400);
         }
 
-        $product = Product::where('ticker', $request->get('product'))->first();
+        $product = Product::where('ticker', $request->get('product_id', ))->first();
         if(!$product){
             return response()->jsonApi([
                 'type' => 'warning',

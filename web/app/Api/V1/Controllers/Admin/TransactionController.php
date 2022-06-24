@@ -34,7 +34,7 @@ class TransactionController extends Controller
      *         )
      *     ),
      *     @OA\Response(
-     *         response=200,
+     *         response="200",
      *         description="Success",
      *     )
      * )
@@ -97,7 +97,7 @@ class TransactionController extends Controller
      *         )
      *     ),
      *     @OA\Response(
-     *         response=200,
+     *         response="200",
      *         description="Success",
      *     )
      * )
@@ -156,7 +156,7 @@ class TransactionController extends Controller
      *         )
      *     ),
      *     @OA\Response(
-     *         response=200,
+     *         response="200",
      *         description="Success",
      *     )
      * )
@@ -231,7 +231,7 @@ class TransactionController extends Controller
      *         )
      *     ),
      *     @OA\Response(
-     *         response=200,
+     *         response="200",
      *         description="Success",
      *     )
      * )
