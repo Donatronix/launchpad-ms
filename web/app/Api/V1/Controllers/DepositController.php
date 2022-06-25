@@ -7,15 +7,13 @@ use App\Http\Controllers\Controller;
 use App\Models\Deposit;
 use App\Models\PaymentType;
 use App\Models\Product;
-use Carbon\Carbon;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
 use Sumra\SDK\JsonApiResponse;
-use Barryvdh\DomPDF\Facade\Pdf;
-
 
 /**
  * Class DepositController
@@ -57,7 +55,6 @@ class DepositController extends Controller
      *             "ManagerWrite"
      *         }
      *     }},
-
      *
      *     @OA\Response(
      *          response="200",
@@ -65,7 +62,8 @@ class DepositController extends Controller
      *     )
      * )
      */
-    public function index(){
+    public function index()
+    {
         // Get deposit
         $deposit = Deposit::byOwner()
             ->where('status', Deposit::STATUS_NEW)
@@ -95,7 +93,6 @@ class DepositController extends Controller
      *             "ManagerWrite"
      *         }
      *     }},
-
      *
      *     @OA\RequestBody(
      *         required=true,
@@ -138,7 +135,7 @@ class DepositController extends Controller
         // Validate input
         try {
             $this->validate($request, $this->model::validationRules());
-        } catch (ValidationException $e){
+        } catch (ValidationException $e) {
             return response()->jsonApi([
                 'type' => 'warning',
                 'title' => 'New Deposit details data',
@@ -147,8 +144,8 @@ class DepositController extends Controller
             ], 400);
         }
 
-        $product = Product::where('ticker', $request->get('product_id', ))->first();
-        if(!$product){
+        $product = Product::where('ticker', $request->get('product_id',))->first();
+        if (!$product) {
             return response()->jsonApi([
                 'type' => 'warning',
                 'title' => 'New Deposit details data',
@@ -164,7 +161,7 @@ class DepositController extends Controller
                 'product_id' => $product->id,
                 'investment_amount' => $request->get('investment_amount'),
                 'deposit_percentage' => $request->get('deposit_percentage'),
-                'deposit_amount' => $request->get('deposit_amount'),
+                'amount' => $request->get('deposit_amount'),
                 'user_id' => Auth::user()->getAuthIdentifier(),
                 'status' => Deposit::STATUS_NEW
             ]);
@@ -208,7 +205,6 @@ class DepositController extends Controller
      *             "ManagerWrite"
      *         }
      *     }},
-
      *
      *     @OA\Parameter(
      *         name="id",
@@ -251,41 +247,6 @@ class DepositController extends Controller
         ], 200);
     }
 
-    public function generatePdfForTransaction($transaction_id)
-    {
-        try {
-            $transaction = (new TransactionService())->getOne($transaction_id);
-            $deposit = $transaction->deposit;
-            $transaction->date =  $transaction->created_at->toDayDateTimeString();
-
-            if($transaction->payment_type_id == PaymentType::DEBIT_CARD) {
-                $pdf = PDF::loadView('pdf.receipt.deposit-card', $transaction->toArray());
-                return $pdf->download('pdf.receipt.deposit-card');
-            }
-            elseif ($transaction->payment_type_id == PaymentType::CRYPTO
-                || $transaction->payment_type_id == PaymentType::FIAT ){
-                $pdf = PDF::loadView('pdf.receipt.deposit-wallet', $transaction->toArray());
-                return $pdf->download('pdf.receipt.deposit-wallet');
-            }
-
-            return response()->jsonApi([
-                'type' => 'success',
-                'title' => 'Deposit details data',
-                'message' => "Deposit detail data has been received",
-                'data' => $transaction->toArray()
-            ], 200);
-
-        } Catch(ModelNotFoundException $e) {
-            return response()->jsonApi([
-                'type' => 'danger',
-                'title' => "Get deposit",
-                'message' => "Transaction with id #{$transaction_id} not found: {$e->getMessage()}",
-                'data' => ''
-            ], 404);
-        }
-
-    }
-
     /**
      * Get deposit object
      *
@@ -301,6 +262,39 @@ class DepositController extends Controller
                 'type' => 'danger',
                 'title' => "Get deposit",
                 'message' => "Deposit with id #{$id} not found: {$e->getMessage()}",
+                'data' => ''
+            ], 404);
+        }
+    }
+
+    public function generatePdfForTransaction($transaction_id)
+    {
+        try {
+            $transaction = (new TransactionService())->getOne($transaction_id);
+            $deposit = $transaction->deposit;
+            $transaction->date = $transaction->created_at->toDayDateTimeString();
+
+            if ($transaction->payment_type_id == PaymentType::DEBIT_CARD) {
+                $pdf = PDF::loadView('pdf.receipt.deposit-card', $transaction->toArray());
+                return $pdf->download('pdf.receipt.deposit-card');
+            } elseif ($transaction->payment_type_id == PaymentType::CRYPTO
+                || $transaction->payment_type_id == PaymentType::FIAT) {
+                $pdf = PDF::loadView('pdf.receipt.deposit-wallet', $transaction->toArray());
+                return $pdf->download('pdf.receipt.deposit-wallet');
+            }
+
+            return response()->jsonApi([
+                'type' => 'success',
+                'title' => 'Deposit details data',
+                'message' => "Deposit detail data has been received",
+                'data' => $transaction->toArray()
+            ], 200);
+
+        } catch (ModelNotFoundException $e) {
+            return response()->jsonApi([
+                'type' => 'danger',
+                'title' => "Get deposit",
+                'message' => "Transaction with id #{$transaction_id} not found: {$e->getMessage()}",
                 'data' => ''
             ], 404);
         }

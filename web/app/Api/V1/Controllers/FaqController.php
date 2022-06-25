@@ -2,10 +2,10 @@
 
 namespace App\Api\V1\Controllers;
 
-use Illuminate\Http\Request;
-
 use App\Models\Faq;
 use App\Traits\ResponseTrait;
+use Exception;
+use Illuminate\Http\Request;
 
 class FaqController extends Controller
 {
@@ -26,7 +26,6 @@ class FaqController extends Controller
      *             "ManagerWrite"
      *         }
      *     }},
-
      *
      *     @OA\Parameter(
      *         name="limit",
@@ -94,8 +93,7 @@ class FaqController extends Controller
         try {
             $faqs = Faq::latest()->paginate($limit);
             return $this->processPaginator('Faqs', $faqs);
-        }
-        catch (\Exception $e) {
+        } catch (Exception $e) {
             return response()->jsonApi([
                 'type' => 'danger',
                 'title' => "Faqs",
@@ -119,7 +117,6 @@ class FaqController extends Controller
      *             "ManagerWrite"
      *         }
      *     }},
-
      *
      *     @OA\Parameter(
      *         name="id",
@@ -158,8 +155,7 @@ class FaqController extends Controller
                 'message' => 'Faq loaded',
                 'data' => $faq
             ], 200);
-        }
-        catch (\Exception $e) {
+        } catch (Exception $e) {
             return response()->jsonApi([
                 'type' => 'danger',
                 'title' => "Faq",

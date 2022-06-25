@@ -1,84 +1,19 @@
 <?php
 
-namespace App\Api\V1\Controllers;
+namespace App\Api\V1\Controllers\User;
 
+use App\Api\V1\Controllers\Controller;
 use App\Api\V1\Services\TransactionService;
-use App\Http\Controllers\Controller;
 use App\Models\Deposit;
 use App\Models\Order;
-use App\Models\PaymentType;
 use App\Models\Product;
-use Barryvdh\DomPDF\Facade\Pdf;
-use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
-use Sumra\SDK\JsonApiResponse;
 
-/**
- * Class OrderController
- *
- * @package App\Api\V1\Controllers
- */
-class OrderController extends Controller
+class InvestmentController extends Controller
 {
-    /**
-     * The name of the factory's corresponding model.
-     *
-     * @var string
-     */
-    protected $model = Order::class;
-
-    /**
-     * OrderController constructor.
-     *
-     * @param Order $model
-     */
-    public function __construct(Order $model)
-    {
-        $this->model = $model;
-    }
-
-    /**
-     *
-     * @OA\Get(
-     *     path="/orders",
-     *     summary="Getting created order by user if exist",
-     *     description="Getting created order by user if exist",
-     *     tags={"Orders"},
-     *
-     *     security={{
-     *         "default": {
-     *             "ManagerRead",
-     *             "User",
-     *             "ManagerWrite"
-     *         }
-     *     }},
-     *
-     *     @OA\Response(
-     *          response="200",
-     *          description="Detail data of order"
-     *     )
-     * )
-     */
-    public function index()
-    {
-        // Get order
-        $order = Order::byOwner()
-            ->where('status', Order::STATUS_NEW)->with(['transaction' => function ($query) {
-                $query->select('id', 'order_id', 'wallet_address', 'payment_type_id');
-            }, 'transaction.payment_type'])
-            ->get();
-
-        return response()->jsonApi([
-            'type' => 'success',
-            'title' => 'Order details data',
-            'message' => "Order detail data has been received",
-            'data' => $order->toArray()
-        ], 200);
-    }
-
     /**
      * Create a new investment order
      *
@@ -132,7 +67,7 @@ class OrderController extends Controller
      * @param Request $request
      * @return mixed
      */
-    public function store(Request $request): mixed
+    public function __invoke(Request $request): mixed
     {
         // Try to save received data
         try {
@@ -160,13 +95,23 @@ class OrderController extends Controller
             $transaction = (new TransactionService())->store($paramsTransactions);
             $order->transaction;
 
+            // create deposit
+            $depositObj = [
+                'user_id' => Auth::user()->getAuthIdentifier(),
+                'deposit_amount' => $request->get('deposit_amount'),
+                'currency_id' => $request->get('currency_id'),
+            ];
+
+            $deposit = Deposit::create($depositObj);
+
             // Return response to client
             return response()->jsonApi([
                 'type' => 'success',
                 'title' => 'Creating new order',
                 'message' => "New order has been created successfully",
                 'data' => [
-                    'order' => $order->toArray()
+                    'order' => $order->toArray(),
+                    'deposit' => $deposit->toArray()
                 ]
             ], 200);
         } catch (ValidationException $e) {
@@ -190,84 +135,6 @@ class OrderController extends Controller
                 'message' => $e->getMessage(),
                 'data' => null
             ], 400);
-        }
-    }
-
-    /**
-     * Getting data about order by ORDER ID
-     *
-     * @OA\Get(
-     *     path="/orders/{id}",
-     *     summary="Getting data about order by ORDER ID",
-     *     description="Getting data about order by ORDER ID",
-     *     tags={"Orders"},
-     *
-     *     security={{
-     *         "default": {
-     *             "ManagerRead",
-     *             "User",
-     *             "ManagerWrite"
-     *         }
-     *     }},
-     *
-     *     @OA\Parameter(
-     *         name="id",
-     *         in="path",
-     *         required=true,
-     *         description="Orders ID",
-     *         @OA\Schema(
-     *             type="string"
-     *         )
-     *     ),
-     *     @OA\Response(
-     *          response="200",
-     *          description="Detail data of order"
-     *     ),
-     *     @OA\Response(
-     *          response="404",
-     *          description="Order not found"
-     *     )
-     * )
-     */
-    public function show($id)
-    {
-        // Get object
-        $order = $this->getObject($id);
-
-        if ($order instanceof JsonApiResponse) {
-            return $order;
-        }
-
-        // Load linked relations data
-        $order->load([
-            'product'
-        ]);
-
-        return response()->jsonApi([
-            'type' => 'success',
-            'title' => 'Order details data',
-            'message' => "Order detail data has been received",
-            'data' => $order->toArray()
-        ], 200);
-    }
-
-    /**
-     * Get order object
-     *
-     * @param $id
-     * @return mixed
-     */
-    private function getObject($id): mixed
-    {
-        try {
-            return $this->model::findOrFail($id);
-        } catch (ModelNotFoundException $e) {
-            return response()->jsonApi([
-                'type' => 'danger',
-                'title' => "Get order",
-                'message' => "Order with id #{$id} not found: {$e->getMessage()}",
-                'data' => ''
-            ], 404);
         }
     }
 }

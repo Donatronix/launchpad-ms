@@ -4,14 +4,11 @@ namespace App\Api\V1\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Deposit;
-use Carbon\Carbon;
 use Exception;
-use Illuminate\Validation\ValidationException;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Sumra\SDK\JsonApiResponse;
-use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Validation\ValidationException;
 
 /**
  * Class DepositController
@@ -63,24 +60,24 @@ class DepositController extends Controller
      *     )
      * )
      *
-     * @param \Illuminate\Http\Request $request
+     * @param Request $request
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function index(Request $request): JsonResponse
     {
         try {
             $allDeposits = Deposit::orderBy('created_at', 'Desc')
                 ->paginate($request->get('limit', 20));
-            $resp['type']       = "Success";
-            $resp['title']      = "List all deposits";
-            $resp['message']    = "List all deposits";
-            $resp['data']       = $allDeposits;
+            $resp['type'] = "Success";
+            $resp['title'] = "List all deposits";
+            $resp['message'] = "List all deposits";
+            $resp['data'] = $allDeposits;
             return response()->json($resp, 200);
         } catch (Exception $e) {
             return response()->json([
-                'type'  => 'danger',
-                'title'  => 'List all deposits',
+                'type' => 'danger',
+                'title' => 'List all deposits',
                 'message' => 'Error in getting list of all deposits',
                 'data' => $e->getMessage()
             ], 400);
@@ -107,17 +104,18 @@ class DepositController extends Controller
      *            @OA\JsonContent(
      *                type="object",
      *                @OA\Property(
+     *                    property="amount",
+     *                    type="decimal",
+     *                    description="amount to deposit",
+     *                    example="1500.00"
+     *                ),
+     *                @OA\Property(
      *                    property="currency_id",
      *                    type="string",
      *                    description="currency id",
      *                    example="8000000-3000000-20000"
      *                ),
-     *                @OA\Property(
-     *                    property="deposit_amount",
-     *                    type="decimal",
-     *                    description="amount to deposit",
-     *                    example="1500.00"
-     *                ),
+
      *                @OA\Property(
      *                    property="user_id",
      *                    type="string",
@@ -129,7 +127,7 @@ class DepositController extends Controller
      *                    type="string",
      *                    description="order id",
      *                    example="5590000-9800000-38380000"
-     *                ),
+     *                )
      *           ),
      *       ),
      *
@@ -163,43 +161,43 @@ class DepositController extends Controller
      *     )
      * )
      *
-     * @param \Illuminate\Http\Request $request
+     * @param Request $request
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function store(Request $request): JsonResponse
     {
         try {
             //validate input
             $this->validate($request, [
-                'currency_id'       => 'required|string',
-                'deposit_amount'    => 'required|decimal',
-                'order_id'          => 'required|string',
+                'currency_id' => 'required|string',
+                'amount' => 'required|decimal',
+                'order_id' => 'required|string',
             ]);
 
             $depositSaved = Deposit::create([
-                'currency_id'       => $request['currency_id'],
-                'deposit_amount'    => $request['deposit_amount'],
-                'order_id'          => $request['order_id'],
-                'user_id'           => Auth::user()->getAuthIdentifier(),
+                'currency_id' => $request['currency_id'],
+                'amount' => $request['amount'],
+                'order_id' => $request['order_id'],
+                'user_id' => Auth::user()->getAuthIdentifier(),
             ]);
 
-            $resp['type']       = "Success";
-            $resp['title']      = "Create new deposit";
-            $resp['message']    = "Deposit was created";
-            $resp['data']       = $depositSaved;
+            $resp['type'] = "Success";
+            $resp['title'] = "Create new deposit";
+            $resp['message'] = "Deposit was created";
+            $resp['data'] = $depositSaved;
             return response()->json($resp, 200);
         } catch (ValidationException $e) {
             return response()->json([
-                'type'  => 'danger',
-                'title'  => 'Create new deposit',
+                'type' => 'danger',
+                'title' => 'Create new deposit',
                 'message' => 'Error occurred when creating new deposit',
                 'data' => $e->getMessage()
             ], 400);
         } catch (Exception $e) {
             return response()->json([
-                'type'  => 'danger',
-                'title'  => 'Create new deposit',
+                'type' => 'danger',
+                'title' => 'Create new deposit',
                 'message' => 'Error occurred when creating new deposit',
                 'data' => $e->getMessage()
             ], 400);
@@ -241,24 +239,24 @@ class DepositController extends Controller
      *     ),
      * )
      *
-     * @param \Illuminate\Http\Request $request
+     * @param Request $request
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function show($id): JsonResponse
     {
         try {
             $deposit = Deposit::findOrFail($id);
 
-            $resp['type']       = "Success";
-            $resp['title']      = "Get deposit";
-            $resp['message']    = "Get deposit";
-            $resp['data']       = $deposit ? $deposit->with('order') : [];
+            $resp['type'] = "Success";
+            $resp['title'] = "Get deposit";
+            $resp['message'] = "Get deposit";
+            $resp['data'] = $deposit ? $deposit->with('order') : [];
             return response()->json($resp, 200);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return response()->json([
-                'type'  => 'danger',
-                'title'  => 'Get deposit',
+                'type' => 'danger',
+                'title' => 'Get deposit',
                 'message' => 'Error in getting deposit',
                 'data' => $e->getMessage()
             ], 400);
@@ -290,7 +288,7 @@ class DepositController extends Controller
      *                    example="8000000-3000000-20000"
      *             ),
      *             @OA\Property(
-     *                    property="deposit_amount",
+     *                    property="amount",
      *                    type="decimal",
      *                    description="amount to deposit",
      *                    example="100.00"
@@ -329,42 +327,42 @@ class DepositController extends Controller
      *     )
      * )
      *
-     * @param \Illuminate\Http\Request $request
+     * @param Request $request
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function update(Request $request, $id): JsonResponse
     {
         try {
             //validate input
             $this->validate($request, [
-                'currency_id'       => 'required|string',
-                'deposit_amount'    => 'required|decimal',
-                'order_id'          => 'required|string',
+                'currency_id' => 'required|string',
+                'amount' => 'required|decimal',
+                'order_id' => 'required|string',
             ]);
 
             $depositSaved = Deposit::where('id', $id)->update([
-                'currency_id'       => $request['currency_id'],
-                'deposit_amount'    => $request['deposit_amount'],
-                'order_id'          => $request['order_id'],
+                'currency_id' => $request['currency_id'],
+                'amount' => $request['amount'],
+                'order_id' => $request['order_id'],
             ]);
 
-            $resp['type']       = "Success";
-            $resp['title']      = "Update Deposit";
-            $resp['message']    = "Record was updated";
-            $resp['data']       = $depositSaved;
+            $resp['type'] = "Success";
+            $resp['title'] = "Update Deposit";
+            $resp['message'] = "Record was updated";
+            $resp['data'] = $depositSaved;
             return response()->json($resp, 200);
         } catch (ValidationException $e) {
             return response()->json([
-                'type'  => 'danger',
-                'title'  => 'Update deposit',
+                'type' => 'danger',
+                'title' => 'Update deposit',
                 'message' => 'Error occurred when updating deposit',
                 'data' => $e->getMessage()
             ], 400);
         } catch (Exception $e) {
             return response()->json([
-                'type'  => 'danger',
-                'title'  => 'Update deposit',
+                'type' => 'danger',
+                'title' => 'Update deposit',
                 'message' => 'Error occurred when updating deposit',
                 'data' => $e->getMessage()
             ], 400);
@@ -401,22 +399,22 @@ class DepositController extends Controller
      *     ),
      * )
      *
-     * @param \Illuminate\Http\Request $request
+     * @param Request $request
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function destroy($id)
     {
         try {
-            $resp['type']       = "Success";
-            $resp['title']      = "Soft delete deposit";
-            $resp['message']    = "Deleted successfully";
-            $resp['data']       = Deposit::findOrFail($id)->delete();
+            $resp['type'] = "Success";
+            $resp['title'] = "Soft delete deposit";
+            $resp['message'] = "Deleted successfully";
+            $resp['data'] = Deposit::findOrFail($id)->delete();
             return response()->json($resp, 200);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return response()->json([
-                'type'  => 'danger',
-                'title'  => 'Soft delete deposit',
+                'type' => 'danger',
+                'title' => 'Soft delete deposit',
                 'message' => 'Error in deleting deposit',
                 'data' => $e->getMessage()
             ], 400);

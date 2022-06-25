@@ -4,6 +4,9 @@ namespace App\Api\V1\Controllers\Admin;
 
 use App\Api\V1\Services\TransactionService;
 use App\Http\Controllers\Controller;
+use Exception;
+use Illuminate\Http\JsonResponse;
+use Sumra\SDK\;
 
 class TransactionController extends Controller
 {
@@ -43,9 +46,9 @@ class TransactionController extends Controller
      *
      * @param Request $request
      *
-     * @return \Sumra\SDK\
+     * @return
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function index(Request $request)
     {
@@ -104,7 +107,7 @@ class TransactionController extends Controller
      *
      * @param         $transaction_id
      *
-     * @return \Sumra\SDK\
+     * @return
      */
     public function show($transaction_id)
     {
@@ -163,7 +166,7 @@ class TransactionController extends Controller
      *
      * @param $transaction_id
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function approve($transaction_id)
     {
@@ -238,7 +241,7 @@ class TransactionController extends Controller
      *
      * @param $transaction_id
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function destroy($transaction_id)
     {

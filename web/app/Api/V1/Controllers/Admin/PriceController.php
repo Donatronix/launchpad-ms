@@ -37,7 +37,7 @@ class PriceController extends Controller
      */
     public function index(Request $request): mixed
     {
-        try{
+        try {
             // Get order
             $order = Price::where('status', true)
                 ->select(['stage', 'price', 'period_in_days', 'percent_profit', 'amount'])
@@ -50,7 +50,7 @@ class PriceController extends Controller
                 'message' => "Product prices list has been received",
                 'data' => $order->toArray()
             ], 200);
-        }catch (ValidationException $e) {
+        } catch (ValidationException $e) {
             return response()->jsonApi([
                 'type' => 'warning',
                 'title' => 'Product price list ',
@@ -137,7 +137,7 @@ class PriceController extends Controller
         }
     }
 
-        /**
+    /**
      * Getting a listing of product prices
      *
      * @OA\Get(
@@ -171,14 +171,14 @@ class PriceController extends Controller
      */
     public function show(Price $price)
     {
-        try{
+        try {
             $price->load('product');
             return response()->json([
                 'type' => 'success',
                 'title' => 'Price Product List',
                 'data' => $price
             ], 200);
-        }catch (ValidationException $e) {
+        } catch (ValidationException $e) {
             return response()->jsonApi([
                 'type' => 'warning',
                 'title' => 'Price Product List',
@@ -188,7 +188,7 @@ class PriceController extends Controller
         }
     }
 
-        /**
+    /**
      * Store a newly stage price in storage.
      *
      * @OA\Put(
@@ -272,7 +272,7 @@ class PriceController extends Controller
 
     }
 
-        /**
+    /**
      * Delete a particular Price based on ID.
      *
      * @OA\Delete(
@@ -324,7 +324,7 @@ class PriceController extends Controller
      */
     public function destroy(Price $price)
     {
-        try{
+        try {
             $price->delete();
             return response()->json([
                 'type' => 'success',

@@ -276,7 +276,7 @@ class TokenRewardController extends Controller
      *
      * Method for update of token Reward of users.
      *
-     * @param Request     $request
+     * @param Request $request
      * @param TokenReward $tokenReward
      *
      * @return JsonResponse

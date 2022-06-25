@@ -3,9 +3,10 @@
 namespace App\Api\V1\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use App\Models\Faq;
 use App\Traits\ResponseTrait;
+use Exception;
+use Illuminate\Http\Request;
 
 class FaqController extends Controller
 {
@@ -26,7 +27,6 @@ class FaqController extends Controller
      *             "ManagerWrite"
      *         }
      *     }},
-
      *
      *     @OA\Parameter(
      *         name="limit",
@@ -94,8 +94,7 @@ class FaqController extends Controller
         try {
             $faqs = Faq::latest()->paginate($limit);
             return $this->processPaginator('Faqs', $faqs);
-        }
-        catch (\Exception $e) {
+        } catch (Exception $e) {
             return response()->jsonApi([
                 'type' => 'danger',
                 'title' => "Faq",
@@ -120,7 +119,6 @@ class FaqController extends Controller
      *             "ManagerWrite"
      *         }
      *     }},
-
      *
      *     @OA\RequestBody(
      *         required=true,
@@ -168,8 +166,7 @@ class FaqController extends Controller
         try {
             $faq = Faq::create($request->all());
             return $this->createdResponse('Faq', $faq);
-        }
-        catch (\Exception $e) {
+        } catch (Exception $e) {
             return $this->errorResponse($e->getMessage());
         }
     }
@@ -189,7 +186,6 @@ class FaqController extends Controller
      *             "ManagerWrite"
      *         }
      *     }},
-
      *
      *     @OA\Parameter(
      *         name="id",
@@ -228,8 +224,7 @@ class FaqController extends Controller
                 'message' => 'Faq loaded',
                 'data' => $faq
             ], 200);
-        }
-        catch (\Exception $e) {
+        } catch (Exception $e) {
             return response()->jsonApi([
                 'type' => 'danger',
                 'title' => "Faq",
@@ -254,7 +249,6 @@ class FaqController extends Controller
      *             "ManagerWrite"
      *         }
      *     }},
-
      *
      *
      *     @OA\Parameter(
@@ -314,8 +308,7 @@ class FaqController extends Controller
             $faq->save();
 
             return $this->okResponse('Faq updated', $faq);
-        }
-        catch (\Exception $e) {
+        } catch (Exception $e) {
             return $this->errorResponse($e->getMessage());
         }
     }
@@ -369,8 +362,7 @@ class FaqController extends Controller
             $faq = Faq::findOrFail($id);
             $faq->delete();
             return $this->okResponse('Faq Deleted');
-        }
-        catch (\Exception $e) {
+        } catch (Exception $e) {
             return response()->jsonApi([
                 'type' => 'danger',
                 'title' => "Faq",

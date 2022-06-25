@@ -4,13 +4,11 @@ namespace App\Api\V1\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Order;
-use Carbon\Carbon;
 use Exception;
-use Illuminate\Validation\ValidationException;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Sumra\SDK\JsonApiResponse;
+use Illuminate\Validation\ValidationException;
 
 
 /**
@@ -70,24 +68,24 @@ class OrderController extends Controller
      *     ),
      * )
      *
-     * @param \Illuminate\Http\Request $request
+     * @param Request $request
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function index(Request $request): JsonResponse
     {
         try {
             $allOrders = Order::orderBy('created_at', 'Desc')
                 ->paginate($request->get('limit', 20));
-            $resp['type']       = "Success";
-            $resp['title']      = "List all orders";
-            $resp['message']    = "List all orders";
-            $resp['data']       = $allOrders;
+            $resp['type'] = "Success";
+            $resp['title'] = "List all orders";
+            $resp['message'] = "List all orders";
+            $resp['data'] = $allOrders;
             return response()->json($resp, 200);
         } catch (Exception $e) {
             return response()->json([
-                'type'  => 'danger',
-                'title'  => 'List all orders',
+                'type' => 'danger',
+                'title' => 'List all orders',
                 'message' => 'Error in getting list of all orders',
                 'data' => $e->getMessage()
             ], 400);
@@ -178,51 +176,51 @@ class OrderController extends Controller
      *     ),
      * )
      *
-     * @param \Illuminate\Http\Request $request
+     * @param Request $request
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function store(Request $request)
     {
         try {
             //validate input
             $this->validate($request, [
-                'product_id'            => 'required|string',
-                'investment_amount'     => 'required|decimal',
-                'deposit_amount'        => 'required|decimal',
-                'order_no'              => 'required|string',
-                'deposit_percentage'    => 'required|string',
-                'amount_token'          => 'required|string',
-                'amount_usd'            => 'required|string',
-                'user_id'               => 'required|string',
+                'product_id' => 'required|string',
+                'investment_amount' => 'required|decimal',
+                'deposit_amount' => 'required|decimal',
+                'order_no' => 'required|string',
+                'deposit_percentage' => 'required|string',
+                'amount_token' => 'required|string',
+                'amount_usd' => 'required|string',
+                'user_id' => 'required|string',
             ]);
 
             $orderSaved = Order::create([
-                'product_id'            => $request['product_id'],
-                'investment_amount'     => $request['investment_amount'],
-                'deposit_amount'        => $request['deposit_amount'],
-                'deposit_percentage'    => $request['deposit_percentage'],
-                'amount_token'          => $request['amount_token'],
-                'amount_usd'            => $request['amount_usd'],
-                'user_id'               => Auth::user()->getAuthIdentifier(),
+                'product_id' => $request['product_id'],
+                'investment_amount' => $request['investment_amount'],
+                'deposit_amount' => $request['deposit_amount'],
+                'deposit_percentage' => $request['deposit_percentage'],
+                'amount_token' => $request['amount_token'],
+                'amount_usd' => $request['amount_usd'],
+                'user_id' => Auth::user()->getAuthIdentifier(),
             ]);
 
-            $resp['type']       = "Success";
-            $resp['title']      = "Create new order";
-            $resp['message']    = "Order was created";
-            $resp['data']       = $orderSaved;
+            $resp['type'] = "Success";
+            $resp['title'] = "Create new order";
+            $resp['message'] = "Order was created";
+            $resp['data'] = $orderSaved;
             return response()->json($resp, 200);
         } catch (ValidationException $e) {
             return response()->json([
-                'type'  => 'danger',
-                'title'  => 'Create new order',
+                'type' => 'danger',
+                'title' => 'Create new order',
                 'message' => 'Error occurred when creating new order',
                 'data' => $e->getMessage()
             ], 400);
         } catch (Exception $e) {
             return response()->json([
-                'type'  => 'danger',
-                'title'  => 'Create new order',
+                'type' => 'danger',
+                'title' => 'Create new order',
                 'message' => 'Error occurred when creating new order',
                 'data' => $e->getMessage()
             ], 400);
@@ -318,9 +316,9 @@ class OrderController extends Controller
      *     ),
      * )
      *
-     * @param \Illuminate\Http\Request $request
+     * @param Request $request
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function show($id)
     {
@@ -328,15 +326,15 @@ class OrderController extends Controller
         try {
             $order = Order::findOrFail($id);
 
-            $resp['type']       = "Success";
-            $resp['title']      = "Get order";
-            $resp['message']    = "Get order";
-            $resp['data']       = $order ? $order->with('product')->with('transaction') : [];
+            $resp['type'] = "Success";
+            $resp['title'] = "Get order";
+            $resp['message'] = "Get order";
+            $resp['data'] = $order ? $order->with('product')->with('transaction') : [];
             return response()->json($resp, 200);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return response()->json([
-                'type'  => 'danger',
-                'title'  => 'Get order',
+                'type' => 'danger',
+                'title' => 'Get order',
                 'message' => 'Error in getting order',
                 'data' => $e->getMessage()
             ], 400);

@@ -99,7 +99,6 @@ class ProductController extends Controller
      *             "ManagerWrite"
      *         }
      *     }},
-
      *
      *     @OA\Parameter(
      *         name="id",

@@ -25,7 +25,6 @@ class PriceController extends Controller
      *             "ManagerWrite"
      *         }
      *     }},
-
      *
      *     @OA\Response(
      *          response="200",
@@ -88,7 +87,7 @@ class PriceController extends Controller
      * )
      *
      * @param Request $request
-     * @param int     $stage
+     * @param int $stage
      *
      * @return mixed
      */

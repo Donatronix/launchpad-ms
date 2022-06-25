@@ -49,6 +49,15 @@ $router->group([
         });
 
         /**
+         * Init first Investment (registration)
+         */
+        $router->group([
+            'prefix' => 'investment',
+        ], function ($router) {
+            $router->get('/', 'InvestmentController');
+        });
+
+        /**
          * Orders
          */
         $router->group([
@@ -57,7 +66,6 @@ $router->group([
             $router->get('/', 'OrderController@index');
             $router->get('/{id}', 'OrderController@show');
             $router->post('/', 'OrderController@store');
-            $router->get('/get-pdf/{transaction_id}', 'OrderController@generatePdfForTransaction');
         });
 
         /**

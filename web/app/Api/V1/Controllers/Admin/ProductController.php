@@ -4,21 +4,21 @@ namespace App\Api\V1\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Product;
-use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 use Exception;
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Carbon;
-use Sumra\SDK\JsonApiResponse;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Validator;
+use PubSub;
+use Sumra\SDK\JsonApiResponse;
 
 class ProductController extends Controller
 {
+    private const RECEIVER_LISTENER = 'CreateCurrency';
     /**
      * @param Product $model
      */
     private Product $model;
-    private const RECEIVER_LISTENER = 'CreateCurrency';
 
     public function __construct(Product $model)
     {
@@ -41,7 +41,6 @@ class ProductController extends Controller
      *             "ManagerWrite"
      *         }
      *     }},
-
      *
      *     @OA\Parameter(
      *         name="limit",
@@ -153,7 +152,6 @@ class ProductController extends Controller
      *             "ManagerWrite"
      *         }
      *     }},
-
      *     @OA\RequestBody(
      *         required=true,
      *         @OA\JsonContent(ref="#/components/schemas/Product")
@@ -214,7 +212,7 @@ class ProductController extends Controller
             $product = $this->model->create($request->all());
 
             // send product to the reference-books-ms
-            \PubSub::transaction(function () {
+            PubSub::transaction(function () {
             })->publish(self::RECEIVER_LISTENER, [
                 'currency_code' => $product->ticker,
                 'title' => $product->title,
@@ -253,7 +251,6 @@ class ProductController extends Controller
      *             "ManagerWrite"
      *         }
      *     }},
-  
      *
      *     @OA\Parameter(
      *         name="id",
@@ -288,12 +285,32 @@ class ProductController extends Controller
                 'message' => "Product detail been received",
                 'data' => $product->toArray()
             ], 200);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return response()->jsonApi([
                 'type' => 'danger',
                 'title' => 'Product detail',
                 'message' => $e->getMessage(),
             ], 400);
+        }
+    }
+
+    /**
+     * Get product object
+     *
+     * @param $id
+     * @return mixed
+     */
+    private function getObject($id): mixed
+    {
+        try {
+            return $this->model::findOrFail($id);
+        } catch (ModelNotFoundException $e) {
+            return response()->jsonApi([
+                'type' => 'danger',
+                'title' => "Get product",
+                'message' => "Product with id #{$id} not found: {$e->getMessage()}",
+                'data' => ''
+            ], 404);
         }
     }
 
@@ -313,7 +330,6 @@ class ProductController extends Controller
      *             "ManagerWrite"
      *         }
      *     }},
-
      *     @OA\Parameter(
      *         name="id",
      *         in="path",
@@ -426,7 +442,6 @@ class ProductController extends Controller
      *             "ManagerWrite"
      *         }
      *     }},
-
      *     @OA\Parameter(
      *         name="id",
      *         in="path",
@@ -488,26 +503,6 @@ class ProductController extends Controller
                 'message' => $e->getMessage(),
                 'data' => null
             ], 400);
-        }
-    }
-
-    /**
-     * Get product object
-     *
-     * @param $id
-     * @return mixed
-     */
-    private function getObject($id): mixed
-    {
-        try {
-            return $this->model::findOrFail($id);
-        } catch (ModelNotFoundException $e) {
-            return response()->jsonApi([
-                'type' => 'danger',
-                'title' => "Get product",
-                'message' => "Product with id #{$id} not found: {$e->getMessage()}",
-                'data' => ''
-            ], 404);
         }
     }
 }

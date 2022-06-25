@@ -48,11 +48,11 @@ class Deposit extends Model
      * @var string[]
      */
     protected $fillable = [
+        'amount',
         'currency_id',
-        'deposit_amount',
-        'user_id',
-        'status',
         'order_id',
+        'status',
+        'user_id',
     ];
 
     /**
@@ -74,8 +74,8 @@ class Deposit extends Model
     public static function validationRules(): array
     {
         return [
+            'amount' => 'required|integer|min:250',
             'currency_id' => 'required|string',
-            'deposit_amount' => 'required|integer|min:250',
         ];
     }
 

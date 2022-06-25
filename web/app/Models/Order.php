@@ -146,12 +146,12 @@ class Order extends Model
     public static function validationRules(): array
     {
         return [
-            'product' => 'required|string',
+            'product_id' => 'required|string',
             'investment_amount' => 'required|integer|min:2500',
             'deposit_percentage' => 'required|integer|min:10|max:100',
             'deposit_amount' => 'required|integer|min:250',
             'payment_type_id' => 'required|integer|exists:payment_types,id',
-            'wallet_address' => 'required',
+            'wallet_address' => 'required|string',
             'currency_id' => 'required|string',
         ];
     }

@@ -16,22 +16,25 @@ class CreateOrdersTable extends Migration
         Schema::create('orders', function (Blueprint $table) {
             $table->uuid('id')->primary();
 
+            $table->string('order_no');
+
             $table->string('product_id');
 
             $table->decimal('investment_amount', 12, 0);
             $table->unsignedTinyInteger('deposit_percentage');
             $table->decimal('deposit_amount', 12, 0);
 
+            $table->unsignedTinyInteger('filled')->default('0');
+
             $table->uuid('user_id');
+
+
+            $table->decimal('amount_token', 12, 2)->nullable();
+            $table->decimal('amount_usd', 12, 2)->nullable();
 
             $table->smallInteger('status')->nullable();
 
             $table->text('payload')->nullable();
-
-            $table->decimal('amount_token', 12, 2)->nullable();
-            $table->decimal('amount_usd', 12, 2)->nullable();
-            $table->string('order_no');
-            $table->timestamp('order_date')->useCurrent();
 
             $table->timestamps();
             $table->softDeletes();
