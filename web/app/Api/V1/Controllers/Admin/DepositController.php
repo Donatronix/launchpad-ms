@@ -406,11 +406,14 @@ class DepositController extends Controller
     public function destroy($id)
     {
         try {
-            $resp['type']       = "Success";
-            $resp['title']      = "Soft delete deposit";
-            $resp['message']    = "Deleted successfully";
-            $resp['data']       = null
-            return response()->json($resp, 200);
+            Deposit::findOrFail($id)->delete();
+
+            return response()->json([
+                'type'       => "Success",
+                'title'      => "Soft delete deposit",
+                'message'    => "Deleted successfully",
+                'data'       => null
+            ], 200);
         } catch (\Exception $e) {
             return response()->json([
                 'type' => 'danger',
