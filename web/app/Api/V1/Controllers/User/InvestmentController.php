@@ -68,7 +68,7 @@ class InvestmentController extends Controller
      *     ),
      *
      *     @OA\Response(
-     *         response="200",
+     *         response="201",
      *         description="Successfully save"
      *     ),
      *     @OA\Response(
@@ -81,7 +81,7 @@ class InvestmentController extends Controller
      *     ),
      *     @OA\Response(
      *         response="404",
-     *         description="not found"
+     *         description="Product not found"
      *     ),
      *     @OA\Response(
      *         response="422",
@@ -144,28 +144,28 @@ class InvestmentController extends Controller
                         'service' => 'CryptoLaunchpadMS',
                     ]
                 ]
-            ], 200);
+            ], 201);
         } catch (ValidationException $e) {
             return response()->jsonApi([
                 'type' => 'warning',
                 'title' => 'Application for participation in the presale',
                 'message' => "Validation error: " . $e->getMessage(),
                 'data' => null
-            ], 400);
+            ], 422);
         } catch (ModelNotFoundException $e) {
             return response()->jsonApi([
                 'type' => 'warning',
                 'title' => 'Application for participation in the presale',
                 'message' => "This product does not exist",
                 'data' => null
-            ], 400);
+            ], 404);
         } catch (\Exception $e) {
             return response()->jsonApi([
                 'type' => 'danger',
                 'title' => 'Application for participation in the presale',
                 'message' => $e->getMessage(),
                 'data' => null
-            ], 400);
+            ], $e->getCode());
         }
     }
 }
