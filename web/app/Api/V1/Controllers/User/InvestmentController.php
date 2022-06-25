@@ -15,13 +15,13 @@ use Illuminate\Validation\ValidationException;
 class InvestmentController extends Controller
 {
     /**
-     * Create a new investment order
+     * Create a first investment after registration
      *
      * @OA\Post(
-     *     path="/orders",
-     *     summary="Create a new investment order",
-     *     description="Create a new investment order",
-     *     tags={"Orders"},
+     *     path="/investment",
+     *     summary="Create a first investment after registration",
+     *     description="Create a first investment after registration",
+     *     tags={"Investment"},
      *
      *     security={{
      *         "default": {
@@ -32,16 +32,44 @@ class InvestmentController extends Controller
      *     }},
      *
      *     @OA\RequestBody(
-     *         required=true,
-     *         @OA\JsonContent(ref="#/components/schemas/Order")
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(
+     *                 property="product_id",
+     *                 type="string",
+     *                 description="Product ID",
+     *                 example="9a778e5d-61aa-4a2b-b511-b445f6a67909"
+     *             ),
+     *             @OA\Property(
+     *                 property="investment_amount",
+     *                 type="number",
+     *                 description="Investment amount",
+     *                 example="100000"
+     *             ),
+     *             @OA\Property(
+     *                 property="deposit_percentage",
+     *                 type="number",
+     *                 description="Deposit percentage",
+     *                 example="10"
+     *             ),
+     *             @OA\Property(
+     *                 property="deposit_amount",
+     *                 type="number",
+     *                 description="Deposit amount",
+     *                 example="10000"
+     *             ),
+     *             @OA\Property(
+     *                 property="currency",
+     *                 type="string",
+     *                 description="Deposit currency code",
+     *                 example="usd"
+     *             )
+     *         )
      *     ),
+     *
      *     @OA\Response(
      *         response="200",
      *         description="Successfully save"
-     *     ),
-     *     @OA\Response(
-     *         response="201",
-     *         description="Order created"
      *     ),
      *     @OA\Response(
      *         response="400",
@@ -72,66 +100,69 @@ class InvestmentController extends Controller
         // Try to save received data
         try {
             // Validate input
-            $this->validate($request, $this->model::validationRules());
+            $this->validate($request, [
+                'product_id' => 'required|string|min:36|max:36',
+                'investment_amount' => 'required|integer|min:2500',
+                'deposit_percentage' => 'required|integer|min:10|max:100',
+                'deposit_amount' => 'required|integer|min:250',
+                'currency' => 'required|string|min:3',
+            ]);
 
             // Get / checking current product
             $product = Product::findOrFail($request->get('product_id', config('settings.empty_uuid')));
 
             // Create new order
-            $order = $this->model::create([
+            $order = Order::create([
                 'product_id' => $product->id,
                 'investment_amount' => $request->get('investment_amount'),
                 'deposit_percentage' => $request->get('deposit_percentage'),
                 'deposit_amount' => $request->get('deposit_amount'),
                 'user_id' => Auth::user()->getAuthIdentifier(),
-                'status' => Order::STATUS_NEW,
-                'amount_token' => $request->get('investment_amount'),
-                'amount_usd' => $request->get('investment_amount'),
+                'status' => Order::STATUS_NEW
             ]);
 
-            // create new transaction
-            $paramsTransactions = $request->all();
-            $paramsTransactions['order_id'] = $order->id;
-            $transaction = (new TransactionService())->store($paramsTransactions);
-            $order->transaction;
-
-            // create deposit
-            $depositObj = [
+            // Create deposit
+            $deposit = Deposit::create([
+                'amount' => $request->get('deposit_amount'),
+                'currency_code' => $request->get('currency'),
+                'order_id' => $order->id,
+                'status' => Deposit::STATUS_CREATED,
                 'user_id' => Auth::user()->getAuthIdentifier(),
-                'deposit_amount' => $request->get('deposit_amount'),
-                'currency_id' => $request->get('currency_id'),
-            ];
-
-            $deposit = Deposit::create($depositObj);
+            ]);
 
             // Return response to client
             return response()->jsonApi([
                 'type' => 'success',
-                'title' => 'Creating new order',
-                'message' => "New order has been created successfully",
+                'title' => 'Application for participation in the presale',
+                'message' => "Application for participation in the presale has been successfully created",
                 'data' => [
-                    'order' => $order->toArray(),
-                    'deposit' => $deposit->toArray()
+                    'amount' => $deposit->amount,
+                    'currency' => $request->get('currency'),
+                    'document' => [
+                        'id' => $deposit->id,
+                        'type' => 'deposit',
+                        'service' => 'CryptoLaunchpadMS',
+                    ]
                 ]
             ], 200);
         } catch (ValidationException $e) {
             return response()->jsonApi([
                 'type' => 'warning',
-                'title' => 'Creating new order',
+                'title' => 'Application for participation in the presale',
                 'message' => "Validation error: " . $e->getMessage(),
                 'data' => null
             ], 400);
         } catch (ModelNotFoundException $e) {
             return response()->jsonApi([
                 'type' => 'warning',
-                'title' => 'Creating new order',
+                'title' => 'Application for participation in the presale',
                 'message' => "This product does not exist",
                 'data' => null
             ], 400);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return response()->jsonApi([
                 'type' => 'danger',
-                'title' => 'Creating new order',
+                'title' => 'Application for participation in the presale',
                 'message' => $e->getMessage(),
                 'data' => null
             ], 400);

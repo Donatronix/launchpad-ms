@@ -53,8 +53,9 @@ $router->group([
          */
         $router->group([
             'prefix' => 'investment',
+            'namespace' => 'User'
         ], function ($router) {
-            $router->get('/', 'InvestmentController');
+            $router->post('/', 'InvestmentController');
         });
 
         /**

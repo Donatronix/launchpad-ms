@@ -45,11 +45,31 @@ class Deposit extends Model
     use SoftDeletes;
 
     /**
+     * Deposit status
+     */
+    const STATUS_CREATED = 1;
+    const STATUS_PAID = 2;
+    const STATUS_FAILED = 3;
+    const STATUS_CANCELED = 4;
+
+    /**
+     * Order statuses array
+     *
+     * @var int[]
+     */
+    public static array $statuses = [
+        self::STATUS_CREATED,
+        self::STATUS_PAID,
+        self::STATUS_FAILED,
+        self::STATUS_CANCELED
+    ];
+
+    /**
      * @var string[]
      */
     protected $fillable = [
         'amount',
-        'currency_id',
+        'currency_code',
         'order_id',
         'status',
         'user_id',

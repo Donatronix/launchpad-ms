@@ -17,10 +17,10 @@ class CreateDepositsTable extends Migration
             $table->uuid('id')->primary();
 
             $table->decimal('amount', 12, 0);
-            $table->string('currency_id');
-            $table->string('order_id')->nullable();
-            $table->smallInteger('status')->nullable();
-            $table->uuid('user_id');
+            $table->string('currency_code', 10)->index();
+            $table->string('order_id')->nullable()->index();
+            $table->smallInteger('status')->default(0)->index();
+            $table->uuid('user_id')->index();
 
             $table->timestamps();
             $table->softDeletes();
