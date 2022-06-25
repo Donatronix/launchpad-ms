@@ -253,7 +253,7 @@ class DepositController extends Controller
             $resp['message'] = "Get deposit";
             $resp['data'] = $deposit ? $deposit->with('order') : [];
             return response()->json($resp, 200);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return response()->json([
                 'type' => 'danger',
                 'title' => 'Get deposit',
@@ -406,12 +406,12 @@ class DepositController extends Controller
     public function destroy($id)
     {
         try {
-            $resp['type'] = "Success";
-            $resp['title'] = "Soft delete deposit";
-            $resp['message'] = "Deleted successfully";
-            $resp['data'] = Deposit::findOrFail($id)->delete();
+            $resp['type']       = "Success";
+            $resp['title']      = "Soft delete deposit";
+            $resp['message']    = "Deleted successfully";
+            $resp['data']       = null
             return response()->json($resp, 200);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return response()->json([
                 'type' => 'danger',
                 'title' => 'Soft delete deposit',
