@@ -140,7 +140,7 @@ class InvestmentController extends Controller
                     'currency' => $request->get('currency'),
                     'document' => [
                         'id' => $deposit->id,
-                        'type' => 'deposit',
+                        'object' => 'Deposit',
                         'service' => 'CryptoLaunchpadMS',
                     ]
                 ]
