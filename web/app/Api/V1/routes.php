@@ -10,21 +10,26 @@ $router->group([
     /**
      * PUBLIC ACCESS
      */
-    /**
-     * Products for public access
-     */
     $router->group([
-        'prefix' => 'products',
+        'namespace' => 'Public'
     ], function ($router) {
-        $router->get('/', 'ProductController@index');
-        $router->get('/{id}', 'ProductController@show');
+        /**
+         * Products for public access
+         */
+        $router->group([
+            'prefix' => 'products',
+        ], function ($router) {
+            $router->get('/', 'ProductController@index');
+            $router->get('/{id}', 'ProductController@show');
+        });
     });
 
     /**
      * USER APPLICATION PRIVATE ACCESS
      */
     $router->group([
-        'middleware' => 'checkUser'
+        'middleware' => 'checkUser',
+        'namespace' => 'Application'
     ], function ($router) {
         /**
          * Token Rewards
@@ -53,7 +58,7 @@ $router->group([
          */
         $router->group([
             'prefix' => 'investment',
-            'namespace' => 'User'
+            'namespace' => 'Application'
         ], function ($router) {
             $router->post('/', 'InvestmentController');
         });
