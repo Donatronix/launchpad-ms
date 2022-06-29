@@ -95,6 +95,11 @@ $router->group([
             $router->get('/', 'FaqController@index');
             $router->get('/{id}', 'FaqController@show');
         });
+
+        /**
+         * Token Purchase
+         */
+        $router->post('/purchase-token', 'PurchaseController@store');
     });
 
     /**

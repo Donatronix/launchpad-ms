@@ -23,6 +23,7 @@ class DatabaseSeeder extends Seeder
             PaymentTypesTableSeeder::class,
             CreditCardTypeSeeder::class,
             FaqSeeder::class,
+            PurchaseSeeder::class,
         ]);
 
 

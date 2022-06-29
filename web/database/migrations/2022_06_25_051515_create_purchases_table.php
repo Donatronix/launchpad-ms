@@ -14,8 +14,21 @@ class CreatePurchasesTable extends Migration
     public function up()
     {
         Schema::create('purchases', function (Blueprint $table) {
-            $table->id();
+            $table->uuid('id')->primary();
+
+            $table->decimal('amount_usd', 12, 2);
+            $table->decimal('token_amount', 12, 5);
+            $table->string('payment_method')->nullable();
+            $table->boolean('payment_status')->default(0);
+
+            $table->foreignUuid('user_id');
+
+            $table->foreignUuid('product_id')->constrained()
+                ->onUpdate('cascade')
+                ->onDelete('cascade');
+
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
