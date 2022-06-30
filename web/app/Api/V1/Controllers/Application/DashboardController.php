@@ -85,6 +85,7 @@ class DashboardController extends Controller
      */
     public function tokenSalesProgress(Request $request): mixed
     {
+        
         // Try to get token sales progress
         try {
             // check if product id is available 
