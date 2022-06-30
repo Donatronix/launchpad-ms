@@ -5,82 +5,110 @@ namespace App\Api\V1\Controllers\Application;
 use App\Api\V1\Controllers\Controller;
 use App\Models\Purchase;
 use Illuminate\Http\Request;
+use Exception;
+use Illuminate\Support\Facades\Validator;
 
 class PurchaseController extends Controller
 {
     /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
+     * @param Purchase $purchase
      */
-    public function index()
+    private Purchase $purchase;
+
+    public function __construct(Purchase $purchase)
     {
-        //
+        $this->purchase = $purchase;
+        $this->user_id = auth()->user()->getAuthIdentifier();
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
 
     /**
-     * Store a newly created resource in storage.
+     * Purchase a Token
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @OA\Post(
+     *     path="/purchase-token",
+     *     summary="Purchase a token",
+     *     description="Create a token purchase order",
+     *     tags={"Token"},
+     *
+     *     security={{
+     *         "default": {
+     *             "ManagerRead",
+     *             "User",
+     *             "ManagerWrite"
+     *         }
+     *     }},
+     *
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(ref="#/components/schemas/Purchase")
+     *     ),
+     *     @OA\Response(
+     *         response="200",
+     *         description="Successfully save"
+     *     ),
+     *     @OA\Response(
+     *         response="201",
+     *         description="Purchase created"
+     *     ),
+     *     @OA\Response(
+     *         response="400",
+     *         description="Invalid request"
+     *     ),
+     *     @OA\Response(
+     *         response="401",
+     *         description="Unauthorized"
+     *     ),
+     *     @OA\Response(
+     *         response="404",
+     *         description="not found"
+     *     ),
+     *     @OA\Response(
+     *         response="422",
+     *         description="Validation failed"
+     *     ),
+     *     @OA\Response(
+     *         response="500",
+     *         description="Unknown error"
+     *     )
+     * )
+     * @param Request $request
+     * @return mixed
      */
-    public function store(Request $request)
+    public function store(Request $request): mixed
     {
-        //
-    }
+        // Try to save purchased token data
+        try {
+            // Validate input
+            $validator = Validator::make($request->all(), $this->purchase::validationRules());
+            if ($validator->fails()) {
+                throw new Exception($validator->errors()->first());
+            }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\Purchase  $purchase
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Purchase $purchase)
-    {
-        //
-    }
+            // Create new token purchase order
+            $purchase = $this->purchase::create([
+                'product_id' => $request->get('product_id'),
+                'user_id' => $this->user_id,
+                'amount_usd' => $request->get('amount_usd'),
+                'token_amount' => $request->get('token_amount'),
+                'payment_method' => $request->get('payment_method'),
+                'payment_status' => $request->get('payment_status'),
+            ]);
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Purchase  $purchase
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Purchase $purchase)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Purchase  $purchase
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, Purchase $purchase)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\Purchase  $purchase
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(Purchase $purchase)
-    {
-        //
+            // Return response to client
+            return response()->jsonApi([
+                'type' => 'success',
+                'title' => 'Creating new token purchase order',
+                'message' => "New token purchase order has been created successfully",
+                'data' => $purchase->toArray()
+            ], 200);
+        } catch (Exception $e) {
+            return response()->jsonApi([
+                'type' => 'danger',
+                'title' => 'Creating new token purchase order',
+                'message' => $e->getMessage(),
+                'data' => null
+            ], 400);
+        }
     }
 }
