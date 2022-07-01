@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Api\V1\Controllers;
+namespace App\Api\V1\Controllers\Public;
 
-use App\Http\Controllers\Controller;
+use App\Api\V1\Controllers\Controller;
 use App\Models\Product;
 use Exception;
 use Illuminate\Http\Request;

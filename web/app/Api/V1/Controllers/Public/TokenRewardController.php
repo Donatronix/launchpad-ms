@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Api\V1\Controllers;
+namespace App\Api\V1\Controllers\Public;
 
-use App\Http\Controllers\Controller;
+use App\Api\V1\Controllers\Controller;
 use App\Models\TokenReward;
 use Exception;
 use Illuminate\Http\Request;
@@ -15,7 +15,7 @@ class TokenRewardController extends Controller
      * @OA\Get(
      *     path="/token-rewards",
      *     description="Get list of un-approved user's tokenReward",
-     *     tags={"Admin / TokenRewards"},
+     *     tags={"TokenRewards"},
      *
      *     security={{
      *         "default": {

@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Api\V1\Controllers;
+namespace App\Api\V1\Controllers\Application;
 
 use App\Api\V1\Services\TransactionService;
-use App\Http\Controllers\Controller;
+use App\Api\V1\Controllers\Controller;
 use App\Models\Deposit;
 use App\Models\Order;
 use App\Models\PaymentType;
