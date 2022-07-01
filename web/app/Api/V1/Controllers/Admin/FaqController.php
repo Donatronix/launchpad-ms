@@ -318,7 +318,7 @@ class FaqController extends Controller
      *
      * @OA\Delete(
      *     path="/admin/faqs/{id}",
-     *     description="Get a faq",
+     *     description="Deletes a faq",
      *     tags={"Admin / Faqs"},
      *
      *     security={{

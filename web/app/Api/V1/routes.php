@@ -22,6 +22,8 @@ $router->group([
             $router->get('/', 'ProductController@index');
             $router->get('/{id}', 'ProductController@show');
         });
+
+        $router->get('/token-rewards', 'TokenRewardController@index');
     });
 
     /**
@@ -100,6 +102,11 @@ $router->group([
          * Token Purchase
          */
         $router->post('/purchase-token', 'PurchaseController@store');
+
+        /**
+         * Token Sales Progress
+         */
+        $router->get('/token-sales-progress', 'DashboardController@tokenSalesProgress');
     });
 
     /**
@@ -143,8 +150,9 @@ $router->group([
         ], function ($router) {
             $router->get('/', 'TokenRewardController@index');
             $router->post('/', 'TokenRewardController@store');
-            $router->put('/', 'TokenRewardController@update');
-            $router->delete('/', 'TokenRewardController@destroy');
+            $router->get('/{token_reward_id}', 'TokenRewardController@show');
+            $router->put('/{token_reward_id}', 'TokenRewardController@update');
+            $router->delete('/{token_reward_id}', 'TokenRewardController@destroy');
         });
 
         /**
