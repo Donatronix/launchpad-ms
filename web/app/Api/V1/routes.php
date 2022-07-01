@@ -100,6 +100,11 @@ $router->group([
          * Token Purchase
          */
         $router->post('/purchase-token', 'PurchaseController@store');
+
+        /**
+         * Token Sales Progress
+         */
+        $router->get('/token-sales-progress', 'DashboardController@tokenSalesProgress');
     });
 
     /**
