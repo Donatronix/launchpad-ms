@@ -1,11 +1,12 @@
 <?php
 
-namespace App\Api\V1\Controllers;
+namespace App\Api\V1\Controllers\Application;
 
 use App\Models\Faq;
 use App\Traits\ResponseTrait;
 use Exception;
 use Illuminate\Http\Request;
+use App\Api\V1\Controllers\Controller;
 
 class FaqController extends Controller
 {

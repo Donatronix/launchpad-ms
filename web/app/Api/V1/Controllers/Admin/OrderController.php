@@ -2,7 +2,7 @@
 
 namespace App\Api\V1\Controllers\Admin;
 
-use App\Http\Controllers\Controller;
+use App\Api\V1\Controllers\Controller;
 use App\Models\Order;
 use Exception;
 use Illuminate\Http\JsonResponse;
@@ -56,15 +56,23 @@ class OrderController extends Controller
      *         )
      *     ),
      *
-     *     @OA\Response(
+     *      @OA\Response(
      *          response="200",
      *          description="Success",
-     *          @OA\JsonContent(
-     *              type="array",
-     *              @OA\Items(
+     *     ),
      *
-     *              )
-     *          ),
+     *     @OA\Response(
+     *         response="500",
+     *         description="Unknown error"
+     *     ),
+     *     @OA\Response(
+     *         response=400,
+     *         description="Invalid request"
+     *     ),
+     *
+     *     @OA\Response(
+     *         response="404",
+     *         description="Not Found"
      *     ),
      * )
      *
@@ -162,13 +170,23 @@ class OrderController extends Controller
      *           ),
      *       ),
      *
+     *      @OA\Response(
+     *          response="200",
+     *          description="Success",
+     *     ),
+     *
      *     @OA\Response(
-     *         response="201",
-     *         description="Order created"
+     *         response="500",
+     *         description="Unknown error"
      *     ),
      *     @OA\Response(
-     *         response="400",
+     *         response=400,
      *         description="Invalid request"
+     *     ),
+     *
+     *     @OA\Response(
+     *         response="404",
+     *         description="Not Found"
      *     ),
      * )
      *
@@ -233,60 +251,6 @@ class OrderController extends Controller
      *      @OA\Response(
      *          response="200",
      *          description="Success",
-     *          @OA\JsonContent(
-     *              type="array",
-     *              @OA\Items(
-     *
-     *             @OA\Property(
-     *                    property="product_id",
-     *                    type="string",
-     *                    description="product id",
-     *                    example="2000-000-3000000-20000"
-     *                ),
-     *                @OA\Property(
-     *                    property="investment_amount",
-     *                    type="decimal",
-     *                    description="amount to investment",
-     *                    example="1500.00"
-     *                ),
-     *                @OA\Property(
-     *                    property="deposit_percentage",
-     *                    type="integer",
-     *                    description="deposit percentage",
-     *                    example="20000-9000000-90000"
-     *                ),
-     *                @OA\Property(
-     *                    property="deposit_amount",
-     *                    type="decimal",
-     *                    description="deposit_amount",
-     *                    example="1"
-     *                ),
-     *                @OA\Property(
-     *                    property="order_no",
-     *                    type="string",
-     *                    description="order number",
-     *                    example="283728323"
-     *                ),
-     *               @OA\Property(
-     *                    property="amount_token",
-     *                    type="string",
-     *                    description="amount token",
-     *                    example="5590"
-     *                ),
-     *                @OA\Property(
-     *                    property="amount_usd",
-     *                    type="string",
-     *                    description="amount usd",
-     *                    example="5590"
-     *                ),
-     *                @OA\Property(
-     *                    property="user_id",
-     *                    type="string",
-     *                    description="user id",
-     *                    example="550000-9000000-9000000"
-     *                ),
-     *              )
-     *          )
      *     ),
      *
      *     @OA\Response(

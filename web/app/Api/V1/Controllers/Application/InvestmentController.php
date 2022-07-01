@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Api\V1\Controllers\Application;
+namespace App\Api\V1\Controllers\Application\Application;
 
 use App\Api\V1\Controllers\Controller;
 use App\Api\V1\Services\TransactionService;

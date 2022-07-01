@@ -2,7 +2,7 @@
 
 namespace App\Api\V1\Controllers\Admin;
 
-use App\Http\Controllers\Controller;
+use App\Api\V1\Controllers\Controller;
 use App\Http\Resources\TokenRewardResource;
 use App\Models\TokenReward;
 use Exception;
@@ -130,7 +130,7 @@ class TokenRewardController extends Controller
      * Method for storage of user's token Reward.
      *
      * @OA\Post(
-     *     path="/admin/token-rewards/store",
+     *     path="/admin/token-rewards",
      *     description="Store user's tokenReward",
      *     tags={"Admin / TokenRewards"},
      *
@@ -213,11 +213,11 @@ class TokenRewardController extends Controller
     }
 
     /**
-     * Method for storage of user's token Reward.
+     * Update user's token Reward.
      *
-     * @OA\Putt(
-     *     path="/admin/token-rewards/store",
-     *     description="Store user's tokenReward",
+     * @OA\Put(
+     *     path="/admin/token-rewards",
+     *     description="update user's tokenReward",
      *     tags={"Admin / TokenRewards"},
      *
      *     security={{
