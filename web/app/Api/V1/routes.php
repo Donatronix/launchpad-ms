@@ -89,19 +89,14 @@ $router->group([
         });
 
         /**
-         * Faqs
-         */
-        $router->group([
-            'prefix' => 'faqs',
-        ], function ($router) {
-            $router->get('/', 'FaqController@index');
-            $router->get('/{id}', 'FaqController@show');
-        });
-
-        /**
          * Token Purchase
          */
         $router->post('/purchase-token', 'PurchaseController@store');
+
+        /**
+         * Token Sales Progress
+         */
+        $router->get('/token-sales-progress', 'DashboardController@tokenSalesProgress');
     });
 
     /**
@@ -161,19 +156,6 @@ $router->group([
         });
 
         /**
-         * Faqs
-         */
-        $router->group([
-            'prefix' => 'faqs',
-        ], function ($router) {
-            $router->get('/', 'FaqController@index');
-            $router->post('/', 'FaqController@store');
-            $router->get('{id}', 'FaqController@show');
-            $router->put('{id}', 'FaqController@update');
-            $router->delete('{id}', 'FaqController@destroy');
-        });
-
-        /**
          * Admin/Deposit
          */
         $router->group([
@@ -195,7 +177,6 @@ $router->group([
         ], function ($router) {
             $router->get('/',       'OrderController@index');
             $router->post('/',      'OrderController@store');
-
             $router->get('{id}',    'OrderController@show');
             $router->put('{id}',    'OrderController@update');
             $router->delete('{id}', 'OrderController@destroy');

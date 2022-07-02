@@ -66,7 +66,7 @@ class OrderController extends Controller
      *         description="Unknown error"
      *     ),
      *     @OA\Response(
-     *         response=400,
+     *         response="400",
      *         description="Invalid request"
      *     ),
      *
@@ -180,7 +180,7 @@ class OrderController extends Controller
      *         description="Unknown error"
      *     ),
      *     @OA\Response(
-     *         response=400,
+     *         response="400",
      *         description="Invalid request"
      *     ),
      *
@@ -258,7 +258,7 @@ class OrderController extends Controller
      *         description="Unknown error"
      *     ),
      *     @OA\Response(
-     *         response=400,
+     *         response="400",
      *         description="Invalid request"
      *     ),
      *
@@ -369,12 +369,12 @@ class OrderController extends Controller
      *         description="Unknown error"
      *     ),
      *     @OA\Response(
-     *         response=400,
+     *         response="400",
      *         description="Invalid request"
      *     ),
      *
      *     @OA\Response(
-     *         response=404,
+     *         response="404",
      *         description="Not Found"
      *     ),
      * )
