@@ -36,14 +36,14 @@ $router->group([
         /**
          * Token Rewards
          */
-        $router->group([
-            'prefix' => 'token-rewards',
-        ], function ($router) {
-            $router->get('/', 'TokenRewardController@index');
-            $router->post('/', 'TokenRewardController@store');
-            $router->put('/', 'TokenRewardController@update');
-            $router->delete('/', 'TokenRewardController@destroy');
-        });
+        // $router->group([
+        //     'prefix' => 'token-rewards',
+        // ], function ($router) {
+        //     $router->get('/', 'TokenRewardController@index');
+        //     $router->post('/', 'TokenRewardController@store');
+        //     $router->put('/', 'TokenRewardController@update');
+        //     $router->delete('/', 'TokenRewardController@destroy');
+        // });
 
         /**
          * Prices

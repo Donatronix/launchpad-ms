@@ -40,7 +40,31 @@ class TokenRewardController extends Controller
      *     ),
      *     @OA\Response(
      *         response="200",
-     *         description="Success",
+     *         description="Successfully save"
+     *     ),
+     *     @OA\Response(
+     *         response="201",
+     *         description="Purchase created"
+     *     ),
+     *     @OA\Response(
+     *         response="400",
+     *         description="Invalid request"
+     *     ),
+     *     @OA\Response(
+     *         response="401",
+     *         description="Unauthorized"
+     *     ),
+     *     @OA\Response(
+     *         response="404",
+     *         description="not found"
+     *     ),
+     *     @OA\Response(
+     *         response="422",
+     *         description="Validation failed"
+     *     ),
+     *     @OA\Response(
+     *         response="500",
+     *         description="Unknown error"
      *     )
      * )
      *
@@ -94,7 +118,31 @@ class TokenRewardController extends Controller
      *     ),
      *     @OA\Response(
      *         response="200",
-     *         description="Success",
+     *         description="Successfully save"
+     *     ),
+     *     @OA\Response(
+     *         response="201",
+     *         description="Purchase created"
+     *     ),
+     *     @OA\Response(
+     *         response="400",
+     *         description="Invalid request"
+     *     ),
+     *     @OA\Response(
+     *         response="401",
+     *         description="Unauthorized"
+     *     ),
+     *     @OA\Response(
+     *         response="404",
+     *         description="not found"
+     *     ),
+     *     @OA\Response(
+     *         response="422",
+     *         description="Validation failed"
+     *     ),
+     *     @OA\Response(
+     *         response="500",
+     *         description="Unknown error"
      *     )
      * )
      *
@@ -142,50 +190,60 @@ class TokenRewardController extends Controller
      *         }
      *     }},
      *
-     *     @OA\Parameter(
-     *         name="purchase_band",
-     *         description="Serial number of purchase",
-     *         in="query",
-     *         required=true,
-     *         @OA\Schema(
-     *             type="integer",
-     *              default=1
-     *         )
-     *     ),
-     *     @OA\Parameter(
-     *         name="swap",
-     *         description="Number of tokens",
-     *         in="query",
-     *         required=true,
-     *         @OA\Schema(
-     *             type="integer",
-     *              default=1
-     *         )
-     *     ),
-     *     @OA\Parameter(
-     *         name="deposit_amount",
-     *         description="Amount money to be depoosited",
-     *         in="query",
-     *         required=true,
-     *         @OA\Schema(
-     *             type="integer",
-     *              default=1
-     *         )
-     *     ),
-     *     @OA\Parameter(
-     *         name="reward_bonus",
-     *         description="Reward bonus for token",
-     *         in="query",
-     *         required=true,
-     *         @OA\Schema(
-     *             type="integer",
-     *              default=1
-     *         )
-     *     ),
+     *       @OA\RequestBody(
+     *            @OA\JsonContent(
+     *                type="object",
+     *                @OA\Property(
+     *                    property="purchase_band",
+     *                    type="string",
+     *                    description="Serial number of purchase",
+     *                ),
+     *                @OA\Property(
+     *                    property="swap",
+     *                    type="string",
+     *                    description="Number of tokens",
+     *                ),
+     *                @OA\Property(
+     *                    property="deposit_amount",
+     *                    type="integer",
+     *                    description="Amount money to be deposited",
+     *                ),
+     *                @OA\Property(
+     *                    property="reward_bonus",
+     *                    type="integer",
+     *                    description="Reward bonus for token",
+     *                ),
+     *           ),
+     *       ),
+     * 
      *     @OA\Response(
      *         response="200",
-     *         description="Success",
-     *     )
+     *         description="Successfully save"
+     *     ),
+     *     @OA\Response(
+     *         response="201",
+     *         description="Purchase created"
+     *     ),
+     *     @OA\Response(
+     *         response="400",
+     *         description="Invalid request"
+     *     ),
+     *     @OA\Response(
+     *         response="401",
+     *         description="Unauthorized"
+     *     ),
+     *     @OA\Response(
+     *         response="404",
+     *         description="not found"
+     *     ),
+     *     @OA\Response(
+     *         response="422",
+     *         description="Validation failed"
+     *     ),
+     *     @OA\Response(
+     *         response="500",
+     *         description="Unknown error"
+     *     ),
      * )
      *
      * Method for storage of token Reward of users.
@@ -229,48 +287,67 @@ class TokenRewardController extends Controller
      *     }},
      *
      *     @OA\Parameter(
-     *         name="purchase_band",
-     *         description="Serial number of purchase",
-     *         in="query",
+     *         name="token_reward_id",
+     *         description="TokenReward ID",
+     *         in="path",
      *         required=true,
      *         @OA\Schema(
-     *             type="integer",
-     *              default=1
+     *             type="integer"
      *         )
      *     ),
-     *     @OA\Parameter(
-     *         name="swap",
-     *         description="Number of tokens",
-     *         in="query",
-     *         required=true,
-     *         @OA\Schema(
-     *             type="integer",
-     *              default=1
-     *         )
-     *     ),
-     *     @OA\Parameter(
-     *         name="deposit_amount",
-     *         description="Amount money to be depoosited",
-     *         in="query",
-     *         required=true,
-     *         @OA\Schema(
-     *             type="integer",
-     *              default=1
-     *         )
-     *     ),
-     *     @OA\Parameter(
-     *         name="reward_bonus",
-     *         description="Reward bonus for token",
-     *         in="query",
-     *         required=true,
-     *         @OA\Schema(
-     *             type="integer",
-     *              default=1
-     *         )
-     *     ),
+     *
+     *       @OA\RequestBody(
+     *            @OA\JsonContent(
+     *                type="object",
+     *                @OA\Property(
+     *                    property="purchase_band",
+     *                    type="string",
+     *                    description="Serial number of purchase",
+     *                ),
+     *                @OA\Property(
+     *                    property="swap",
+     *                    type="string",
+     *                    description="Number of tokens",
+     *                ),
+     *                @OA\Property(
+     *                    property="deposit_amount",
+     *                    type="integer",
+     *                    description="Amount money to be deposited",
+     *                ),
+     *                @OA\Property(
+     *                    property="reward_bonus",
+     *                    type="integer",
+     *                    description="Reward bonus for token",
+     *                ),
+     *           ),
+     *       ),
      *     @OA\Response(
      *         response="200",
-     *         description="Success",
+     *         description="Successfully save"
+     *     ),
+     *     @OA\Response(
+     *         response="201",
+     *         description="Purchase created"
+     *     ),
+     *     @OA\Response(
+     *         response="400",
+     *         description="Invalid request"
+     *     ),
+     *     @OA\Response(
+     *         response="401",
+     *         description="Unauthorized"
+     *     ),
+     *     @OA\Response(
+     *         response="404",
+     *         description="not found"
+     *     ),
+     *     @OA\Response(
+     *         response="422",
+     *         description="Validation failed"
+     *     ),
+     *     @OA\Response(
+     *         response="500",
+     *         description="Unknown error"
      *     )
      * )
      *
@@ -325,7 +402,31 @@ class TokenRewardController extends Controller
      *     ),
      *     @OA\Response(
      *         response="200",
-     *         description="Success",
+     *         description="Successfully save"
+     *     ),
+     *     @OA\Response(
+     *         response="201",
+     *         description="Purchase created"
+     *     ),
+     *     @OA\Response(
+     *         response="400",
+     *         description="Invalid request"
+     *     ),
+     *     @OA\Response(
+     *         response="401",
+     *         description="Unauthorized"
+     *     ),
+     *     @OA\Response(
+     *         response="404",
+     *         description="not found"
+     *     ),
+     *     @OA\Response(
+     *         response="422",
+     *         description="Validation failed"
+     *     ),
+     *     @OA\Response(
+     *         response="500",
+     *         description="Unknown error"
      *     )
      * )
      *
