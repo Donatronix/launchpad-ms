@@ -36,7 +36,7 @@ class PriceController extends Controller
      *         description="Unknown error"
      *     ),
      *     @OA\Response(
-     *         response=400,
+     *         response="400",
      *         description="Invalid request"
      *     ),
      *
@@ -113,7 +113,7 @@ class PriceController extends Controller
      *     ),
      *     @OA\Response(
      *         response="404",
-     *         description="not found"
+     *         description="Not Found"
      *     ),
      *     @OA\Response(
      *         response="422",
@@ -247,7 +247,7 @@ class PriceController extends Controller
      *     ),
      *     @OA\Response(
      *         response="404",
-     *         description="not found"
+     *         description="Not Found"
      *     ),
      *     @OA\Response(
      *         response="422",
@@ -347,7 +347,7 @@ class PriceController extends Controller
         try {
             // get price with id
             $price = Price::findOrFail($id);
-            // delete price 
+            // delete price
             $price->delete();
             return response()->json([
                 'type' => 'success',

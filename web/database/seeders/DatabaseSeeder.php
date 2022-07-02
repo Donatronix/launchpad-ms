@@ -22,10 +22,8 @@ class DatabaseSeeder extends Seeder
             TokenRewardsTableSeeder::class,
             PaymentTypesTableSeeder::class,
             CreditCardTypeSeeder::class,
-            FaqSeeder::class,
             PurchaseSeeder::class,
         ]);
-
 
         // Seeds for local and staging
         if (App::environment(['local', 'staging'])) {

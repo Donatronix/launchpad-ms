@@ -12,7 +12,7 @@ use Sumra\SDK\JsonApiResponse;
 
 class DashboardController extends Controller
 {
-    
+
     private Purchase $purchase;
     private Product $product;
 
@@ -40,7 +40,7 @@ class DashboardController extends Controller
      *             "ManagerWrite"
      *         }
      *     }},
-     * 
+     *
      *     @OA\Parameter(
      *         name="product_id",
      *         in="path",
@@ -69,7 +69,7 @@ class DashboardController extends Controller
      *     ),
      *     @OA\Response(
      *         response="404",
-     *         description="not found"
+     *         description="Not Found"
      *     ),
      *     @OA\Response(
      *         response="422",
@@ -85,10 +85,10 @@ class DashboardController extends Controller
      */
     public function tokenSalesProgress(Request $request): mixed
     {
-        
+
         // Try to get token sales progress
         try {
-            // check if product id is available 
+            // check if product id is available
             if(!$request->has("product_id")){
             return response()->jsonApi([
                 'type' => 'danger',
@@ -105,7 +105,7 @@ class DashboardController extends Controller
                 return $product;
             }
 
-            // Sum all purchases for this token 
+            // Sum all purchases for this token
             $total_sales = $this->purchase::where('product_id', $request->get("product_id"))->sum("token_amount");
 
             // Create new token purchase order
