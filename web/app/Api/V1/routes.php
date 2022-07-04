@@ -94,6 +94,11 @@ $router->group([
         $router->post('/purchase-token', 'PurchaseController@store');
 
         /**
+         * Token Investors
+         */
+        $router->get('/token-investors', 'PurchaseController@tokenInvestors');
+
+        /**
          * Token Sales Progress
          */
         $router->get('/token-sales-progress', 'DashboardController@tokenSalesProgress');
