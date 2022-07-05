@@ -29,9 +29,10 @@ class CreateTableTransactionsTable extends Migration
             $table->decimal('total_amount', 12, 2, true);
             $table->decimal('bonus', 12, 2, true);
             $table->decimal('sol_received', 12, 2, true);
+            $table->string('admin_id', 100)->nullable();
+            $table->string('user_id', 100)->nullable();
 
             $table->uuid('order_id');
-            $table->uuid('user_id');
 
             $table->unsignedTinyInteger('credit_card_type_id')->default(0);
 

@@ -279,7 +279,7 @@ class TransactionController extends Controller
      *    @OA\Parameter(
      *         name="currency_code",
      *         in="query",
-     *         description="currency ($,€,£)",
+     *         description="Currency ($, €, £)",
      *         @OA\Schema(
      *             type="string"
      *         )
@@ -288,7 +288,7 @@ class TransactionController extends Controller
      *     @OA\Parameter(
      *         name="user_id",
      *         in="query",
-     *         description="Filter for a specific user loan details",
+     *         description="Transaction Owner's id (added automatically)",
      *         @OA\Schema(
      *             type="string"
      *         )
@@ -337,6 +337,7 @@ class TransactionController extends Controller
             'transaction_gateway' => 'required|string',
             'amount_received' => 'required|string',
             'transaction_date' => 'required|date|before:tomorrow',
+            'user_id' => 'required',
         ]);
 
         if ($validator->fails()) {

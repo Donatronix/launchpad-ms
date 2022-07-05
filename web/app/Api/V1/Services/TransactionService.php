@@ -56,7 +56,8 @@ class TransactionService
             'payment_date' => $params['transaction_date'],
             'total_amount' => $total_amount,
             'wallet_address' => $params['wallet_address'],
-            'user_id' => Auth::user()->getAuthIdentifier(),
+            'admin_id' => Auth::user()->getAuthIdentifier(), #authenticated admin
+            'user_id' => $params['user_id'],
             'payment_token' => $params['transaction_token'],
             'payment_gateway' => $params['transaction_gateway'],
             'currency_code' => $params['currency_code'],
