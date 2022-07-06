@@ -79,6 +79,16 @@ class PriceController extends Controller
      *              default="1"
      *         )
      *     ),
+     * 
+     *     @OA\Parameter(
+     *         name="product_id",
+     *         description="Id of product",
+     *         in="query",
+     *         required=false,
+     *         @OA\Schema(
+     *              type="string",
+     *         )
+     *     ),
      *
      *     @OA\Response(
      *          response="200",
@@ -95,8 +105,13 @@ class PriceController extends Controller
     {
         try {
             // Get prices
+            if($request->has("product_id")){
+                $prices = Price::where(['stage' => $stage, 'product_id' => $request->get("product_id")])
+                    ->first();
+            }else{
             $prices = Price::where('stage', $stage)
                 ->get();
+            }
 
             return response()->jsonApi([
                 'type' => 'success',
