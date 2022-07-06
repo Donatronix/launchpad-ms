@@ -25,13 +25,6 @@ class DepositController extends Controller
      *     description="Getting all data about deposits for all users",
      *     tags={"Admin / Deposits"},
      *
-     *     security={{
-     *         "default": {
-     *             "ManagerRead",
-     *             "User",
-     *             "ManagerWrite"
-     *         }
-     *     }},
      *
      *     @OA\Parameter(
      *         name="limit",
@@ -68,7 +61,22 @@ class DepositController extends Controller
     {
         try {
             $allDeposits = Deposit::orderBy('created_at', 'Desc')
+                ->with(['order' => function ($query) {
+                    $query->select(
+                        'id',
+                        'product_id',
+                        'investment_amount',
+                        'deposit_percentage',
+                        'deposit_amount',
+                        'user_id',
+                        'status',
+                        'order_no',
+                        'amount_token',
+                        'amount_usd'
+                    );
+                }])
                 ->paginate($request->get('limit', 20));
+
             $resp['type'] = "Success";
             $resp['title'] = "List all deposits";
             $resp['message'] = "List all deposits";
@@ -92,13 +100,6 @@ class DepositController extends Controller
      *     description="Adding new deposit for user",
      *     tags={"Admin / Deposits"},
      *
-     *      security={{
-     *         "default": {
-     *             "ManagerRead",
-     *             "User",
-     *             "ManagerWrite"
-     *         }
-     *      }},
      *
      *       @OA\RequestBody(
      *            @OA\JsonContent(
@@ -164,35 +165,35 @@ class DepositController extends Controller
             //validate input
             $this->validate($request, [
                 'currency_id' => 'required|string',
-                'amount' => 'required|decimal',
-                'order_id' => 'required|string',
+                'amount'    => 'required|decimal',
+                'order_id'  => 'required|string',
             ]);
 
             $depositSaved = Deposit::create([
-                'currency_id' => $request['currency_id'],
-                'amount' => $request['amount'],
-                'order_id' => $request['order_id'],
-                'user_id' => Auth::user()->getAuthIdentifier(),
+                'currency_id'   => $request['currency_id'],
+                'amount'        => $request['amount'],
+                'order_id'      => $request['order_id'],
+                'user_id'       => Auth::user()->getAuthIdentifier(),
             ]);
 
-            $resp['type'] = "Success";
+            $resp['type']   = "Success";
             $resp['title'] = "Create new deposit";
             $resp['message'] = "Deposit was created";
             $resp['data'] = $depositSaved;
             return response()->json($resp, 200);
         } catch (ValidationException $e) {
             return response()->json([
-                'type' => 'danger',
-                'title' => 'Create new deposit',
-                'message' => 'Error occurred when creating new deposit',
-                'data' => $e->getMessage()
+                'type'      => 'warning',
+                'title'     => 'Create new deposit',
+                'message'   => 'Validation error',
+                'data'      => $e->getMessage()
             ], 400);
         } catch (Exception $e) {
             return response()->json([
-                'type' => 'danger',
-                'title' => 'Create new deposit',
-                'message' => 'Error occurred when creating new deposit',
-                'data' => $e->getMessage()
+                'type'      => 'danger',
+                'title'     => 'Create new deposit',
+                'message'   => 'Error occurred when creating new deposit',
+                'data'      => $e->getMessage()
             ], 400);
         }
     }
@@ -216,20 +217,6 @@ class DepositController extends Controller
      *         response="200",
      *         description="Success"
      *     ),
-     *
-     *     @OA\Response(
-     *         response="500",
-     *         description="Unknown error"
-     *     ),
-     *     @OA\Response(
-     *         response="400",
-     *         description="Invalid request"
-     *     ),
-     *
-     *     @OA\Response(
-     *         response="404",
-     *         description="Not Found"
-     *     ),
      * )
      *
      * @param Request $request
@@ -241,17 +228,17 @@ class DepositController extends Controller
         try {
             $deposit = Deposit::findOrFail($id);
 
-            $resp['type'] = "Success";
-            $resp['title'] = "Get deposit";
-            $resp['message'] = "Get deposit";
-            $resp['data'] = $deposit ? $deposit->with('order') : [];
+            $resp['type']       = "Success";
+            $resp['title']      = "Get deposit";
+            $resp['message']    = "Get deposit";
+            $resp['data']       = $deposit ? $deposit->with('order') : [];
             return response()->json($resp, 200);
         } catch (\Exception $e) {
             return response()->json([
-                'type' => 'danger',
-                'title' => 'Get deposit',
-                'message' => 'Error in getting deposit',
-                'data' => $e->getMessage()
+                'type'      => 'danger',
+                'title'     => 'Get deposit',
+                'message'   => 'Error in getting deposit',
+                'data'      => $e->getMessage()
             ], 400);
         }
     }
@@ -341,9 +328,9 @@ class DepositController extends Controller
             return response()->json($resp, 200);
         } catch (ValidationException $e) {
             return response()->json([
-                'type' => 'danger',
+                'type' => 'warning',
                 'title' => 'Update deposit',
-                'message' => 'Error occurred when updating deposit',
+                'message' => 'Validation Error',
                 'data' => $e->getMessage()
             ], 400);
         } catch (Exception $e) {

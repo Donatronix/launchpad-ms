@@ -164,7 +164,7 @@ class TokenRewardController extends Controller
 
             return response()->json([
                 'success' => true,
-                'tokenReward' => new TokenRewardResource ($tokenReward),
+                'tokenReward' => new TokenRewardResource($tokenReward),
             ]);
         } catch (Exception $e) {
             return response()->json([
@@ -215,7 +215,7 @@ class TokenRewardController extends Controller
      *                ),
      *           ),
      *       ),
-     * 
+     *
      *     @OA\Response(
      *         response="200",
      *         description="Successfully save"
@@ -365,7 +365,6 @@ class TokenRewardController extends Controller
             DB::transaction(function () use ($request, &$tokenReward) {
                 $tokenReward->update($request->all());
             });
-
         } catch (Exception $e) {
             return response()->json([
                 'success' => false,

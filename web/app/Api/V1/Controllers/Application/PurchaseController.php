@@ -25,12 +25,11 @@ class PurchaseController extends Controller
 
 
     /**
-     * Purchase a Token
+     * Display list of all purchase - shopping List
      *
-     * @OA\Post(
+     * @OA\Get(
      *     path="/purchase-token",
-     *     summary="Purchase a token",
-     *     description="Create a token purchase order",
+     *     description="Getting list of all purchase-token - shopping list",
      *     tags={"Token"},
      *
      *     security={{
@@ -40,6 +39,71 @@ class PurchaseController extends Controller
      *             "ManagerWrite"
      *         }
      *     }},
+     *
+     *     @OA\Parameter(
+     *         name="limit",
+     *         description="Count of purchase in response",
+     *         in="query",
+     *         required=false,
+     *         @OA\Schema(
+     *             type="integer",
+     *             default=20,
+     *         )
+     *     ),
+     *     @OA\Parameter(
+     *         name="page",
+     *         description="Page of list",
+     *         in="query",
+     *         required=false,
+     *         @OA\Schema(
+     *             type="integer",
+     *             default=1,
+     *         )
+     *     ),
+     *
+     *     @OA\Response(
+     *         response="200",
+     *         description="Success"
+     *     )
+     * )
+     *
+     * @param Request $request
+     *
+     * @return JsonResponse
+     */
+    public function index(Request $request): mixed
+    {
+        try {
+            $allPurchase = Purchase::orderBy('created_at', 'Desc')
+                ->with(['product' => function ($query) {
+                    $query->select('title', 'ticker', 'supply', 'presale_percentage', 'start_date', 'end_date', 'icon');
+                }])
+                ->paginate($request->get('limit', 20));
+
+            $resp['type'] = "Success";
+            $resp['title'] = "List all purchase";
+            $resp['message'] = "List all purchase";
+            $resp['data'] = $allPurchase;
+            return response()->json($resp, 200);
+        } catch (Exception $e) {
+            return response()->json([
+                'type' => 'danger',
+                'title' => 'List all purchase',
+                'message' => 'Error in getting list of all purchase',
+                'data' => $e->getMessage()
+            ], 400);
+        }
+    }
+
+    /**
+     * Purchase a Token
+     *
+     * @OA\Post(
+     *     path="/purchase-token",
+     *     summary="Purchase a token",
+     *     description="Create a token purchase order",
+     *     tags={"Token"},
+     *
      *
      *     @OA\RequestBody(
      *         required=true,
@@ -139,7 +203,7 @@ class PurchaseController extends Controller
      *             type="string"
      *         )
      *     ),
-     * 
+     *
      *     @OA\Response(
      *         response="200",
      *         description="Successfully save"
@@ -185,7 +249,7 @@ class PurchaseController extends Controller
                 ])->select("user_id")->distinct()->get();
             $investors = [];
 
-                // Loop through each of the purchase to get the user details 
+                // Loop through each of the purchase to get the user details
                 foreach($purchases as $key => $value){
                     $user = \DB::connection('identity')->table('users')->where('id',$value['user_id'])->select(["id","first_name","last_name","phone","email_verified_at", "status", "id_number"])->first();
                     // sum the tokens for the user

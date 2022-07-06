@@ -88,9 +88,16 @@ $router->group([
         });
 
         /**
-         * Token Purchase
+         * Token Purchase - shopping List
          */
-        $router->post('/purchase-token', 'PurchaseController@store');
+        $router->group([
+            'namespace' => 'Application',
+            'prefix' => 'purchase-token',
+        ], function ($router) {
+            $router->get('/', 'PurchaseController@index');
+            $router->post('/', 'PurchaseController@store');
+        });
+
 
         /**
          * Token Investors
@@ -159,11 +166,13 @@ $router->group([
             $router->post('/', 'TransactionController@store');
         });
 
+
         /**
          * Admin/Deposit
          */
         $router->group([
-            'prefix' => 'deposits',
+            'namespace' => 'Admin',
+            'prefix' => 'admin/deposits',
         ], function ($router) {
             $router->get('/',       'DepositController@index');
             $router->post('/',      'DepositController@store');
@@ -177,7 +186,8 @@ $router->group([
          * Admin/Order
          */
         $router->group([
-            'prefix' => 'orders',
+            'namespace' => 'Admin',
+            'prefix' => 'admin/orders',
         ], function ($router) {
             $router->get('/',       'OrderController@index');
             $router->post('/',      'OrderController@store');
