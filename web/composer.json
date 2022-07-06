@@ -9,7 +9,8 @@
         "ext-json": "*",
         "ext-openssl": "*",
         "barryvdh/laravel-dompdf": "^1.0",
-        "laravel/lumen-framework": "~8"
+        "laravel/lumen-framework": "~8",
+        "sumra/sdk": "*"
     },
     "require-dev": {
         "fakerphp/faker": "~1",
