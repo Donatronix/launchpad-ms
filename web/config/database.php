@@ -3,6 +3,7 @@
 
 return [
     'default' => 'launchpad',
+    'migrations' => 'migrations',
     'connections' => [
         'launchpad' => [
             'driver' => 'mysql',
