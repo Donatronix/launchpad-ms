@@ -29,4 +29,6 @@ $router->group([
             echo "Connected successfully to database: " . DB::connection()->getDatabaseName();
         }
     });
+
+    $router->post('trans-test', "TransactionController@store");
 });

@@ -54,9 +54,18 @@ class Transaction extends Model
         'total_amount',
         'order_id',
         'user_id',
+        'admin_id',
         'payment_system',
         'credit_card_type_id',
-        'wallet_address'
+        'wallet_address',
+        'currency_code',
+        'payment_date',
+        'payment_token',
+        'token_stage',
+        'payment_gateway',
+        'bonus',
+        'sol_received',
+        'amount_received',
     ];
 
     /**
