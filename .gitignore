@@ -3,5 +3,3 @@
 /sumra-sdk
 docker-compose.yaml
 xdebug.ini
-server.php
-.env
