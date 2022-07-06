@@ -24,6 +24,16 @@ $router->group([
         });
 
         $router->get('/token-rewards', 'TokenRewardController@index');
+
+        /**
+         * Prices
+         */
+        $router->group([
+            'prefix' => 'prices',
+        ], function ($router) {
+            $router->get('/', 'PriceController');
+            $router->get('/{stage}', 'PriceController@getPriceByStage');
+        });
     });
 
     /**
@@ -46,21 +56,10 @@ $router->group([
         // });
 
         /**
-         * Prices
-         */
-        $router->group([
-            'prefix' => 'prices',
-        ], function ($router) {
-            $router->get('/', 'PriceController');
-            $router->get('/{stage}', 'PriceController@getPriceByStage');
-        });
-
-        /**
          * Init first Investment (registration)
          */
         $router->group([
             'prefix' => 'investment',
-            'namespace' => 'Application'
         ], function ($router) {
             $router->post('/', 'InvestmentController');
         });
