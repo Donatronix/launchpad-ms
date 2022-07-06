@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Api\V1\Controllers;
+namespace App\Api\V1\Controllers\Application;
 
 use App\Api\V1\Services\TransactionService;
-use App\Http\Controllers\Controller;
+use App\Api\V1\Controllers\Controller;
 use App\Models\Deposit;
 use App\Models\Order;
 use App\Models\PaymentType;
@@ -118,7 +118,7 @@ class OrderController extends Controller
      *     ),
      *     @OA\Response(
      *         response="404",
-     *         description="not found"
+     *         description="Not Found"
      *     ),
      *     @OA\Response(
      *         response="422",
@@ -194,12 +194,12 @@ class OrderController extends Controller
     }
 
     /**
-     * Getting data about order by ORDER ID
+     * Getting data about order
      *
      * @OA\Get(
      *     path="/orders/{id}",
-     *     summary="Getting data about order by ORDER ID",
-     *     description="Getting data about order by ORDER ID",
+     *     summary="Getting data about order",
+     *     description="Getting data about order",
      *     tags={"Orders"},
      *
      *     security={{

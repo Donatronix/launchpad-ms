@@ -2,7 +2,7 @@
 
 namespace App\Api\V1\Controllers\Admin;
 
-use App\Http\Controllers\Controller;
+use App\Api\V1\Controllers\Controller;
 use App\Models\Price;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
@@ -26,10 +26,24 @@ class PriceController extends Controller
      *         }
      *     }},
      *
-     *     @OA\Response(
+     *      @OA\Response(
      *          response="200",
-     *          description="Getting a listing of product prices"
-     *     )
+     *          description="Success",
+     *     ),
+     *
+     *     @OA\Response(
+     *         response="500",
+     *         description="Unknown error"
+     *     ),
+     *     @OA\Response(
+     *         response="400",
+     *         description="Invalid request"
+     *     ),
+     *
+     *     @OA\Response(
+     *         response="404",
+     *         description="Not Found"
+     *     ),
      * )
      *
      * @param Request $request
@@ -99,7 +113,7 @@ class PriceController extends Controller
      *     ),
      *     @OA\Response(
      *         response="404",
-     *         description="not found"
+     *         description="Not Found"
      *     ),
      *     @OA\Response(
      *         response="422",
@@ -154,61 +168,13 @@ class PriceController extends Controller
      *         }
      *     }},
      *
-     *     @OA\Response(
-     *          response="200",
-     *          description="Getting a listing of product prices"
-     *     )
-     * )
-     *
-     * @param Request $request
-     * @return mixed
-     */
-
-    /**
-     * Display the specified resource.
-     *
-     * @param Price $price
-     */
-    public function show(Price $price)
-    {
-        try {
-            $price->load('product');
-            return response()->json([
-                'type' => 'success',
-                'title' => 'Price Product List',
-                'data' => $price
-            ], 200);
-        } catch (ValidationException $e) {
-            return response()->jsonApi([
-                'type' => 'warning',
-                'title' => 'Price Product List',
-                'message' => "Validation error",
-                'data' => $e->getMessage()
-            ], 400);
-        }
-    }
-
-    /**
-     * Store a newly stage price in storage.
-     *
-     * @OA\Put(
-     *     path="/admin/prices",
-     *     summary="Saving new stage price",
-     *     description="Saving new stage price",
-     *     tags={"Admin / Prices"},
-     *
-     *     security={{
-     *         "default": {
-     *             "ManagerRead",
-     *             "User",
-     *             "ManagerWrite"
-     *         }
-     *     }},
-     *
-     *     @OA\RequestBody(
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="query",
+     *         description="Price's id",
      *         required=true,
-     *         @OA\JsonContent(ref="#/components/schemas/ProductPrice")
-     *     ),
+     *      ),
+     *
      *     @OA\Response(
      *         response="200",
      *         description="Successfully save"
@@ -244,16 +210,102 @@ class PriceController extends Controller
      */
 
     /**
+     * Display the specified resource.
+     *
+     * @param Price $price
+     */
+    public function show(Price $price)
+    {
+        try {
+            $price->load('product');
+            return response()->json([
+                'type' => 'success',
+                'title' => 'Price Product List',
+                'data' => $price
+            ], 200);
+        } catch (ValidationException $e) {
+            return response()->jsonApi([
+                'type' => 'warning',
+                'title' => 'Price Product List',
+                'message' => "Validation error",
+                'data' => $e->getMessage()
+            ], 400);
+        }
+    }
+
+    /**
+     * Updates a stage price.
+     *
+     * @OA\Put(
+     *     path="/admin/prices",
+     *     description="Updates a stage price",
+     *     tags={"Admin / Prices"},
+     *
+     *     security={{
+     *         "default": {
+     *             "ManagerRead",
+     *             "User",
+     *             "ManagerWrite"
+     *         }
+     *     }},
+     *
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="query",
+     *         description="Price's id",
+     *         required=true,
+     *      ),
+     *
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(ref="#/components/schemas/ProductPrice")
+     *     ),
+     *     @OA\Response(
+     *         response="200",
+     *         description="Successfully save"
+     *     ),
+     *     @OA\Response(
+     *         response="201",
+     *         description="Price created"
+     *     ),
+     *     @OA\Response(
+     *         response="400",
+     *         description="Invalid request"
+     *     ),
+     *     @OA\Response(
+     *         response="401",
+     *         description="Unauthorized"
+     *     ),
+     *     @OA\Response(
+     *         response="404",
+     *         description="Not Found"
+     *     ),
+     *     @OA\Response(
+     *         response="422",
+     *         description="Validation failed"
+     *     ),
+     *     @OA\Response(
+     *         response="500",
+     *         description="Unknown error"
+     *     )
+     * )
+     *
+     * @param Request $request
+     * @return mixed
+     */
+
+    /**
      * Update the specified resource in storage.
      *
      * @param Request $request
-     * @param Price $price
+     * @param $id
      */
-    public function update(Request $request, Price $price)
+    public function update(Request $request, $id)
     {
         try {
             $this->validate($request, Price::validationRules());
-            $price = Price::update($request->all());
+            $price = Price::findOrFail($id);
+            $price->update($request->all());
             return response()->json([
                 'type' => 'success',
                 'title' => "Update Price",
@@ -269,16 +321,15 @@ class PriceController extends Controller
                 'data' => $e->getMessage()
             ], 400);
         }
-
     }
 
     /**
      * Delete a particular Price based on ID.
      *
      * @OA\Delete(
-     *     path="/admin/price/{id}",
+     *     path="/admin/prices/{id}",
      *     description="Get a price",
-     *     tags={"Admin / price"},
+     *     tags={"Admin / Prices"},
      *
      *     security={{
      *         "default": {
@@ -319,12 +370,15 @@ class PriceController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param Price $price
+     * @param $id
      * @return Response
      */
-    public function destroy(Price $price)
+    public function destroy($id)
     {
         try {
+            // get price with id
+            $price = Price::findOrFail($id);
+            // delete price
             $price->delete();
             return response()->json([
                 'type' => 'success',
@@ -339,7 +393,5 @@ class PriceController extends Controller
                 'data' => $e->getMessage()
             ], 400);
         }
-
-
     }
 }

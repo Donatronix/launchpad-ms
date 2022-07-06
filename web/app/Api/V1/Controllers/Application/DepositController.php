@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Api\V1\Controllers;
+namespace App\Api\V1\Controllers\Application;
 
 use App\Api\V1\Services\TransactionService;
-use App\Http\Controllers\Controller;
+use App\Api\V1\Controllers\Controller;
 use App\Models\Deposit;
 use App\Models\PaymentType;
 use App\Models\Product;
@@ -116,7 +116,7 @@ class DepositController extends Controller
      *     ),
      *     @OA\Response(
      *         response="404",
-     *         description="not found"
+     *         description="Not Found"
      *     ),
      *     @OA\Response(
      *         response="422",

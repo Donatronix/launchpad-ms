@@ -24,7 +24,8 @@ trait ResponseTrait
             'type' => 'success',
             'message' => $message,
             'data' => $paginator->items(),
-            'meta' => $meta]);
+            'meta' => $meta
+        ]);
     }
 
     public function createdResponse($message, $data)
@@ -32,21 +33,25 @@ trait ResponseTrait
         return response([
             'type' => 'success',
             'message' => $message,
-            'data' => $data], 201);
+            'data' => $data
+        ], 201);
     }
 
     public function errorResponse($message)
     {
         return response([
             'type' => 'danger',
-            'message' => $message], 500);
+            'message' => $message
+        ], 500);
     }
 
-    public function okResponse($message, $data = null)
+    public function okResponse($title, $message, $data = null)
     {
         return response([
             'type' => 'success',
+            'title' => $title,
             'message' => $message,
-            'data' => $data], 200);
+            'data' => $data
+        ], 200);
     }
 }

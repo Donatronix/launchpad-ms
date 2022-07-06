@@ -2,7 +2,7 @@
 
 namespace App\Api\V1\Controllers\Admin;
 
-use App\Http\Controllers\Controller;
+use App\Api\V1\Controllers\Controller;
 use App\Models\Deposit;
 use Exception;
 use Illuminate\Http\JsonResponse;
@@ -115,13 +115,6 @@ class DepositController extends Controller
      *                    description="currency id",
      *                    example="8000000-3000000-20000"
      *                ),
-
-     *                @OA\Property(
-     *                    property="user_id",
-     *                    type="string",
-     *                    description="user id",
-     *                    example="800000-8000000-2290000"
-     *                ),
      *                @OA\Property(
      *                    property="order_id",
      *                    type="string",
@@ -149,7 +142,7 @@ class DepositController extends Controller
      *     ),
      *     @OA\Response(
      *         response="404",
-     *         description="not found"
+     *         description="Not Found"
      *     ),
      *     @OA\Response(
      *         response="422",
@@ -294,12 +287,6 @@ class DepositController extends Controller
      *                    example="100.00"
      *             ),
      *             @OA\Property(
-     *                    property="user_id",
-     *                    type="string",
-     *                    description="user id",
-     *                    example="90000-8000000-2290000"
-     *             ),
-     *             @OA\Property(
      *                    property="order_id",
      *                    type="string",
      *                    description="order id",
@@ -374,7 +361,7 @@ class DepositController extends Controller
      *
      * @OA\Delete(
      *     path="/admin/deposits/{id}",
-     *     description="deposits id",
+     *     description="Deletes one deposit",
      *     tags={"Admin / Deposits"},
      *
      *     @OA\Parameter(

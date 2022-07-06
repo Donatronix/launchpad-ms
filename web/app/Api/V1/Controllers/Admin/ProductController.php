@@ -2,7 +2,7 @@
 
 namespace App\Api\V1\Controllers\Admin;
 
-use App\Http\Controllers\Controller;
+use App\Api\V1\Controllers\Controller;
 use App\Models\Product;
 use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -383,6 +383,7 @@ class ProductController extends Controller
             'supply' => 'integer',
             'presale_percentage' => 'string',
             'start_date' => 'string',
+            'end_date' => 'string',
         ]);
 
         if ($validator->fails()) {
@@ -390,7 +391,7 @@ class ProductController extends Controller
         }
 
         // transform the request object to format date
-        if ($request->has('start_date')) {
+        if ($request->has('start_date') || $request->has('end_date')) {
             $request->merge([
                 'start_date' => Carbon::parse($request->get('start_date')),
                 'end_date' => Carbon::parse($request->get('end_date')),

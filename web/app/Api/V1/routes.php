@@ -22,6 +22,8 @@ $router->group([
             $router->get('/', 'ProductController@index');
             $router->get('/{id}', 'ProductController@show');
         });
+
+        $router->get('/token-rewards', 'TokenRewardController@index');
     });
 
     /**
@@ -34,14 +36,14 @@ $router->group([
         /**
          * Token Rewards
          */
-        $router->group([
-            'prefix' => 'token-rewards',
-        ], function ($router) {
-            $router->get('/', 'TokenRewardController@index');
-            $router->post('/', 'TokenRewardController@store');
-            $router->put('/', 'TokenRewardController@update');
-            $router->delete('/', 'TokenRewardController@destroy');
-        });
+        // $router->group([
+        //     'prefix' => 'token-rewards',
+        // ], function ($router) {
+        //     $router->get('/', 'TokenRewardController@index');
+        //     $router->post('/', 'TokenRewardController@store');
+        //     $router->put('/', 'TokenRewardController@update');
+        //     $router->delete('/', 'TokenRewardController@destroy');
+        // });
 
         /**
          * Prices
@@ -87,19 +89,19 @@ $router->group([
         });
 
         /**
-         * Faqs
-         */
-        $router->group([
-            'prefix' => 'faqs',
-        ], function ($router) {
-            $router->get('/', 'FaqController@index');
-            $router->get('/{id}', 'FaqController@show');
-        });
-
-        /**
          * Token Purchase
          */
         $router->post('/purchase-token', 'PurchaseController@store');
+
+        /**
+         * Token Investors
+         */
+        $router->get('/token-investors', 'PurchaseController@tokenInvestors');
+
+        /**
+         * Token Sales Progress
+         */
+        $router->get('/token-sales-progress', 'DashboardController@tokenSalesProgress');
     });
 
     /**
@@ -143,8 +145,9 @@ $router->group([
         ], function ($router) {
             $router->get('/', 'TokenRewardController@index');
             $router->post('/', 'TokenRewardController@store');
-            $router->put('/', 'TokenRewardController@update');
-            $router->delete('/', 'TokenRewardController@destroy');
+            $router->get('/{token_reward_id}', 'TokenRewardController@show');
+            $router->put('/{token_reward_id}', 'TokenRewardController@update');
+            $router->delete('/{token_reward_id}', 'TokenRewardController@destroy');
         });
 
         /**
@@ -155,19 +158,6 @@ $router->group([
         ], function ($router) {
             $router->get('/', 'TransactionController');
             $router->post('/', 'TransactionController@store');
-        });
-
-        /**
-         * Faqs
-         */
-        $router->group([
-            'prefix' => 'faqs',
-        ], function ($router) {
-            $router->get('/', 'FaqController@index');
-            $router->post('/', 'FaqController@store');
-            $router->get('{id}', 'FaqController@show');
-            $router->put('{id}', 'FaqController@update');
-            $router->delete('{id}', 'FaqController@destroy');
         });
 
         /**
@@ -192,7 +182,6 @@ $router->group([
         ], function ($router) {
             $router->get('/',       'OrderController@index');
             $router->post('/',      'OrderController@store');
-
             $router->get('{id}',    'OrderController@show');
             $router->put('{id}',    'OrderController@update');
             $router->delete('{id}', 'OrderController@destroy');
