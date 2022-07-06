@@ -16,7 +16,7 @@ class PriceController extends Controller
      *     path="/prices",
      *     summary="Getting a listing of product prices",
      *     description="Getting a listing of product prices",
-     *     tags={"Prices"},
+     *     tags={"User | Prices"},
      *
      *     security={{
      *         "default": {
@@ -25,6 +25,15 @@ class PriceController extends Controller
      *             "ManagerWrite"
      *         }
      *     }},
+     * 
+     *     @OA\Parameter(
+     *         name="product_id",
+     *         in="query",
+     *         description="Get price by product with product id",
+     *         @OA\Schema(
+     *             type="string"
+     *         )
+     *     ),
      *
      *     @OA\Response(
      *          response="200",
@@ -41,7 +50,7 @@ class PriceController extends Controller
         // Get order
         $order = Price::where('status', true)
             ->select(['stage', 'price', 'period_in_days', 'percent_profit', 'amount'])
-            ->where('product_id', '957d387a-e1a3-44ef-af29-6ce9118d67b4')
+            ->where('product_id', $request->product_id)
             ->get();
 
         return response()->jsonApi([
@@ -59,7 +68,7 @@ class PriceController extends Controller
      *     path="/prices/{stage}",
      *     summary="Getting a listing of product prices by stage",
      *     description="Getting a listing of product prices by stage",
-     *     tags={"Prices"},
+     *     tags={"User | Prices"},
      *
      *     security={{
      *         "default": {

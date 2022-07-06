@@ -2,8 +2,8 @@
 
 namespace App\Api\V1\Controllers\Application;
 
-use App\Api\V1\Services\TransactionService;
 use App\Api\V1\Controllers\Controller;
+use App\Api\V1\Services\TransactionService;
 use App\Models\Deposit;
 use App\Models\PaymentType;
 use App\Models\Product;
