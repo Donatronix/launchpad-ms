@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateTableTransactionsTable extends Migration
+class CreateTransactionsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,8 +13,6 @@ class CreateTableTransactionsTable extends Migration
      */
     public function up()
     {
-        Schema::dropIfExists('transactions');
-
         Schema::create('transactions', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->unsignedTinyInteger('payment_type_id');  // fiat/crypto ID
