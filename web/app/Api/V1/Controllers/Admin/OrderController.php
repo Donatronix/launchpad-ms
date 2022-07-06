@@ -26,14 +26,6 @@ class OrderController extends Controller
      *     description="Getting all data about order for all users",
      *     tags={"Admin / Orders"},
      *
-     *      security={{
-     *         "default": {
-     *             "ManagerRead",
-     *             "User",
-     *             "ManagerWrite"
-     *         }
-     *      }},
-     *
      *
      *       @OA\Parameter(
      *         name="limit",
@@ -84,7 +76,14 @@ class OrderController extends Controller
     {
         try {
             $allOrders = Order::orderBy('created_at', 'Desc')
+                ->with(['product' => function ($query) {
+                    $query->select('title', 'ticker', 'supply', 'presale_percentage', 'start_date', 'end_date', 'icon');
+                }])
+                ->with(['transaction' => function ($query) {
+                    $query->select('payment_type_id', 'total_amount', 'order_id', 'user_id', 'payment_system', 'credit_card_type_id', 'wallet_address');
+                }])
                 ->paginate($request->get('limit', 20));
+
             $resp['type'] = "Success";
             $resp['title'] = "List all orders";
             $resp['message'] = "List all orders";
@@ -107,15 +106,8 @@ class OrderController extends Controller
      *     path="/admin/orders",
      *     description="Adding new orders",
      *     tags={"Admin / Orders"},
-     *
-     *      security={{
-     *         "default": {
-     *             "ManagerRead",
-     *             "User",
-     *             "ManagerWrite"
-     *         }
-     *      }},
-     *
+
+
      *       @OA\RequestBody(
      *            @OA\JsonContent(
      *                type="object",
