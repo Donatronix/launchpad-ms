@@ -24,7 +24,13 @@ class DepositController extends Controller
      *     path="/admin/deposits",
      *     description="Getting all data about deposits for all users",
      *     tags={"Admin / Deposits"},
-     *
+     *     security={{
+     *         "default": {
+     *             "ManagerRead",
+     *             "User",
+     *             "ManagerWrite"
+     *         }
+     *     }},
      *
      *     @OA\Parameter(
      *         name="limit",
@@ -100,6 +106,13 @@ class DepositController extends Controller
      *     description="Adding new deposit for user",
      *     tags={"Admin / Deposits"},
      *
+     *     security={{
+     *         "default": {
+     *             "ManagerRead",
+     *             "User",
+     *             "ManagerWrite"
+     *         }
+     *     }},
      *
      *       @OA\RequestBody(
      *            @OA\JsonContent(
@@ -251,6 +264,14 @@ class DepositController extends Controller
      *     description="Update one deposit",
      *     tags={"Admin / Deposits"},
      *
+     *     security={{
+     *         "default": {
+     *             "ManagerRead",
+     *             "User",
+     *             "ManagerWrite"
+     *         }
+     *     }},
+     *
      *     @OA\Parameter(
      *         name="id",
      *         in="query",
@@ -350,6 +371,14 @@ class DepositController extends Controller
      *     path="/admin/deposits/{id}",
      *     description="Deletes one deposit",
      *     tags={"Admin / Deposits"},
+     *
+     *     security={{
+     *         "default": {
+     *             "ManagerRead",
+     *             "User",
+     *             "ManagerWrite"
+     *         }
+     *     }},
      *
      *     @OA\Parameter(
      *         name="id",

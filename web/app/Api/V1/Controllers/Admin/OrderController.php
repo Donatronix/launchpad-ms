@@ -26,6 +26,13 @@ class OrderController extends Controller
      *     description="Getting all data about order for all users",
      *     tags={"Admin / Orders"},
      *
+     *     security={{
+     *         "default": {
+     *             "ManagerRead",
+     *             "User",
+     *             "ManagerWrite"
+     *         }
+     *     }},
      *
      *       @OA\Parameter(
      *         name="limit",
