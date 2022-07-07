@@ -168,7 +168,7 @@ class TransactionController extends Controller
      *
      * @return JsonResponse
      */
-    public function approve($transaction_id)
+    public function update($transaction_id)
     {
         try {
             $transaction = Transaction::find($transaction_id);
@@ -183,7 +183,10 @@ class TransactionController extends Controller
             $transaction->save();
 
             return response()->json([
-                'success' => true
+                'success' => true,
+                'title' => 'Transaction approved',
+                'message' => "Transaction updated successfully",
+                'data' => $transaction
             ], 200);
         } catch (Exception $e) {
             return response()->json([
