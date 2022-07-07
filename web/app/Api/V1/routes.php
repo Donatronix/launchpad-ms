@@ -163,7 +163,11 @@ $router->group([
             'prefix' => 'transactions',
         ], function ($router) {
             $router->get('/', 'TransactionController');
+            $router->get('/', 'TransactionController@index');
             $router->post('/', 'TransactionController@store');
+            $router->get('/{transaction_id}', 'TransactionController@show');
+            $router->put('/{transaction_id}', 'TransactionController@update');
+            $router->delete('/{transaction_id}', 'TransactionController@destroy');
         });
 
 

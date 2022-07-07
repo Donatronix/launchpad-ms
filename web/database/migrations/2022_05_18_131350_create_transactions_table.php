@@ -27,6 +27,7 @@ class CreateTransactionsTable extends Migration
             $table->decimal('total_amount', 12, 2, true);
             $table->decimal('bonus', 12, 2, true);
             $table->decimal('sol_received', 12, 2, true);
+            $table->enum('status', ['0','1','2'])->default(0);
             $table->string('admin_id', 100)->nullable();
             $table->string('user_id', 100)->nullable();
 

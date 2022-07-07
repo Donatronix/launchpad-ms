@@ -58,9 +58,12 @@ class TransactionController extends Controller
             $result = Transaction::where('status', Transaction::STATUS_WAITING)
                 ->paginate($request->get('limit', 20));
 
-
             // Return response
-            return response()->jsonApi($result->toArray());
+            return response()->json([
+                'success' => true,
+                'title' => "list of un-approved",
+                'transaction' => $result->toArray()
+            ]);
         } catch (Exception $e) {
             return response()->jsonApi([
                 'type' => 'danger',
@@ -119,7 +122,8 @@ class TransactionController extends Controller
 
             return response()->json([
                 'success' => true,
-                'transaction' => $transaction
+                'title' => "A transaction by id",
+                'transaction' => $transaction->toArray()
             ]);
         } catch (Exception $e) {
             return response()->json([
