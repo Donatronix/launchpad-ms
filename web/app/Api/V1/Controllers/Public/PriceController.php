@@ -30,6 +30,7 @@ class PriceController extends Controller
      *         name="product_id",
      *         in="query",
      *         description="Get price by product with product id",
+     *         required=false,
      *         @OA\Schema(
      *             type="string"
      *         )

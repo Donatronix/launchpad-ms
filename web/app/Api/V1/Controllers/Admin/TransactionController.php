@@ -225,6 +225,7 @@ class TransactionController extends Controller
      *         name="transaction_type",
      *         in="query",
      *         description="Transaction type",
+     *         required=false,
      *         @OA\Schema(
      *             type="string"
      *         )
@@ -233,6 +234,7 @@ class TransactionController extends Controller
      *         name="transaction_date",
      *         in="query",
      *         description="Transaction date",
+     *         required=false,
      *         @OA\Schema(
      *             type="date"
      *         )
@@ -242,6 +244,7 @@ class TransactionController extends Controller
      *         name="amount_received",
      *         in="query",
      *         description="Amount Invested",
+     *         required=false,
      *         @OA\Schema(
      *             type="string"
      *         )
@@ -269,6 +272,7 @@ class TransactionController extends Controller
      *         name="wallet_address",
      *         in="query",
      *         description="Payment address",
+     *         required=false,
      *         @OA\Schema(
      *             type="string"
      *         )
@@ -287,6 +291,7 @@ class TransactionController extends Controller
      *         name="currency_code",
      *         in="query",
      *         description="Currency ($, €, £)",
+     *         required=false,
      *         @OA\Schema(
      *             type="string"
      *         )
@@ -296,6 +301,7 @@ class TransactionController extends Controller
      *         name="user_id",
      *         in="query",
      *         description="Transaction Owner's id (added automatically)",
+     *         required=false,
      *         @OA\Schema(
      *             type="string"
      *         )
