@@ -296,31 +296,31 @@ class TokenRewardController extends Controller
      *         )
      *     ),
      *
-     *       @OA\RequestBody(
-     *            @OA\JsonContent(
-     *                type="object",
-     *                @OA\Property(
-     *                    property="purchase_band",
-     *                    type="string",
-     *                    description="Serial number of purchase",
-     *                ),
-     *                @OA\Property(
-     *                    property="swap",
-     *                    type="string",
-     *                    description="Number of tokens",
-     *                ),
-     *                @OA\Property(
-     *                    property="deposit_amount",
-     *                    type="integer",
-     *                    description="Amount money to be deposited",
-     *                ),
-     *                @OA\Property(
-     *                    property="reward_bonus",
-     *                    type="integer",
-     *                    description="Reward bonus for token",
-     *                ),
-     *           ),
-     *       ),
+     *     @OA\RequestBody(
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(
+     *                 property="purchase_band",
+     *                 type="string",
+     *                 description="Serial number of purchase",
+     *             ),
+     *             @OA\Property(
+     *                 property="swap",
+     *                 type="string",
+     *                 description="Number of tokens",
+     *             ),
+     *             @OA\Property(
+     *                 property="deposit_amount",
+     *                 type="integer",
+     *                 description="Amount money to be deposited",
+     *             ),
+     *             @OA\Property(
+     *                 property="reward_bonus",
+     *                 type="integer",
+     *                 description="Reward bonus for token",
+     *             )
+     *         )
+     *     ),
      *     @OA\Response(
      *         response="200",
      *         description="Successfully save"

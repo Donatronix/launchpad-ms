@@ -294,6 +294,8 @@ class OrderController extends Controller
     }
 
 
+
+
     /**
      * Update single Order
      *
@@ -302,67 +304,22 @@ class OrderController extends Controller
      *     description="Update one order",
      *      tags={"Admin / Orders"},
      *
+     *     security={{
+     *         "default": {
+     *             "ManagerRead",
+     *             "User",
+     *             "ManagerWrite"
+     *         }
+     *     }},
+     *
      *     @OA\Parameter(
      *         name="id",
      *         in="query",
-     *         description="Order's id",
+     *         description="Order id",
      *         required=true,
      *      ),
      *
-     *    @OA\RequestBody(
-     *            @OA\JsonContent(
-     *                type="object",
-     *                @OA\Property(
-     *                    property="product_id",
-     *                    type="string",
-     *                    description="product id",
-     *                    example="2000-000-3000000-20000"
-     *                ),
-     *                @OA\Property(
-     *                    property="investment_amount",
-     *                    type="decimal",
-     *                    description="amount to investment",
-     *                    example="1500.00"
-     *                ),
-     *                @OA\Property(
-     *                    property="deposit_percentage",
-     *                    type="integer",
-     *                    description="deposit percentage",
-     *                    example="20000-9000000-90000"
-     *                ),
-     *                @OA\Property(
-     *                    property="deposit_amount",
-     *                    type="decimal",
-     *                    description="deposit_amount",
-     *                    example="1"
-     *                ),
-     *                @OA\Property(
-     *                    property="order_no",
-     *                    type="string",
-     *                    description="order number",
-     *                    example="283728323"
-     *                ),
-     *               @OA\Property(
-     *                    property="amount_token",
-     *                    type="string",
-     *                    description="amount token",
-     *                    example="5590"
-     *                ),
-     *                @OA\Property(
-     *                    property="amount_usd",
-     *                    type="string",
-     *                    description="amount usd",
-     *                    example="5590"
-     *                ),
-     *                @OA\Property(
-     *                    property="user_id",
-     *                    type="string",
-     *                    description="user id",
-     *                    example="550000-9000000-9000000"
-     *                ),
-     *           ),
-     *       ),
-     *
+
      *     @OA\Response(
      *         response="500",
      *         description="Unknown error"
@@ -415,6 +372,70 @@ class OrderController extends Controller
                 'type'      => 'danger',
                 'title'     => 'Update Order',
                 'message'   => 'Error occurred when updating order',
+                'data'      => $e->getMessage()
+            ], 400);
+        }
+    }
+
+    /**
+     * Approve single Order
+     *
+     * @OA\get(
+     *      path="/admin/order/approve/{id}",
+     *     description="Update one order",
+     *      tags={"Admin / Orders"},
+     *
+     *     security={{
+     *         "default": {
+     *             "ManagerRead",
+     *             "User",
+     *             "ManagerWrite"
+     *         }
+     *     }},
+     *
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="query",
+     *         description="Order id",
+     *         required=true,
+     *      ),
+     *
+     *
+     *     @OA\Response(
+     *         response="500",
+     *         description="Unknown error"
+     *     ),
+     *     @OA\Response(
+     *         response="400",
+     *         description="Invalid request"
+     *     ),
+     *
+     *     @OA\Response(
+     *         response="404",
+     *         description="Not Found"
+     *     ),
+     * )
+     *
+     * @param \Illuminate\Http\Request $request
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function approve($id)
+    {
+        try {
+            $order = Order::findOrFail($id);
+            $$approveOrder = $order->where('id', $id)->update(['status' => Order::STATUS_COMPLETED]);
+
+            $resp['type']       = "Success";
+            $resp['title']      = "Approve Order";
+            $resp['message']    = "Order was approved";
+            $resp['data']       = $approveOrder;
+            return response()->json($resp, 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'type'      => 'danger',
+                'title'     => 'Approve Order',
+                'message'   => 'Error occurred when approving order',
                 'data'      => $e->getMessage()
             ], 400);
         }

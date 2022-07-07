@@ -186,6 +186,7 @@ class DepositController extends Controller
                 'currency_id'   => $request['currency_id'],
                 'amount'        => $request['amount'],
                 'order_id'      => $request['order_id'],
+                'status'        => Deposit::STATUS_CREATED,
                 'user_id'       => Auth::user()->getAuthIdentifier(),
             ]);
 
@@ -212,7 +213,7 @@ class DepositController extends Controller
     }
 
     /**
-     * Display a single Deposit
+     * Display a single Deposit - View details
      *
      * @OA\Get(
      *     path="/admin/deposits/{id}",
@@ -240,6 +241,22 @@ class DepositController extends Controller
     {
         try {
             $deposit = Deposit::findOrFail($id);
+            $allDeposits = $deposit->orderBy('created_at', 'Desc')
+                ->with(['order' => function ($query) {
+                    $query->select(
+                        'id',
+                        'product_id',
+                        'investment_amount',
+                        'deposit_percentage',
+                        'deposit_amount',
+                        'user_id',
+                        'status',
+                        'order_no',
+                        'amount_token',
+                        'amount_usd'
+                    );
+                }])
+                ->first();
 
             $resp['type']       = "Success";
             $resp['title']      = "Get deposit";
@@ -426,4 +443,4 @@ class DepositController extends Controller
             ], 400);
         }
     }
-}
+}//end class
