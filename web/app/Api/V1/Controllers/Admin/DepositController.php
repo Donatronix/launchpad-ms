@@ -68,14 +68,31 @@ class DepositController extends Controller
     {
         try {
             $allDeposits = Deposit::orderBy('created_at', 'Desc')
+                ->with(['order' => function ($query) {
+                    $query->select(
+                        'id',
+                        'product_id',
+                        'investment_amount',
+                        'deposit_percentage',
+                        'deposit_amount',
+                        'user_id',
+                        'status',
+                        'order_no',
+                        'amount_token',
+                        'amount_usd'
+                    );
+                }])
                 ->paginate($request->get('limit', 20));
-            $resp['type'] = "Success";
-            $resp['title'] = "List all deposits";
-            $resp['message'] = "List all deposits";
-            $resp['data'] = $allDeposits;
-            return response()->json($resp, 200);
+
+            // Return response
+            return response()->jsonApi([
+                'type' => 'success',
+                'title' => "List all deposits",
+                'message' => "List all deposits",
+                'data' => $allDeposits
+            ], 200);
         } catch (Exception $e) {
-            return response()->json([
+            return response()->jsonApi([
                 'type' => 'danger',
                 'title' => 'List all deposits',
                 'message' => 'Error in getting list of all deposits',
@@ -92,37 +109,37 @@ class DepositController extends Controller
      *     description="Adding new deposit for user",
      *     tags={"Admin / Deposits"},
      *
-     *      security={{
+     *     security={{
      *         "default": {
      *             "ManagerRead",
      *             "User",
      *             "ManagerWrite"
      *         }
-     *      }},
+     *     }},
      *
-     *       @OA\RequestBody(
-     *            @OA\JsonContent(
-     *                type="object",
-     *                @OA\Property(
-     *                    property="amount",
-     *                    type="decimal",
-     *                    description="amount to deposit",
-     *                    example="1500.00"
-     *                ),
-     *                @OA\Property(
-     *                    property="currency_id",
-     *                    type="string",
-     *                    description="currency id",
-     *                    example="8000000-3000000-20000"
-     *                ),
-     *                @OA\Property(
-     *                    property="order_id",
-     *                    type="string",
-     *                    description="order id",
-     *                    example="5590000-9800000-38380000"
-     *                )
-     *           ),
-     *       ),
+     *     @OA\RequestBody(
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(
+     *                 property="amount",
+     *                 type="decimal",
+     *                 description="amount to deposit",
+     *                 example="1500.00"
+     *             ),
+     *             @OA\Property(
+     *                 property="currency_id",
+     *                 type="string",
+     *                 description="currency id",
+     *                 example="8000000-3000000-20000"
+     *             ),
+     *             @OA\Property(
+     *                 property="order_id",
+     *                 type="string",
+     *                 description="order id",
+     *                 example="5590000-9800000-38380000"
+     *             )
+     *         ),
+     *     ),
      *
      *     @OA\Response(
      *         response="200",
@@ -172,23 +189,26 @@ class DepositController extends Controller
                 'currency_id' => $request['currency_id'],
                 'amount' => $request['amount'],
                 'order_id' => $request['order_id'],
+                'status' => Deposit::STATUS_CREATED,
                 'user_id' => Auth::user()->getAuthIdentifier(),
             ]);
 
-            $resp['type'] = "Success";
-            $resp['title'] = "Create new deposit";
-            $resp['message'] = "Deposit was created";
-            $resp['data'] = $depositSaved;
-            return response()->json($resp, 200);
+            // Return response
+            return response()->jsonApi([
+                'type' => 'success',
+                'title' => "Create new deposit",
+                'message' => "Deposit was created",
+                'data' => $depositSaved
+            ], 200);
         } catch (ValidationException $e) {
-            return response()->json([
-                'type' => 'danger',
+            return response()->jsonApi([
+                'type' => 'warning',
                 'title' => 'Create new deposit',
-                'message' => 'Error occurred when creating new deposit',
+                'message' => 'Validation error',
                 'data' => $e->getMessage()
             ], 400);
         } catch (Exception $e) {
-            return response()->json([
+            return response()->jsonApi([
                 'type' => 'danger',
                 'title' => 'Create new deposit',
                 'message' => 'Error occurred when creating new deposit',
@@ -198,7 +218,7 @@ class DepositController extends Controller
     }
 
     /**
-     * Display a single Deposit
+     * Display a single Deposit - View details
      *
      * @OA\Get(
      *     path="/admin/deposits/{id}",
@@ -216,20 +236,6 @@ class DepositController extends Controller
      *         response="200",
      *         description="Success"
      *     ),
-     *
-     *     @OA\Response(
-     *         response="500",
-     *         description="Unknown error"
-     *     ),
-     *     @OA\Response(
-     *         response="400",
-     *         description="Invalid request"
-     *     ),
-     *
-     *     @OA\Response(
-     *         response="404",
-     *         description="Not Found"
-     *     ),
      * )
      *
      * @param Request $request
@@ -240,14 +246,32 @@ class DepositController extends Controller
     {
         try {
             $deposit = Deposit::findOrFail($id);
+            $allDeposits = $deposit->orderBy('created_at', 'Desc')
+                ->with(['order' => function ($query) {
+                    $query->select(
+                        'id',
+                        'product_id',
+                        'investment_amount',
+                        'deposit_percentage',
+                        'deposit_amount',
+                        'user_id',
+                        'status',
+                        'order_no',
+                        'amount_token',
+                        'amount_usd'
+                    );
+                }])
+                ->first();
 
-            $resp['type'] = "Success";
-            $resp['title'] = "Get deposit";
-            $resp['message'] = "Get deposit";
-            $resp['data'] = $deposit ? $deposit->with('order') : [];
-            return response()->json($resp, 200);
+            // Return response
+            return response()->jsonApi([
+                'type' => 'success',
+                'title' => "Get deposit",
+                'message' => "Get deposit",
+                'data' => $deposit ? $deposit->with('order') : []
+            ], 200);
         } catch (\Exception $e) {
-            return response()->json([
+            return response()->jsonApi([
                 'type' => 'danger',
                 'title' => 'Get deposit',
                 'message' => 'Error in getting deposit',
@@ -264,6 +288,14 @@ class DepositController extends Controller
      *     description="Update one deposit",
      *     tags={"Admin / Deposits"},
      *
+     *     security={{
+     *         "default": {
+     *             "ManagerRead",
+     *             "User",
+     *             "ManagerWrite"
+     *         }
+     *     }},
+     *
      *     @OA\Parameter(
      *         name="id",
      *         in="query",
@@ -275,26 +307,25 @@ class DepositController extends Controller
      *         @OA\JsonContent(
      *             type="object",
      *             @OA\Property(
-     *                    property="currency_id",
-     *                    type="string",
-     *                    description="currency id",
-     *                    example="8000000-3000000-20000"
+     *                 property="currency_id",
+     *                 type="string",
+     *                 description="currency id",
+     *                 example="8000000-3000000-20000"
      *             ),
      *             @OA\Property(
-     *                    property="amount",
-     *                    type="decimal",
-     *                    description="amount to deposit",
-     *                    example="100.00"
+     *                 property="amount",
+     *                 type="decimal",
+     *                 description="amount to deposit",
+     *                 example="100.00"
      *             ),
      *             @OA\Property(
-     *                    property="order_id",
-     *                    type="string",
-     *                    description="order id",
-     *                    example="490000-9800000-38380000"
-     *             ),
-     *         ),
+     *                 property="order_id",
+     *                 type="string",
+     *                 description="order id",
+     *                 example="490000-9800000-38380000"
+     *             )
+     *         )
      *     ),
-     *
      *
      *     @OA\Response(
      *         response="200",
@@ -334,20 +365,22 @@ class DepositController extends Controller
                 'order_id' => $request['order_id'],
             ]);
 
-            $resp['type'] = "Success";
-            $resp['title'] = "Update Deposit";
-            $resp['message'] = "Record was updated";
-            $resp['data'] = $depositSaved;
-            return response()->json($resp, 200);
+            // Return response
+            return response()->jsonApi([
+                'type' => 'success',
+                'title' => "Update Deposit",
+                'message' => "Record was updated",
+                'data' => $depositSaved
+            ], 200);
         } catch (ValidationException $e) {
-            return response()->json([
-                'type' => 'danger',
+            return response()->jsonApi([
+                'type' => 'warning',
                 'title' => 'Update deposit',
-                'message' => 'Error occurred when updating deposit',
+                'message' => 'Validation Error',
                 'data' => $e->getMessage()
             ], 400);
         } catch (Exception $e) {
-            return response()->json([
+            return response()->jsonApi([
                 'type' => 'danger',
                 'title' => 'Update deposit',
                 'message' => 'Error occurred when updating deposit',
@@ -363,6 +396,14 @@ class DepositController extends Controller
      *     path="/admin/deposits/{id}",
      *     description="Deletes one deposit",
      *     tags={"Admin / Deposits"},
+     *
+     *     security={{
+     *         "default": {
+     *             "ManagerRead",
+     *             "User",
+     *             "ManagerWrite"
+     *         }
+     *     }},
      *
      *     @OA\Parameter(
      *         name="id",
@@ -395,14 +436,14 @@ class DepositController extends Controller
         try {
             Deposit::findOrFail($id)->delete();
 
-            return response()->json([
-                'type'       => "Success",
-                'title'      => "Soft delete deposit",
-                'message'    => "Deleted successfully",
-                'data'       => null
+            return response()->jsonApi([
+                'type' => 'success',
+                'title' => "Soft delete deposit",
+                'message' => "Deleted successfully",
+                'data' => null
             ], 200);
         } catch (\Exception $e) {
-            return response()->json([
+            return response()->jsonApi([
                 'type' => 'danger',
                 'title' => 'Soft delete deposit',
                 'message' => 'Error in deleting deposit',
@@ -410,4 +451,4 @@ class DepositController extends Controller
             ], 400);
         }
     }
-}
+}//end class

@@ -58,9 +58,12 @@ class TransactionController extends Controller
             $result = Transaction::where('status', Transaction::STATUS_WAITING)
                 ->paginate($request->get('limit', 20));
 
-
             // Return response
-            return response()->jsonApi($result->toArray());
+            return response()->json([
+                'success' => true,
+                'title' => "list of un-approved",
+                'transaction' => $result->toArray()
+            ]);
         } catch (Exception $e) {
             return response()->jsonApi([
                 'type' => 'danger',
@@ -119,7 +122,8 @@ class TransactionController extends Controller
 
             return response()->json([
                 'success' => true,
-                'transaction' => $transaction
+                'title' => "A transaction by id",
+                'transaction' => $transaction->toArray()
             ]);
         } catch (Exception $e) {
             return response()->json([
@@ -164,7 +168,7 @@ class TransactionController extends Controller
      *
      * @return JsonResponse
      */
-    public function approve($transaction_id)
+    public function update($transaction_id)
     {
         try {
             $transaction = Transaction::find($transaction_id);
@@ -179,7 +183,10 @@ class TransactionController extends Controller
             $transaction->save();
 
             return response()->json([
-                'success' => true
+                'success' => true,
+                'title' => 'Transaction approved',
+                'message' => "Transaction updated successfully",
+                'data' => $transaction
             ], 200);
         } catch (Exception $e) {
             return response()->json([
@@ -218,6 +225,7 @@ class TransactionController extends Controller
      *         name="transaction_type",
      *         in="query",
      *         description="Transaction type",
+     *         required=false,
      *         @OA\Schema(
      *             type="string"
      *         )
@@ -226,6 +234,7 @@ class TransactionController extends Controller
      *         name="transaction_date",
      *         in="query",
      *         description="Transaction date",
+     *         required=false,
      *         @OA\Schema(
      *             type="date"
      *         )
@@ -235,6 +244,7 @@ class TransactionController extends Controller
      *         name="amount_received",
      *         in="query",
      *         description="Amount Invested",
+     *         required=false,
      *         @OA\Schema(
      *             type="string"
      *         )
@@ -262,6 +272,7 @@ class TransactionController extends Controller
      *         name="wallet_address",
      *         in="query",
      *         description="Payment address",
+     *         required=false,
      *         @OA\Schema(
      *             type="string"
      *         )
@@ -280,6 +291,7 @@ class TransactionController extends Controller
      *         name="currency_code",
      *         in="query",
      *         description="Currency ($, €, £)",
+     *         required=false,
      *         @OA\Schema(
      *             type="string"
      *         )
@@ -289,6 +301,7 @@ class TransactionController extends Controller
      *         name="user_id",
      *         in="query",
      *         description="Transaction Owner's id (added automatically)",
+     *         required=false,
      *         @OA\Schema(
      *             type="string"
      *         )
