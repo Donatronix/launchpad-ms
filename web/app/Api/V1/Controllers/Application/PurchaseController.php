@@ -4,11 +4,9 @@ namespace App\Api\V1\Controllers\Application;
 
 use App\Api\V1\Controllers\Controller;
 use App\Models\Purchase;
-use Illuminate\Http\Request;
 use Exception;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
-
-use function PHPUnit\Framework\throwException;
 
 class PurchaseController extends Controller
 {
@@ -22,7 +20,6 @@ class PurchaseController extends Controller
         $this->purchase = $purchase;
         $this->user_id = auth()->user()->getAuthIdentifier();
     }
-
 
     /**
      * Display list of all purchase - shopping List
@@ -80,13 +77,15 @@ class PurchaseController extends Controller
                 }])
                 ->paginate($request->get('limit', 20));
 
-            $resp['type'] = "Success";
-            $resp['title'] = "List all purchase";
-            $resp['message'] = "List all purchase";
-            $resp['data'] = $allPurchase;
-            return response()->json($resp, 200);
+            // Return response
+            return response()->jsonApi([
+                'type' => 'success',
+                'title' => 'List all purchase',
+                'message' => 'List all purchase',
+                'data' => $allPurchase
+            ], 200);
         } catch (Exception $e) {
-            return response()->json([
+            return response()->jsonApi([
                 'type' => 'danger',
                 'title' => 'List all purchase',
                 'message' => 'Error in getting list of all purchase',
@@ -103,7 +102,6 @@ class PurchaseController extends Controller
      *     summary="Purchase a token",
      *     description="Create a token purchase order",
      *     tags={"Token"},
-     *
      *
      *     @OA\RequestBody(
      *         required=true,
@@ -243,23 +241,33 @@ class PurchaseController extends Controller
             if (!$request->has('product_id')) {
                 throw new Exception("Product_id required as query string");
             }
+
             // get unique user_id for the product
             $purchases = $this->purchase::where([
                 'product_id' => $request->get('product_id')
-            ])->select("user_id")->distinct()->get();
-            $investors = [];
+            ])
+                ->select("user_id")
+                ->distinct()
+                ->get();
 
             // Loop through each of the purchase to get the user details
+            $investors = [];
             foreach ($purchases as $key => $value) {
-                $user = \DB::connection('identity')->table('users')->where('id', $value['user_id'])->select(["id", "first_name", "last_name", "phone", "email_verified_at", "status", "id_number"])->first();
+                $user = \DB::connection('identity')
+                    ->table('users')
+                    ->where('id', $value['user_id'])
+                    ->select(["id", "first_name", "last_name", "phone", "email_verified_at", "status", "id_number"])
+                    ->first();
+
                 // sum the tokens for the user
                 $tokens = $this->purchase::where([
-                    'product_id' => $request->get('product_id'), 'user_id' => $value['user_id']
+                    'product_id' => $request->get('product_id'),
+                    'user_id' => $value['user_id']
                 ])->sum("token_amount");
+
                 $user->tokens = $tokens;
                 array_push($investors, $user);
             }
-
 
             // Return response to client
             return response()->jsonApi([

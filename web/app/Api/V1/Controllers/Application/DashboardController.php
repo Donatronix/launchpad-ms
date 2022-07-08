@@ -12,7 +12,6 @@ use Sumra\SDK\JsonApiResponse;
 
 class DashboardController extends Controller
 {
-
     private Purchase $purchase;
     private Product $product;
 
@@ -22,7 +21,6 @@ class DashboardController extends Controller
         $this->product = $product;
         $this->user_id = auth()->user()->getAuthIdentifier();
     }
-
 
     /**
      * Token Sales Progress
