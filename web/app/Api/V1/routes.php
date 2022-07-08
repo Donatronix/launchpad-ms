@@ -9,6 +9,8 @@ $router->group([
 ], function ($router) {
     /**
      * PUBLIC ACCESS
+     *
+     * level with free access to the endpoint
      */
     $router->group([
         'namespace' => 'Public'
@@ -23,15 +25,30 @@ $router->group([
             $router->get('/{id}', 'ProductController@show');
         });
 
-        $router->get('/token-rewards', 'TokenRewardController@index');
+        /**
+         * Token Rewards
+         */
+        $router->get('/token-rewards', 'TokenRewardController');
+
+        /**
+         * Prices
+         */
+        $router->group([
+            'prefix' => 'prices',
+        ], function ($router) {
+            $router->get('/', 'PriceController');
+            $router->get('/{stage}', 'PriceController@getPriceByStage');
+        });
     });
 
     /**
      * USER APPLICATION PRIVATE ACCESS
+     *
+     * Application level for users
      */
     $router->group([
+        'namespace' => 'Application',
         'middleware' => 'checkUser',
-        'namespace' => 'Application'
     ], function ($router) {
         /**
          * Token Rewards
@@ -46,21 +63,10 @@ $router->group([
         // });
 
         /**
-         * Prices
-         */
-        $router->group([
-            'prefix' => 'prices',
-        ], function ($router) {
-            $router->get('/', 'PriceController');
-            $router->get('/{stage}', 'PriceController@getPriceByStage');
-        });
-
-        /**
          * Init first Investment (registration)
          */
         $router->group([
             'prefix' => 'investment',
-            'namespace' => 'Application'
         ], function ($router) {
             $router->post('/', 'InvestmentController');
         });
@@ -89,10 +95,19 @@ $router->group([
         });
 
         /**
-         * Token Purchase
-         *
+         * Token Purchase - shopping List
          */
-        $router->post('/purchase-token', 'PurchaseController@store');
+        $router->group([
+            'prefix' => 'purchase-token',
+        ], function ($router) {
+            $router->get('/', 'PurchaseController@index');
+            $router->post('/', 'PurchaseController@store');
+        });
+
+        /**
+         * Token Investors
+         */
+        $router->get('/token-investors', 'PurchaseController@tokenInvestors');
 
         /**
          * Token Sales Progress
@@ -102,6 +117,8 @@ $router->group([
 
     /**
      * ADMIN PANEL ACCESS
+     *
+     * Admin / super admin access level (E.g CEO company)
      */
     $router->group([
         'prefix' => 'admin',
@@ -125,7 +142,7 @@ $router->group([
 
         /**
          * Price
-         * 
+         *
          */
         $router->group(['prefix' => 'price'], function ($router) {
             $router->get('/', 'PriceController@index');
@@ -155,7 +172,20 @@ $router->group([
             'prefix' => 'transactions',
         ], function ($router) {
             $router->get('/', 'TransactionController');
+            $router->get('/', 'TransactionController@index');
             $router->post('/', 'TransactionController@store');
+            $router->get('/{transaction_id}', 'TransactionController@show');
+            $router->put('/{transaction_id}', 'TransactionController@update');
+            $router->delete('/{transaction_id}', 'TransactionController@destroy');
+        });
+
+        /**
+         *Dashboard
+         */
+        $router->group([
+            'prefix' => 'dashboard',
+        ], function ($router) {
+            $router->get('/',  'DashboardController@index');
         });
 
         /**
@@ -183,6 +213,7 @@ $router->group([
             $router->get('{id}',    'OrderController@show');
             $router->put('{id}',    'OrderController@update');
             $router->delete('{id}', 'OrderController@destroy');
+            $router->get('approve/{id}', 'OrderController@approve');
         });
 
         /**
@@ -210,5 +241,17 @@ $router->group([
             $router->put('{id}',    'AdminController@update');
             $router->delete('{id}', 'AdminController@destroy');
         });
+    });
+
+    /**
+     * WEBHOOKS
+     *
+     * Access level of external / internal software services
+     */
+    $router->group([
+        'prefix' => 'webhooks',
+        'namespace' => 'Webhooks'
+    ], function ($router) {
+        //
     });
 });

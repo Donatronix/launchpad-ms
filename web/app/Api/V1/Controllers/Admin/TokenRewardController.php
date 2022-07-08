@@ -164,7 +164,7 @@ class TokenRewardController extends Controller
 
             return response()->json([
                 'success' => true,
-                'tokenReward' => new TokenRewardResource ($tokenReward),
+                'tokenReward' => new TokenRewardResource($tokenReward),
             ]);
         } catch (Exception $e) {
             return response()->json([
@@ -215,7 +215,7 @@ class TokenRewardController extends Controller
      *                ),
      *           ),
      *       ),
-     * 
+     *
      *     @OA\Response(
      *         response="200",
      *         description="Successfully save"
@@ -296,31 +296,31 @@ class TokenRewardController extends Controller
      *         )
      *     ),
      *
-     *       @OA\RequestBody(
-     *            @OA\JsonContent(
-     *                type="object",
-     *                @OA\Property(
-     *                    property="purchase_band",
-     *                    type="string",
-     *                    description="Serial number of purchase",
-     *                ),
-     *                @OA\Property(
-     *                    property="swap",
-     *                    type="string",
-     *                    description="Number of tokens",
-     *                ),
-     *                @OA\Property(
-     *                    property="deposit_amount",
-     *                    type="integer",
-     *                    description="Amount money to be deposited",
-     *                ),
-     *                @OA\Property(
-     *                    property="reward_bonus",
-     *                    type="integer",
-     *                    description="Reward bonus for token",
-     *                ),
-     *           ),
-     *       ),
+     *     @OA\RequestBody(
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(
+     *                 property="purchase_band",
+     *                 type="string",
+     *                 description="Serial number of purchase",
+     *             ),
+     *             @OA\Property(
+     *                 property="swap",
+     *                 type="string",
+     *                 description="Number of tokens",
+     *             ),
+     *             @OA\Property(
+     *                 property="deposit_amount",
+     *                 type="integer",
+     *                 description="Amount money to be deposited",
+     *             ),
+     *             @OA\Property(
+     *                 property="reward_bonus",
+     *                 type="integer",
+     *                 description="Reward bonus for token",
+     *             )
+     *         )
+     *     ),
      *     @OA\Response(
      *         response="200",
      *         description="Successfully save"
@@ -365,7 +365,6 @@ class TokenRewardController extends Controller
             DB::transaction(function () use ($request, &$tokenReward) {
                 $tokenReward->update($request->all());
             });
-
         } catch (Exception $e) {
             return response()->json([
                 'success' => false,

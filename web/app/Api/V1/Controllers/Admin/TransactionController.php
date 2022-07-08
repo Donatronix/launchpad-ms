@@ -4,10 +4,11 @@ namespace App\Api\V1\Controllers\Admin;
 
 use App\Api\V1\Services\TransactionService;
 use App\Api\V1\Controllers\Controller;
+use App\Models\Transaction;
 use Exception;
 use Illuminate\Http\JsonResponse;
-use App\Models\Transaction;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class TransactionController extends Controller
 {
@@ -17,7 +18,7 @@ class TransactionController extends Controller
      * @OA\Get(
      *     path="/admin/transactions",
      *     description="Get list of un-approved user's transaction",
-     *     tags={"Admin / Transactions"},
+     *     tags={"Admin | Transactions"},
      *
      *     security={{
      *         "default": {
@@ -57,15 +58,12 @@ class TransactionController extends Controller
             $result = Transaction::where('status', Transaction::STATUS_WAITING)
                 ->paginate($request->get('limit', 20));
 
-//            $result = DB::table('transactions')
-//                ->select('transactions.*', 'users.last_name', 'users.first_name')
-//                ->join('users', 'users.id', '=', 'transactions.transactionable_id')
-//                ->where('transactions.transactionable_type', Transaction::TYPE_CONTRACT)
-//                ->orderBy('transactions.id', 'asc')
-
-
             // Return response
-            return response()->jsonApi($result->toArray());
+            return response()->json([
+                'success' => true,
+                'title' => "list of un-approved",
+                'transaction' => $result->toArray()
+            ]);
         } catch (Exception $e) {
             return response()->jsonApi([
                 'type' => 'danger',
@@ -81,7 +79,7 @@ class TransactionController extends Controller
      * @OA\Get(
      *     path="/admin/transactions/{transaction_id}",
      *     description="Get transaction of user by transaction_id",
-     *     tags={"Admin / Transactions"},
+     *     tags={"Admin | Transactions"},
      *
      *     security={{
      *         "default": {
@@ -124,7 +122,8 @@ class TransactionController extends Controller
 
             return response()->json([
                 'success' => true,
-                'transaction' => $transaction
+                'title' => "A transaction by id",
+                'transaction' => $transaction->toArray()
             ]);
         } catch (Exception $e) {
             return response()->json([
@@ -140,7 +139,7 @@ class TransactionController extends Controller
      * @OA\Patch(
      *     path="/admin/transactions/{transaction_id}",
      *     description="Approve user's transaction",
-     *     tags={"Admin / Transactions"},
+     *     tags={"Admin | Transactions"},
      *
      *     security={{
      *         "default": {
@@ -169,7 +168,7 @@ class TransactionController extends Controller
      *
      * @return JsonResponse
      */
-    public function approve($transaction_id)
+    public function update($transaction_id)
     {
         try {
             $transaction = Transaction::find($transaction_id);
@@ -184,7 +183,10 @@ class TransactionController extends Controller
             $transaction->save();
 
             return response()->json([
-                'success' => true
+                'success' => true,
+                'title' => 'Transaction approved',
+                'message' => "Transaction updated successfully",
+                'data' => $transaction
             ], 200);
         } catch (Exception $e) {
             return response()->json([
@@ -194,8 +196,171 @@ class TransactionController extends Controller
         }
     }
 
+    /**
+     *  Store transaction data manually
+     *
+     * @OA\Post(
+     *     path="/admin/add-transaction",
+     *     description="Get all loans by filter",
+     *     tags={"Admin | Transactions"},
+     *
+     *     security={{
+     *          "default" :{
+     *              "ManagerRead",
+     *              "Admin",
+     *              "ManagerWrite"
+     *          },
+     *     }},
+     *
+     *     x={
+     *          "auth-type": "Applecation & Application Use",
+     *          "throttling-tier": "Unlimited",
+     *          "wso2-appliocation-security": {
+     *              "security-types": {"oauth2"},
+     *              "optional": "false"
+     *           },
+     *     },
+     *
+     *     @OA\Parameter(
+     *         name="transaction_type",
+     *         in="query",
+     *         description="Transaction type",
+     *         required=false,
+     *         @OA\Schema(
+     *             type="string"
+     *         )
+     *     ),
+     *     @OA\Parameter(
+     *         name="transaction_date",
+     *         in="query",
+     *         description="Transaction date",
+     *         required=false,
+     *         @OA\Schema(
+     *             type="date"
+     *         )
+     *     ),
+     *
+     *     @OA\Parameter(
+     *         name="amount_received",
+     *         in="query",
+     *         description="Amount Invested",
+     *         required=false,
+     *         @OA\Schema(
+     *             type="string"
+     *         )
+     *     ),
+     *
+     *    @OA\Parameter(
+     *         name="wallet_address",
+     *         in="query",
+     *         description="Payment address",
+     *         @OA\Schema(
+     *             type="string"
+     *         )
+     *     ),
+     *
+     * *    @OA\Parameter(
+     *         name="transaction_token",
+     *         in="query",
+     *         description="Payment token",
+     *         @OA\Schema(
+     *             type="string"
+     *         )
+     *     ),
+     *
+     * *    @OA\Parameter(
+     *         name="wallet_address",
+     *         in="query",
+     *         description="Payment address",
+     *         required=false,
+     *         @OA\Schema(
+     *             type="string"
+     *         )
+     *     ),
+     *
+     *     @OA\Parameter(
+     *         name="transaction_gateway",
+     *         in="query",
+     *         description="transaction gateway (UTTA)",
+     *         @OA\Schema(
+     *             type="string"
+     *         )
+     *     ),
+     *
+     *    @OA\Parameter(
+     *         name="currency_code",
+     *         in="query",
+     *         description="Currency ($, €, £)",
+     *         required=false,
+     *         @OA\Schema(
+     *             type="string"
+     *         )
+     *     ),
+     *
+     *     @OA\Parameter(
+     *         name="user_id",
+     *         in="query",
+     *         description="Transaction Owner's id (added automatically)",
+     *         required=false,
+     *         @OA\Schema(
+     *             type="string"
+     *         )
+     *     ),
+     *
+     *     @OA\Parameter(
+     *         name="token_stage",
+     *         in="query",
+     *         description="reward stage",
+     *         @OA\Schema(
+     *             type="string"
+     *         )
+     *     ),
+     *
+     *     @OA\Response(
+     *         response="200",
+     *         description="Success send data"
+     *     ),
+     *     @OA\Response(
+     *         response="401",
+     *         description="Unauthorized"
+     *     ),
+     *     @OA\Response(
+     *         response="400",
+     *         description="Invalid request"
+     *     ),
+     *     @OA\Response(
+     *         response="403",
+     *         description="Forbidden"
+     *     ),
+     *     @OA\Response(
+     *         response="404",
+     *         description="Not found"
+     *     ),
+     *     @OA\Response(
+     *         response="500",
+     *         description="Internal server error"
+     *     )
+     * )
+     */
     public function store(Request $request)
     {
+        $validator = Validator::make($request->all(), [
+            'token_stage' => 'required|string',
+            'currency_code' => 'required|string',
+            'transaction_gateway' => 'required|string',
+            'amount_received' => 'required|string',
+            'transaction_date' => 'required|date|before:tomorrow',
+            'user_id' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->jsonApi([
+                'type' => 'success',
+                'title' => 'New Transaction created',
+                'message' => "New Transaction has been added successfully",
+                'data' => $validator->errors()->toArray()
+            ], 200);
+        }
         // create new transaction
         $paramsTransactions = $request->all();
         $transaction = (new TransactionService())->store($paramsTransactions);
@@ -204,7 +369,7 @@ class TransactionController extends Controller
         return response()->jsonApi([
             'type' => 'success',
             'title' => 'New Transaction created',
-            'message' => "New Transaction has been created successfully",
+            'message' => "New Transaction has been added successfully",
             'data' => $transaction->toArray()
         ], 200);
     }
@@ -215,7 +380,7 @@ class TransactionController extends Controller
      * @OA\Delete(
      *     path="/admin/transactions/{transaction_id}",
      *     description="destroy user's transactions by transaction_id",
-     *     tags={"Admin / Transactions"},
+     *     tags={"Admin | Transactions"},
      *
      *     security={{
      *         "default": {

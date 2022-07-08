@@ -3,16 +3,15 @@
 namespace App\Api\V1\Controllers\Application;
 
 use App\Api\V1\Controllers\Controller;
-use App\Models\Purchase;
-use Illuminate\Http\Request;
 use App\Models\Product;
+use App\Models\Purchase;
 use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Http\Request;
 use Sumra\SDK\JsonApiResponse;
 
 class DashboardController extends Controller
 {
-
     private Purchase $purchase;
     private Product $product;
 
@@ -22,7 +21,6 @@ class DashboardController extends Controller
         $this->product = $product;
         $this->user_id = auth()->user()->getAuthIdentifier();
     }
-
 
     /**
      * Token Sales Progress
@@ -85,17 +83,16 @@ class DashboardController extends Controller
      */
     public function tokenSalesProgress(Request $request): mixed
     {
-
         // Try to get token sales progress
         try {
             // check if product id is available
-            if(!$request->has("product_id")){
-            return response()->jsonApi([
-                'type' => 'danger',
-                'title' => 'Token Sales Progress',
-                'message' => "You must send product_id as a parameter",
-                'data' => null
-            ], 400);
+            if (!$request->has("product_id")) {
+                return response()->jsonApi([
+                    'type' => 'danger',
+                    'title' => 'Token Sales Progress',
+                    'message' => "You must send product_id as a parameter",
+                    'data' => null
+                ], 400);
             }
 
             // Read product model

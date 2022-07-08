@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -54,9 +55,18 @@ class Transaction extends Model
         'total_amount',
         'order_id',
         'user_id',
+        'admin_id',
         'payment_system',
         'credit_card_type_id',
-        'wallet_address'
+        'wallet_address',
+        'currency_code',
+        'payment_date',
+        'payment_token',
+        'token_stage',
+        'payment_gateway',
+        'bonus',
+        'sol_received',
+        'amount_received',
     ];
 
     /**
@@ -74,7 +84,7 @@ class Transaction extends Model
      * Auto relations for transaction Model
      */
 
-    protected $with = ['creditCardType', 'user'];
+    protected $with = ['creditCardType'];
 
     /**
      * Get the owning transactionable model.
