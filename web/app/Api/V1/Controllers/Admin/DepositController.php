@@ -24,6 +24,7 @@ class DepositController extends Controller
      *     path="/admin/deposits",
      *     description="Getting all data about deposits for all users",
      *     tags={"Admin / Deposits"},
+     *
      *     security={{
      *         "default": {
      *             "ManagerRead",
