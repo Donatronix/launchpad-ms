@@ -25,7 +25,10 @@ $router->group([
             $router->get('/{id}', 'ProductController@show');
         });
 
-        $router->get('/token-rewards', 'TokenRewardController@index');
+        /**
+         * Token Rewards
+         */
+        $router->get('/token-rewards', 'TokenRewardController');
 
         /**
          * Prices

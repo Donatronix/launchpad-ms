@@ -14,16 +14,9 @@ class TokenRewardController extends Controller
      *
      * @OA\Get(
      *     path="/token-rewards",
+     *     summary="Get list of un-approved user's tokenReward",
      *     description="Get list of un-approved user's tokenReward",
-     *     tags={"TokenRewards"},
-     *
-     *     security={{
-     *         "default": {
-     *             "ManagerRead",
-     *             "User",
-     *             "ManagerWrite"
-     *         }
-     *     }},
+     *     tags={"Public | Token Rewards"},
      *
      *     @OA\Parameter(
      *         name="limit",
@@ -37,27 +30,15 @@ class TokenRewardController extends Controller
      *     ),
      *     @OA\Response(
      *         response="200",
-     *         description="Successfully save"
-     *     ),
-     *     @OA\Response(
-     *         response="201",
-     *         description="Purchase created"
+     *         description="Successfully readed"
      *     ),
      *     @OA\Response(
      *         response="400",
      *         description="Invalid request"
      *     ),
      *     @OA\Response(
-     *         response="401",
-     *         description="Unauthorized"
-     *     ),
-     *     @OA\Response(
      *         response="404",
      *         description="not found"
-     *     ),
-     *     @OA\Response(
-     *         response="422",
-     *         description="Validation failed"
      *     ),
      *     @OA\Response(
      *         response="500",
@@ -73,7 +54,7 @@ class TokenRewardController extends Controller
      *
      * @throws Exception
      */
-    public function index(Request $request)
+    public function __invoke(Request $request)
     {
         try {
             $result = TokenReward::paginate($request->get('limit', 20));
