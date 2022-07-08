@@ -9,6 +9,8 @@ $router->group([
 ], function ($router) {
     /**
      * PUBLIC ACCESS
+     *
+     * level with free access to the endpoint
      */
     $router->group([
         'namespace' => 'Public'
@@ -38,10 +40,12 @@ $router->group([
 
     /**
      * USER APPLICATION PRIVATE ACCESS
+     *
+     * Application level for users
      */
     $router->group([
+        'namespace' => 'Application',
         'middleware' => 'checkUser',
-        'namespace' => 'Application'
     ], function ($router) {
         /**
          * Token Rewards
@@ -97,7 +101,6 @@ $router->group([
             $router->post('/', 'PurchaseController@store');
         });
 
-
         /**
          * Token Investors
          */
@@ -111,6 +114,8 @@ $router->group([
 
     /**
      * ADMIN PANEL ACCESS
+     *
+     * Admin / super admin access level (E.g CEO company)
      */
     $router->group([
         'prefix' => 'admin',
@@ -204,5 +209,17 @@ $router->group([
             $router->put('{id}',    'OrderController@update');
             $router->delete('{id}', 'OrderController@destroy');
         });
+    });
+
+    /**
+     * WEBHOOKS
+     *
+     * Access level of external / internal software services
+     */
+    $router->group([
+        'prefix' => 'webhooks',
+        'namespace' => 'Webhooks'
+    ], function ($router) {
+        //
     });
 });
