@@ -125,7 +125,7 @@ class OrderController extends Controller
                 ->orderBy($request->get('sort-by', 'created_at'), $request->get('sort-order', 'desc'))
                 ->paginate($request->get('limit', 20));
 
-            $resp['type'] = "Success";
+            $resp['type'] = 'success';
             $resp['title'] = "List all orders";
             $resp['message'] = "List all orders";
             $resp['data'] = $allOrders;
@@ -243,7 +243,7 @@ class OrderController extends Controller
 
             $orderSaved = Order::create($request->all());
 
-            $resp['type'] = "Success";
+            $resp['type'] = 'success';
             $resp['title'] = "Create new order";
             $resp['message'] = "Order was created";
             $resp['data'] = $orderSaved;
@@ -310,7 +310,7 @@ class OrderController extends Controller
             $order = Order::findOrFail($id);
             $getallOrder = $order ? $order->with('product')->with('transaction') : [];
 
-            $resp['type']       = "Success";
+            $resp['type']       = 'success';
             $resp['title']      = "Get order";
             $resp['message']    = "Get order";
             $resp['data']       = $getallOrder;
@@ -438,7 +438,7 @@ class OrderController extends Controller
             ]);
             $orderUpdated = Order::findOrFail($id);
             $orderUpdated->update($request->all());
-            $resp['type']       = "Success";
+            $resp['type']       = 'success';
             $resp['title']      = "Order was updated";
             $resp['message']    = "Order was updated";
             $resp['data']       = $orderUpdated;
@@ -509,7 +509,7 @@ class OrderController extends Controller
             $order = Order::findOrFail($id);
             $approveOrder = $order->where('id', $id)->update(['status' => Order::STATUS_COMPLETED]);
 
-            $resp['type']       = "Success";
+            $resp['type']       = 'success';
             $resp['title']      = "Approve Order";
             $resp['message']    = "Order was approved";
             $resp['data']       = $approveOrder;
@@ -573,7 +573,7 @@ class OrderController extends Controller
             $order = Order::findOrFail($id);
             $approveOrder = $order->where('id', $id)->update(['status' => Order::STATUS_CANCELED]);
 
-            $resp['type']       = "Success";
+            $resp['type']       = 'success';
             $resp['title']      = "Reject Order";
             $resp['message']    = "Order was rejected";
             $resp['data']       = $approveOrder;
