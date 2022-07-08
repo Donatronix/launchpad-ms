@@ -91,7 +91,6 @@ $router->group([
          * Token Purchase - shopping List
          */
         $router->group([
-            'namespace' => 'Application',
             'prefix' => 'purchase-token',
         ], function ($router) {
             $router->get('/', 'PurchaseController@index');
@@ -170,13 +169,20 @@ $router->group([
             $router->delete('/{transaction_id}', 'TransactionController@destroy');
         });
 
+        /**
+         *Dashboard
+         */
+        $router->group([
+            'prefix' => 'dashboard',
+        ], function ($router) {
+            $router->get('/',  'DashboardController@index');
+        });
 
         /**
          * Admin/Deposit
          */
         $router->group([
-            'namespace' => 'Admin',
-            'prefix' => 'admin/deposits',
+            'prefix' => 'deposits',
         ], function ($router) {
             $router->get('/',       'DepositController@index');
             $router->post('/',      'DepositController@store');
@@ -190,8 +196,7 @@ $router->group([
          * Admin/Order
          */
         $router->group([
-            'namespace' => 'Admin',
-            'prefix' => 'admin/orders',
+            'prefix' => 'orders',
         ], function ($router) {
             $router->get('/',       'OrderController@index');
             $router->post('/',      'OrderController@store');
