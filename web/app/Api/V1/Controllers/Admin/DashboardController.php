@@ -12,7 +12,6 @@ use Exception;
 
 class DashboardController extends Controller
 {
-
    /**
      * Method for transaction dashboard.
      *
@@ -54,7 +53,7 @@ class DashboardController extends Controller
         $currency_code = $transaction->distinct('currency_code')->get('currency_code')->pluck('currency_code');
         $user_count = $transaction->distinct('user_id')->count();
         $amount_received = $transaction->sum('amount_received');
-        
+
         $data = [
             'transactions_count' => $transaction_count,
             'users_count' => $user_count,

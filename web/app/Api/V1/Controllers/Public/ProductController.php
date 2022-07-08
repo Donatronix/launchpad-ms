@@ -17,15 +17,7 @@ class ProductController extends Controller
      *     path="/products",
      *     summary="Getting product list for start presale",
      *     description="Getting product list for start presale",
-     *     tags={"Products"},
-     *
-     *     security={{
-     *         "default": {
-     *             "ManagerRead",
-     *             "User",
-     *             "ManagerWrite"
-     *         }
-     *     }},
+     *     tags={"Public | Products"},
      *
      *     @OA\Parameter(
      *         name="status",
@@ -90,15 +82,7 @@ class ProductController extends Controller
      *     path="/products/{id}",
      *     summary="Getting product detail by ID or ticker",
      *     description="Getting product detail by ID or ticker",
-     *     tags={"Products"},
-     *
-     *     security={{
-     *         "default": {
-     *             "ManagerRead",
-     *             "User",
-     *             "ManagerWrite"
-     *         }
-     *     }},
+     *     tags={"Public | Products"},
      *
      *     @OA\Parameter(
      *         name="id",

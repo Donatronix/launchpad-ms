@@ -16,16 +16,8 @@ class PriceController extends Controller
      *     path="/prices",
      *     summary="Getting a listing of product prices",
      *     description="Getting a listing of product prices",
-     *     tags={"User | Prices"},
+     *     tags={"Public | Prices"},
      *
-     *     security={{
-     *         "default": {
-     *             "ManagerRead",
-     *             "User",
-     *             "ManagerWrite"
-     *         }
-     *     }},
-     * 
      *     @OA\Parameter(
      *         name="product_id",
      *         in="query",
@@ -46,7 +38,7 @@ class PriceController extends Controller
      *
      * @return mixed
      */
-    public function __invoke(Request $request): mixed
+    public function index(Request $request): mixed
     {
         // Get order
         $order = Price::where('status', true)
@@ -69,15 +61,7 @@ class PriceController extends Controller
      *     path="/prices/{stage}",
      *     summary="Getting a listing of product prices by stage",
      *     description="Getting a listing of product prices by stage",
-     *     tags={"User | Prices"},
-     *
-     *     security={{
-     *         "default": {
-     *             "ManagerRead",
-     *             "User",
-     *             "ManagerWrite"
-     *         }
-     *     }},
+     *     tags={"Public | Prices"},
      *
      *     @OA\Parameter(
      *         name="stage",
@@ -85,8 +69,8 @@ class PriceController extends Controller
      *         in="path",
      *         required=true,
      *         @OA\Schema(
-     *             type="int",
-     *              default="1"
+     *             type="integer",
+     *             default="1"
      *         )
      *     ),
      *
