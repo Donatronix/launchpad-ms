@@ -240,25 +240,25 @@ class PurchaseController extends Controller
     {
         // Try to save purchased token data
         try {
-            if(!$request->has('product_id')){
+            if (!$request->has('product_id')) {
                 throw new Exception("Product_id required as query string");
             }
             // get unique user_id for the product
             $purchases = $this->purchase::where([
                 'product_id' => $request->get('product_id')
-                ])->select("user_id")->distinct()->get();
+            ])->select("user_id")->distinct()->get();
             $investors = [];
 
-                // Loop through each of the purchase to get the user details
-                foreach($purchases as $key => $value){
-                    $user = \DB::connection('identity')->table('users')->where('id',$value['user_id'])->select(["id","first_name","last_name","phone","email_verified_at", "status", "id_number"])->first();
-                    // sum the tokens for the user
-                    $tokens = $this->purchase::where([
-                        'product_id' => $request->get('product_id'), 'user_id' => $value['user_id']
-                        ])->sum("token_amount");
-                    $user->tokens = $tokens;
-                    array_push($investors, $user);
-                }
+            // Loop through each of the purchase to get the user details
+            foreach ($purchases as $key => $value) {
+                $user = \DB::connection('identity')->table('users')->where('id', $value['user_id'])->select(["id", "first_name", "last_name", "phone", "email_verified_at", "status", "id_number"])->first();
+                // sum the tokens for the user
+                $tokens = $this->purchase::where([
+                    'product_id' => $request->get('product_id'), 'user_id' => $value['user_id']
+                ])->sum("token_amount");
+                $user->tokens = $tokens;
+                array_push($investors, $user);
+            }
 
 
             // Return response to client

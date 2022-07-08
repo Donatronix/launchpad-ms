@@ -25,6 +25,13 @@ class OrderController extends Controller
      *     description="Getting all data about order for all users",
      *     tags={"Admin / Orders"},
      *
+     *     security={{
+     *         "default": {
+     *             "ManagerRead",
+     *             "User",
+     *             "ManagerWrite"
+     *         }
+     *     }},
      *
      *       @OA\Parameter(
      *         name="limit",
@@ -38,12 +45,46 @@ class OrderController extends Controller
      *      ),
      *     @OA\Parameter(
      *         name="page",
+     *         in="query",
+     *         description="Count",
+     *         @OA\Schema(
+     *             type="number"
+     *         )
+     *     ),
+     *     @OA\Parameter(
+     *         name="search",
+     *         in="query",
+     *         description="Search keywords",
+     *         @OA\Schema(
+     *             type="string"
+     *         )
+     *     ),
+     *
+     *     @OA\Parameter(
+     *         name="page",
      *         description="Page of list",
      *         in="query",
      *         required=false,
      *         @OA\Schema(
      *              type="integer",
      *              default=1,
+     *         )
+     *     ),
+     *
+     *      @OA\Parameter(
+     *         name="sort-by",
+     *         in="query",
+     *         description="Sort by field ()",
+     *         @OA\Schema(
+     *             type="string"
+     *         )
+     *     ),
+     *     @OA\Parameter(
+     *         name="sort-order",
+     *         in="query",
+     *         description="Sort order (asc, desc)",
+     *         @OA\Schema(
+     *             type="string"
      *         )
      *     ),
      *
@@ -81,6 +122,7 @@ class OrderController extends Controller
                 ->with(['transaction' => function ($query) {
                     $query->select('payment_type_id', 'total_amount', 'order_id', 'user_id', 'payment_system', 'credit_card_type_id', 'wallet_address');
                 }])
+                ->orderBy($request->get('sort-by', 'created_at'), $request->get('sort-order', 'desc'))
                 ->paginate($request->get('limit', 20));
 
             $resp['type'] = "Success";
@@ -105,7 +147,6 @@ class OrderController extends Controller
      *     path="/admin/orders",
      *     description="Adding new orders",
      *     tags={"Admin / Orders"},
-
 
      *       @OA\RequestBody(
      *            @OA\JsonContent(
@@ -265,7 +306,6 @@ class OrderController extends Controller
      */
     public function show($id)
     {
-
         try {
             $order = Order::findOrFail($id);
             $getallOrder = $order ? $order->with('product')->with('transaction') : [];
@@ -294,10 +334,18 @@ class OrderController extends Controller
      *     description="Update one order",
      *      tags={"Admin / Orders"},
      *
+     *     security={{
+     *         "default": {
+     *             "ManagerRead",
+     *             "User",
+     *             "ManagerWrite"
+     *         }
+     *     }},
+     *
      *     @OA\Parameter(
      *         name="id",
      *         in="query",
-     *         description="Order's id",
+     *         description="Order id",
      *         required=true,
      *      ),
      *
@@ -411,4 +459,132 @@ class OrderController extends Controller
             ], 400);
         }
     }
-}//end class
+
+    /**
+     * Approve single Order
+     *
+     * @OA\get(
+     *      path="/admin/order/approve/{id}",
+     *     description="Update one order",
+     *      tags={"Admin / Orders"},
+     *
+     *     security={{
+     *         "default": {
+     *             "ManagerRead",
+     *             "User",
+     *             "ManagerWrite"
+     *         }
+     *     }},
+     *
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="query",
+     *         description="Order id",
+     *         required=true,
+     *      ),
+     *
+     *
+     *     @OA\Response(
+     *         response="500",
+     *         description="Unknown error"
+     *     ),
+     *     @OA\Response(
+     *         response="400",
+     *         description="Invalid request"
+     *     ),
+     *
+     *     @OA\Response(
+     *         response="404",
+     *         description="Not Found"
+     *     ),
+     * )
+     *
+     * @param \Illuminate\Http\Request $request
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function approve($id)
+    {
+        try {
+            $order = Order::findOrFail($id);
+            $approveOrder = $order->where('id', $id)->update(['status' => Order::STATUS_COMPLETED]);
+
+            $resp['type']       = "Success";
+            $resp['title']      = "Approve Order";
+            $resp['message']    = "Order was approved";
+            $resp['data']       = $approveOrder;
+            return response()->json($resp, 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'type'      => 'danger',
+                'title'     => 'Approve Order',
+                'message'   => 'Error occurred when approving order',
+                'data'      => $e->getMessage()
+            ], 400);
+        }
+    }
+
+    /**
+     * Approve single Order
+     *
+     * @OA\get(
+     *      path="/admin/order/reject/{id}",
+     *     description="Update one order",
+     *      tags={"Admin / Orders"},
+     *
+     *     security={{
+     *         "default": {
+     *             "ManagerRead",
+     *             "User",
+     *             "ManagerWrite"
+     *         }
+     *     }},
+     *
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="query",
+     *         description="Order id",
+     *         required=true,
+     *      ),
+     *
+     *
+     *     @OA\Response(
+     *         response="500",
+     *         description="Unknown error"
+     *     ),
+     *     @OA\Response(
+     *         response="400",
+     *         description="Invalid request"
+     *     ),
+     *
+     *     @OA\Response(
+     *         response="404",
+     *         description="Not Found"
+     *     ),
+     * )
+     *
+     * @param \Illuminate\Http\Request $request
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function reject($id)
+    {
+        try {
+            $order = Order::findOrFail($id);
+            $approveOrder = $order->where('id', $id)->update(['status' => Order::STATUS_CANCELED]);
+
+            $resp['type']       = "Success";
+            $resp['title']      = "Reject Order";
+            $resp['message']    = "Order was rejected";
+            $resp['data']       = $approveOrder;
+            return response()->json($resp, 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'type'      => 'danger',
+                'title'     => 'Reject Order',
+                'message'   => 'Error occurred when rejecting order',
+                'data'      => $e->getMessage()
+            ], 400);
+        }
+    }
+}
