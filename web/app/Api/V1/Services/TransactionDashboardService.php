@@ -9,10 +9,11 @@ class TransactionDashboardService
 {
     public static function getTransactionsStatistics(): array
     {
-        $newTransactionsByDay = Transaction::whereBetween('created_at', self::getPeriod('day'));
-        $newTransactionsByWeek = Transaction::whereBetween('created_at', self::getPeriod('week'));
-        $newTransactionsByMonth = Transaction::whereBetween('created_at', self::getPeriod('month'));
-        $newTransactionsByYear = Transaction::whereBetween('created_at', self::getPeriod('year'));
+        $query = new Transaction;
+        $newTransactionsByDay = $query->whereBetween('created_at', self::getPeriod('day'));
+        $newTransactionsByWeek = $query->whereBetween('created_at', self::getPeriod('week'));
+        $newTransactionsByMonth = $query->whereBetween('created_at', self::getPeriod('month'));
+        $newTransactionsByYear = $query->whereBetween('created_at', self::getPeriod('year'));
 
         //Group by Wallet
         $newTransactionsByWalletPerWeek = $newTransactionsByWeek->groupBy('wallet_address')
@@ -45,28 +46,28 @@ class TransactionDashboardService
         ->selectRaw('token_stage, count(*) as total')->get();
         
         return [
-            'new_transactions_by_day_count' => $newTransactionsByDay->count(),
-            'new_transactions_by_week_count' => $newTransactionsByWeek->count(),
-            'new_transactions_by_month_count' => $newTransactionsByMonth->count(),
-            'new_transactions_by_year_count' => $newTransactionsByYear->count(),
+            'transactions_stat_by_day_count' => $newTransactionsByDay->count(),
+            'transactions_stat_by_week_count' => $newTransactionsByWeek->count(),
+            'transactions_stat_by_month_count' => $newTransactionsByMonth->count(),
+            'transactions_stat_by_year_count' => $newTransactionsByYear->count(),
 
             //Wallets
-            'new_transactions_by_wallets_per_day' => $newTransactionsByWalletPerDay,
-            'new_transactions_by_wallets_per_week' => $newTransactionsByWalletPerWeek,
-            'new_transactions_by_wallets_per_month' => $newTransactionsByWalletPerMonth,
-            'new_transactions_by_wallets_per_year' => $newTransactionsByWalletPerYear,
+            'transactions_stat_by_wallets_per_day' => $newTransactionsByWalletPerDay,
+            'transactions_stat_by_wallets_per_week' => $newTransactionsByWalletPerWeek,
+            'transactions_stat_by_wallets_per_month' => $newTransactionsByWalletPerMonth,
+            'transactions_stat_by_wallets_per_year' => $newTransactionsByWalletPerYear,
 
             //PaymentGateways
-            'new_transactions_by_payment_gateways_per_day' => $newTransactionsByPaymentGatewayPerDay,
-            'new_transactions_by_payment_gateways_per_week' => $newTransactionsByPaymentGatewayPerWeek,
-            'new_transactions_by_payment_gateways_per_month' => $newTransactionsByPaymentGatewayPerMonth,
-            'new_transactions_by_payment_gateways_per_year' => $newTransactionsByPaymentGatewayPerYear,
+            'transactions_stat_by_payment_gateways_per_day' => $newTransactionsByPaymentGatewayPerDay,
+            'transactions_stat_by_payment_gateways_per_week' => $newTransactionsByPaymentGatewayPerWeek,
+            'transactions_stat_by_payment_gateways_per_month' => $newTransactionsByPaymentGatewayPerMonth,
+            'transactions_stat_by_payment_gateways_per_year' => $newTransactionsByPaymentGatewayPerYear,
 
             //PaymentGateways
-            'new_transactions_by_stages_per_day' => $newTransactionsByStagesPerDay,
-            'new_transactions_by_stages_per_week' => $newTransactionsByStagesPerWeek,
-            'new_transactions_by_stages_per_month' => $newTransactionsByStagesPerMonth,
-            'new_transactions_by_stages_per_year' => $newTransactionsByStagesPerYear,
+            'transactions_stat_by_stages_per_day' => $newTransactionsByStagesPerDay,
+            'transactions_stat_by_stages_per_week' => $newTransactionsByStagesPerWeek,
+            'transactions_stat_by_stages_per_month' => $newTransactionsByStagesPerMonth,
+            'transactions_stat_by_stages_per_year' => $newTransactionsByStagesPerYear,
         ];
     }
 

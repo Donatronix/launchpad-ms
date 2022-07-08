@@ -48,15 +48,16 @@ class DashboardController extends Controller
 
     try{
 
-        $transaction = Transaction::all();
+        $transaction = new Transaction;
         $transaction_count = $transaction->count();
 
-        $currency_code = DB::table('transactions')->distinct('currency_code')->get('currency_code')->pluck('currency_code');
-
-        $amount_received = Transaction::sum('amount_received');
+        $currency_code = $transaction->distinct('currency_code')->get('currency_code')->pluck('currency_code');
+        $user_count = $transaction->distinct('user_id')->count();
+        $amount_received = $transaction->sum('amount_received');
         
         $data = [
             'transactions_count' => $transaction_count,
+            'users_count' => $user_count,
             'currency_code' => $currency_code,
             'amount_received' => $amount_received,
             'transactions' => $transaction->toArray(),
