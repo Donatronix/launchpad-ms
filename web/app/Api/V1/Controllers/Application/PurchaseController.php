@@ -196,7 +196,7 @@ class PurchaseController extends Controller
      * List Token investors
      *
      * @OA\Get(
-     *     path="/token-investors/{product_id}",
+     *     path="/token-investors",
      *     description="List the users that have invested in a token",
      *     tags={"Token"},
      *
@@ -210,7 +210,7 @@ class PurchaseController extends Controller
      *
      *     @OA\Parameter(
      *         name="id",
-     *         in="path",
+     *         in="query",
      *         required=true,
      *         description="Product Id",
      *         @OA\Schema(
