@@ -89,8 +89,13 @@ class PriceController extends Controller
     {
         try {
             // Get prices
+            if($request->has("product_id")){
+                $prices = Price::where(['stage' => $stage, 'product_id' => $request->get("product_id")])
+                    ->first();
+            }else{
             $prices = Price::where('stage', $stage)
                 ->get();
+            }
 
             return response()->jsonApi([
                 'type' => 'success',
