@@ -2,21 +2,21 @@
 
 namespace App\Api\V1\Controllers\Admin;
 
-use App\Api\V1\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\Purchase;
+use App\Api\V1\Controllers\Controller;
 use Illuminate\Support\Facades\Http;
 use Auth;
+use App\Models\Purchase;
 
-class InvestorController extends Controller
+class AdminController extends Controller
 {
     /**
-     * Display a listing of Investor
+     * Display a listing of Admin
      *
      * @OA\Get(
-     *     path="/admin/investors",
-     *     description="Get list of Investor users",
-     *     tags={"Admin / Investors"},
+     *     path="/admin",
+     *     description="Get list of Admin users",
+     *     tags={"Admin / Admins"},
      *
      *     security={{
      *         "default": {
@@ -81,7 +81,7 @@ class InvestorController extends Controller
              * Prep IDS endpoint
              *
              */
-            $endpoint = '/admin/users?type=Investor';
+            $endpoint = '/admin/users?type=Admin';
             $params = $request->getQueryString();
             if ($params) {
                 $endpoint = $endpoint . '&' . $params;
@@ -105,7 +105,7 @@ class InvestorController extends Controller
                 throw new \Exception("Error Processing Request", 500);
             }
 
-            $investors = [];
+            $admins = [];
             $data = $response->object()->data ?? null;
 
             if ($data) {
@@ -114,40 +114,40 @@ class InvestorController extends Controller
                  * Get Tokens
                  *
                  */
-                foreach ($data->data as $key => $investor) {
+                foreach ($data->data as $key => $admin) {
                     $tokens = Purchase::where([
-                        'user_id' => $investor->id
+                        'user_id' => $admin->id
                     ])->sum("token_amount");
 
-                    $investor->tokens = $tokens;
-                    $investors[] = $investor;
+                    $admin->tokens = $tokens;
+                    $admins[] = $admin;
                 }
 
                 /**
                  * Client Response
                  *
                  */
-                $data->data = $investors;
+                $data->data = $admins;
             }
 
             return response()->jsonApi([
                 'type' => 'success',
-                'title' => 'Get Investor',
-                'message' => 'Avaialable Investors',
-                'data' => $data,
+                'title' => 'Get Admins',
+                'message' => 'Avaialable Admins',
+                'data' => $data
             ], 200);
         }
         catch (\Exception $e) {
             return response()->jsonApi([
                 'type' => 'danger',
-                'title' => 'Get Investor',
+                'title' => 'Get Admin',
                 'message' => $e->getMessage()
             ], 400);
         }
     }
 
     /**
-     * Create new Resource
+     * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response

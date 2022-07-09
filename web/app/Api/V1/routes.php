@@ -190,13 +190,13 @@ $router->group([
 
         /**
          * Admin/Deposit
+         *
          */
         $router->group([
             'prefix' => 'deposits',
         ], function ($router) {
             $router->get('/',       'DepositController@index');
             $router->post('/',      'DepositController@store');
-
             $router->get('{id}',    'DepositController@show');
             $router->put('{id}',    'DepositController@update');
             $router->delete('{id}', 'DepositController@destroy');
@@ -204,6 +204,7 @@ $router->group([
 
         /**
          * Admin/Order
+         *
          */
         $router->group([
             'prefix' => 'orders',
