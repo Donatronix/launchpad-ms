@@ -195,9 +195,9 @@ $router->group([
             $router->get('/',       'DepositController@index');
             $router->post('/',      'DepositController@store');
 
-            $router->get('{id}',    'DepositController@show');
-            $router->put('{id}',    'DepositController@update');
-            $router->delete('{id}', 'DepositController@destroy');
+            $router->get('/{id}',    'DepositController@show');
+            $router->put('/{id}',    'DepositController@update');
+            $router->delete('/{id}', 'DepositController@destroy');
         });
 
         /**
@@ -208,10 +208,10 @@ $router->group([
         ], function ($router) {
             $router->get('/',       'OrderController@index');
             $router->post('/',      'OrderController@store');
-            $router->get('{id}',    'OrderController@show');
-            $router->put('{id}',    'OrderController@update');
-            $router->delete('{id}', 'OrderController@destroy');
-            $router->get('approve/{id}', 'OrderController@approve');
+            $router->get('/{id}',    'OrderController@show');
+            $router->put('/{id}',    'OrderController@update');
+            $router->delete('/{id}', 'OrderController@destroy');
+            $router->get('/approve/{id}', 'OrderController@approve');
         });
     });
 

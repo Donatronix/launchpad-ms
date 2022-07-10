@@ -68,31 +68,18 @@ class DepositController extends Controller
     {
         try {
             $allDeposits = Deposit::orderBy('created_at', 'Desc')
-                ->with(['order' => function ($query) {
-                    $query->select(
-                        'id',
-                        'product_id',
-                        'investment_amount',
-                        'deposit_percentage',
-                        'deposit_amount',
-                        'user_id',
-                        'status',
-                        'order_no',
-                        'amount_token',
-                        'amount_usd'
-                    );
-                }])
+                ->with('order')
                 ->paginate($request->get('limit', 20));
 
             // Return response
-            return response()->jsonApi([
+            return response()->json([
                 'type' => 'success',
                 'title' => "List all deposits",
                 'message' => "List all deposits",
                 'data' => $allDeposits
             ], 200);
         } catch (Exception $e) {
-            return response()->jsonApi([
+            return response()->json([
                 'type' => 'danger',
                 'title' => 'List all deposits',
                 'message' => 'Error in getting list of all deposits',
@@ -194,7 +181,7 @@ class DepositController extends Controller
             ]);
 
             // Return response
-            return response()->jsonApi([
+            return response()->json([
                 'type' => 'success',
                 'title' => "Create new deposit",
                 'message' => "Deposit was created",
@@ -208,7 +195,7 @@ class DepositController extends Controller
                 'data' => $e->getMessage()
             ], 400);
         } catch (Exception $e) {
-            return response()->jsonApi([
+            return response()->json([
                 'type' => 'danger',
                 'title' => 'Create new deposit',
                 'message' => 'Error occurred when creating new deposit',
@@ -264,14 +251,14 @@ class DepositController extends Controller
                 ->first();
 
             // Return response
-            return response()->jsonApi([
+            return response()->json([
                 'type' => 'success',
                 'title' => "Get deposit",
                 'message' => "Get deposit",
                 'data' => $deposit ? $deposit->with('order') : []
             ], 200);
         } catch (\Exception $e) {
-            return response()->jsonApi([
+            return response()->json([
                 'type' => 'danger',
                 'title' => 'Get deposit',
                 'message' => 'Error in getting deposit',
@@ -366,21 +353,21 @@ class DepositController extends Controller
             ]);
 
             // Return response
-            return response()->jsonApi([
+            return response()->json([
                 'type' => 'success',
                 'title' => "Update Deposit",
                 'message' => "Record was updated",
                 'data' => $depositSaved
             ], 200);
         } catch (ValidationException $e) {
-            return response()->jsonApi([
+            return response()->json([
                 'type' => 'warning',
                 'title' => 'Update deposit',
                 'message' => 'Validation Error',
                 'data' => $e->getMessage()
             ], 400);
         } catch (Exception $e) {
-            return response()->jsonApi([
+            return response()->json([
                 'type' => 'danger',
                 'title' => 'Update deposit',
                 'message' => 'Error occurred when updating deposit',
@@ -436,14 +423,14 @@ class DepositController extends Controller
         try {
             Deposit::findOrFail($id)->delete();
 
-            return response()->jsonApi([
+            return response()->json([
                 'type' => 'success',
                 'title' => "Soft delete deposit",
                 'message' => "Deleted successfully",
                 'data' => null
             ], 200);
         } catch (\Exception $e) {
-            return response()->jsonApi([
+            return response()->json([
                 'type' => 'danger',
                 'title' => 'Soft delete deposit',
                 'message' => 'Error in deleting deposit',
