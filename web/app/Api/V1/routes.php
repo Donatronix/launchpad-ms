@@ -128,6 +128,7 @@ $router->group([
             'checkAdmin'
         ]
     ], function ($router) {
+
         /**
          * Products
          */
@@ -141,6 +142,7 @@ $router->group([
 
         /**
          * Price
+         *
          */
         $router->group(['prefix' => 'price'], function ($router) {
             $router->get('/', 'PriceController@index');
@@ -188,13 +190,13 @@ $router->group([
 
         /**
          * Admin/Deposit
+         *
          */
         $router->group([
             'prefix' => 'deposits',
         ], function ($router) {
             $router->get('/',       'DepositController@index');
             $router->post('/',      'DepositController@store');
-
             $router->get('{id}',    'DepositController@show');
             $router->put('{id}',    'DepositController@update');
             $router->delete('{id}', 'DepositController@destroy');
@@ -202,6 +204,7 @@ $router->group([
 
         /**
          * Admin/Order
+         *
          */
         $router->group([
             'prefix' => 'orders',
@@ -212,6 +215,32 @@ $router->group([
             $router->put('{id}',    'OrderController@update');
             $router->delete('{id}', 'OrderController@destroy');
             $router->get('approve/{id}', 'OrderController@approve');
+        });
+
+        /**
+         * Investors
+         *
+         */
+        $router->group([
+            'prefix' => 'investors',
+        ], function ($router) {
+            $router->get('/',       'InvestorController@index');
+            $router->post('/',      'InvestorController@store');
+            $router->get('{id}',    'InvestorController@show');
+            $router->put('{id}',    'InvestorController@update');
+            $router->delete('{id}', 'InvestorController@destroy');
+        });
+
+        /**
+         * Admins
+         *
+         */
+        $router->group([], function ($router) {
+            $router->get('/',       'AdminController@index');
+            $router->post('/',      'AdminController@store');
+            $router->get('{id}',    'AdminController@show');
+            $router->put('{id}',    'AdminController@update');
+            $router->delete('{id}', 'AdminController@destroy');
         });
     });
 
