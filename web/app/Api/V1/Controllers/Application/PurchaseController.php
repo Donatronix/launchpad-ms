@@ -4,20 +4,25 @@ namespace App\Api\V1\Controllers\Application;
 
 use App\Api\V1\Controllers\Controller;
 use App\Models\Purchase;
-use Exception;
+use App\Models\Product;
 use Illuminate\Http\Request;
+use Exception;
+use PubSub;
 use Illuminate\Support\Facades\Validator;
 
 class PurchaseController extends Controller
 {
+    private const RECEIVER_LISTENER = 'PurchaseToken';
+
     /**
      * @param Purchase $purchase
      */
     private Purchase $purchase;
 
-    public function __construct(Purchase $purchase)
+    public function __construct(Purchase $purchase, Product $product)
     {
         $this->purchase = $purchase;
+        $this->product = $product;
         $this->user_id = auth()->user()->getAuthIdentifier();
     }
 
@@ -159,6 +164,17 @@ class PurchaseController extends Controller
                 'payment_status' => $request->get('payment_status'),
             ]);
 
+            // get the product details
+            $product = $this->product::find($request->get('product_id'));
+
+            // send token purchased to wallet
+            PubSub::transaction(function () {
+            })->publish(self::RECEIVER_LISTENER, [
+                'amount' => $purchase->token_amount,
+                'token' => $product->ticker,
+                'user_id' => $this->user_id,
+            ], "UltainfinityWalletsMS");
+
             // Return response to client
             return response()->jsonApi([
                 'type' => 'success',
@@ -180,7 +196,7 @@ class PurchaseController extends Controller
      * List Token investors
      *
      * @OA\Get(
-     *     path="/token-investors/{product_id}",
+     *     path="/token-investors",
      *     description="List the users that have invested in a token",
      *     tags={"Token"},
      *
@@ -194,7 +210,7 @@ class PurchaseController extends Controller
      *
      *     @OA\Parameter(
      *         name="id",
-     *         in="path",
+     *         in="query",
      *         required=true,
      *         description="Product Id",
      *         @OA\Schema(
