@@ -212,15 +212,6 @@ class TransactionController extends Controller
      *          },
      *     }},
      *
-     *     x={
-     *          "auth-type": "Applecation & Application Use",
-     *          "throttling-tier": "Unlimited",
-     *          "wso2-appliocation-security": {
-     *              "security-types": {"oauth2"},
-     *              "optional": "false"
-     *           },
-     *     },
-     *
      *     @OA\Parameter(
      *         name="transaction_type",
      *         in="query",
