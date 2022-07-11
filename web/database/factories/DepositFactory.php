@@ -27,7 +27,7 @@ class DepositFactory extends Factory
         //     'deposit_percentage' => $percentage,
         //     'deposit_amount' => $deposit,
         //     'user_id' => $this->faker->randomElement(config('settings.default_users_ids')),
-        //     'status' => Deposit::STATUS_NEW,
+        //     'status' => Deposit::STATUS_CREATED,
         //     'payload' => ''
         // ];
         return [];

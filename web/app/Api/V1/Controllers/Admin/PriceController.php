@@ -53,16 +53,16 @@ class PriceController extends Controller
     {
         try {
             // Get order
-            $order = Price::where('status', true)
+            $price = Price::where('status', true)
                 ->select(['stage', 'price', 'period_in_days', 'percent_profit', 'amount'])
-                ->where('product_id', '957d387a-e1a3-44ef-af29-6ce9118d67b4')
+                //->where('product_id', $request->product_id)
                 ->get();
 
             return response()->jsonApi([
                 'type' => 'success',
                 'title' => 'Product prices list',
                 'message' => "Product prices list has been received",
-                'data' => $order->toArray()
+                'data' => $price
             ], 200);
         } catch (ValidationException $e) {
             return response()->jsonApi([

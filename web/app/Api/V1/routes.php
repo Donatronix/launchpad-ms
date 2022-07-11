@@ -36,7 +36,7 @@ $router->group([
         $router->group([
             'prefix' => 'prices',
         ], function ($router) {
-            $router->get('/', 'PriceController');
+            $router->get('/', 'PriceController@index');
             $router->get('/{stage}', 'PriceController@getPriceByStage');
         });
     });
@@ -171,7 +171,6 @@ $router->group([
         $router->group([
             'prefix' => 'transactions',
         ], function ($router) {
-            $router->get('/', 'TransactionController');
             $router->get('/', 'TransactionController@index');
             $router->post('/', 'TransactionController@store');
             $router->get('/{transaction_id}', 'TransactionController@show');
