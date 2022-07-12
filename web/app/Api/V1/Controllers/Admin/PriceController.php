@@ -134,7 +134,7 @@ class PriceController extends Controller
         try {
             $this->validate($request, Price::validationRules());
             $price = Price::create($request->all());
-            return response()->json([
+            return response()->jsonApi([
                 'type' => 'success',
                 'title' => "Create new Price",
                 'message' => 'Price was successful created',
@@ -218,7 +218,7 @@ class PriceController extends Controller
     {
         try {
             $price->load('product');
-            return response()->json([
+            return response()->jsonApi([
                 'type' => 'success',
                 'title' => 'Price Product List',
                 'data' => $price
@@ -306,7 +306,7 @@ class PriceController extends Controller
             $this->validate($request, Price::validationRules());
             $price = Price::findOrFail($id);
             $price->update($request->all());
-            return response()->json([
+            return response()->jsonApi([
                 'type' => 'success',
                 'title' => "Update Price",
                 'message' => 'Price was successful updated',
@@ -380,7 +380,7 @@ class PriceController extends Controller
             $price = Price::findOrFail($id);
             // delete price
             $price->delete();
-            return response()->json([
+            return response()->jsonApi([
                 'type' => 'success',
                 'title' => "Delete Price",
                 'message' => 'Price was successful deleted',
