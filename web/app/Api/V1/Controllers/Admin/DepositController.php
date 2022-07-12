@@ -353,21 +353,21 @@ class DepositController extends Controller
             ]);
 
             // Return response
-            return response()->json([
+            return response()->jsonApi([
                 'type' => 'success',
                 'title' => "Update Deposit",
                 'message' => "Record was updated",
                 'data' => $depositSaved
             ], 200);
         } catch (ValidationException $e) {
-            return response()->json([
+            return response()->jsonApi([
                 'type' => 'warning',
                 'title' => 'Update deposit',
                 'message' => 'Validation Error',
                 'data' => $e->getMessage()
             ], 400);
         } catch (Exception $e) {
-            return response()->json([
+            return response()->jsonApi([
                 'type' => 'danger',
                 'title' => 'Update deposit',
                 'message' => 'Error occurred when updating deposit',
@@ -423,14 +423,14 @@ class DepositController extends Controller
         try {
             Deposit::findOrFail($id)->delete();
 
-            return response()->json([
+            return response()->jsonApi([
                 'type' => 'success',
                 'title' => "Soft delete deposit",
                 'message' => "Deleted successfully",
                 'data' => null
             ], 200);
         } catch (\Exception $e) {
-            return response()->json([
+            return response()->jsonApi([
                 'type' => 'danger',
                 'title' => 'Soft delete deposit',
                 'message' => 'Error in deleting deposit',
