@@ -68,20 +68,7 @@ class DepositController extends Controller
     {
         try {
             $allDeposits = Deposit::orderBy('created_at', 'Desc')
-                ->with(['order' => function ($query) {
-                    $query->select(
-                        'id',
-                        'product_id',
-                        'investment_amount',
-                        'deposit_percentage',
-                        'deposit_amount',
-                        'user_id',
-                        'status',
-                        'order_no',
-                        'amount_token',
-                        'amount_usd'
-                    );
-                }])
+                ->with('order')
                 ->paginate($request->get('limit', 20));
 
             // Return response

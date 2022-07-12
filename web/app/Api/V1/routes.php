@@ -128,7 +128,6 @@ $router->group([
             'checkAdmin'
         ]
     ], function ($router) {
-
         /**
          * Products
          */
@@ -142,7 +141,6 @@ $router->group([
 
         /**
          * Price
-         *
          */
         $router->group(['prefix' => 'price'], function ($router) {
             $router->get('/', 'PriceController@index');
@@ -189,31 +187,29 @@ $router->group([
 
         /**
          * Admin/Deposit
-         *
          */
         $router->group([
             'prefix' => 'deposits',
         ], function ($router) {
             $router->get('/',       'DepositController@index');
             $router->post('/',      'DepositController@store');
-            $router->get('{id}',    'DepositController@show');
-            $router->put('{id}',    'DepositController@update');
-            $router->delete('{id}', 'DepositController@destroy');
+            $router->get('/{id}',    'DepositController@show');
+            $router->put('/{id}',    'DepositController@update');
+            $router->delete('/{id}', 'DepositController@destroy');
         });
 
         /**
          * Admin/Order
-         *
          */
         $router->group([
             'prefix' => 'orders',
         ], function ($router) {
             $router->get('/',       'OrderController@index');
             $router->post('/',      'OrderController@store');
-            $router->get('{id}',    'OrderController@show');
-            $router->put('{id}',    'OrderController@update');
-            $router->delete('{id}', 'OrderController@destroy');
-            $router->get('approve/{id}', 'OrderController@approve');
+            $router->get('/{id}',    'OrderController@show');
+            $router->put('/{id}',    'OrderController@update');
+            $router->delete('/{id}', 'OrderController@destroy');
+            $router->get('/approve/{id}', 'OrderController@approve');
         });
 
         /**

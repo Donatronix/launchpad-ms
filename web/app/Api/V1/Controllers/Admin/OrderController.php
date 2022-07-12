@@ -118,12 +118,9 @@ class OrderController extends Controller
                 ->with(['product' => function ($query) {
                     $query->select('title', 'ticker', 'supply', 'presale_percentage', 'start_date', 'end_date', 'icon');
                 }])
-                ->with(['transaction' => function ($query) {
-                    $query->select('payment_type_id', 'total_amount', 'order_id', 'user_id', 'payment_system', 'credit_card_type_id', 'wallet_address');
-                }])
+                ->with(['transaction'])
                 ->orderBy($request->get('sort-by', 'created_at'), $request->get('sort-order', 'desc'))
                 ->paginate($request->get('limit', 20));
-
 
             return response()->jsonApi([
                 'type' => 'success',
