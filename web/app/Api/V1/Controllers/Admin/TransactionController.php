@@ -59,7 +59,7 @@ class TransactionController extends Controller
                 ->paginate($request->get('limit', 20));
 
             // Return response
-            return response()->json([
+            return response()->jsonApi([
                 'type' => 'success',
                 'title' => "list of un-approved",
                 'message' => '',
@@ -115,19 +115,19 @@ class TransactionController extends Controller
             $transaction = Transaction::find($transaction_id);
 
             if (!$transaction) {
-                return response()->json([
+                return response()->jsonApi([
                     'success' => false,
                     'error' => 'No transaction of user with id=' . $transaction_id
                 ], 400);
             }
 
-            return response()->json([
+            return response()->jsonApi([
                 'success' => true,
                 'title' => "A transaction by id",
                 'transaction' => $transaction->toArray()
             ]);
         } catch (Exception $e) {
-            return response()->json([
+            return response()->jsonApi([
                 'success' => false,
                 'error' => $e->getMessage()
             ], 400);
@@ -175,7 +175,7 @@ class TransactionController extends Controller
             $transaction = Transaction::find($transaction_id);
 
             if (!$transaction)
-                return response()->json([
+                return response()->jsonApi([
                     'success' => false,
                     'error' => 'No transaction with id=' . $transaction_id
                 ], 400);
@@ -183,14 +183,14 @@ class TransactionController extends Controller
             $transaction->status = Transaction::STATUS_CONFIRMED;
             $transaction->save();
 
-            return response()->json([
+            return response()->jsonApi([
                 'success' => true,
                 'title' => 'Transaction approved',
                 'message' => "Transaction updated successfully",
                 'data' => $transaction
             ], 200);
         } catch (Exception $e) {
-            return response()->json([
+            return response()->jsonApi([
                 'success' => false,
                 'error' => $e->getMessage()
             ], 400);
@@ -406,22 +406,22 @@ class TransactionController extends Controller
         try {
             $transaction = Transaction::find($transaction_id);
             if (!$transaction)
-                return response()->json([
+                return response()->jsonApi([
                     'success' => false,
                     'error' => 'No transaction  with id=' . $transaction_id
                 ], 400);
 
             if ($transaction->status == Transaction::STATUS_CONFIRMED)
-                return response()->json([
+                return response()->jsonApi([
                     'success' => false,
                     'error' => 'transaction  with id=' . $transaction_id . ' is already accepted'
                 ], 400);
 
             $transaction->delete();
 
-            return response()->json(['success' => true], 200);
+            return response()->jsonApi(['success' => true], 200);
         } catch (Exception $e) {
-            return response()->json([
+            return response()->jsonApi([
                 'success' => false,
                 'error' => $e->getMessage()
             ], 400);

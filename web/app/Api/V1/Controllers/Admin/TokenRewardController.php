@@ -156,18 +156,18 @@ class TokenRewardController extends Controller
             $tokenReward = TokenReward::find($token_reward_id);
 
             if (!$tokenReward) {
-                return response()->json([
+                return response()->jsonApi([
                     'success' => false,
                     'error' => 'No tokenReward of user with id=' . $token_reward_id,
                 ], 400);
             }
 
-            return response()->json([
+            return response()->jsonApi([
                 'success' => true,
                 'tokenReward' => new TokenRewardResource($tokenReward),
             ]);
         } catch (Exception $e) {
-            return response()->json([
+            return response()->jsonApi([
                 'success' => false,
                 'error' => $e->getMessage(),
             ], 400);
@@ -262,12 +262,12 @@ class TokenRewardController extends Controller
                 $tokenReward = TokenReward::create($request->all());
             });
         } catch (Exception $e) {
-            return response()->json([
+            return response()->jsonApi([
                 'success' => false,
                 'error' => $e->getMessage(),
             ], 400);
         }
-        return response()->json(['success' => true], 200);
+        return response()->jsonApi(['success' => true], 200);
     }
 
     /**
@@ -366,12 +366,12 @@ class TokenRewardController extends Controller
                 $tokenReward->update($request->all());
             });
         } catch (Exception $e) {
-            return response()->json([
+            return response()->jsonApi([
                 'success' => false,
                 'error' => $e->getMessage(),
             ], 400);
         }
-        return response()->json(['success' => true], 200);
+        return response()->jsonApi(['success' => true], 200);
     }
 
     /**
@@ -438,7 +438,7 @@ class TokenRewardController extends Controller
         try {
             $tokenReward = TokenReward::find($token_reward_id);
             if (!$tokenReward)
-                return response()->json([
+                return response()->jsonApi([
                     'success' => false,
                     'error' => 'No token reward  with id=' . $token_reward_id,
                 ], 400);
@@ -446,9 +446,9 @@ class TokenRewardController extends Controller
 
             $tokenReward->delete();
 
-            return response()->json(['success' => true], 200);
+            return response()->jsonApi(['success' => true], 200);
         } catch (Exception $e) {
-            return response()->json([
+            return response()->jsonApi([
                 'success' => false,
                 'error' => $e->getMessage(),
             ], 400);
