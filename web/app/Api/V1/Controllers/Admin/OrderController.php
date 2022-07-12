@@ -118,16 +118,18 @@ class OrderController extends Controller
                 ->with(['product' => function ($query) {
                     $query->select('title', 'ticker', 'supply', 'presale_percentage', 'start_date', 'end_date', 'icon');
                 }])
+                ->with(['transaction'])
                 ->orderBy($request->get('sort-by', 'created_at'), $request->get('sort-order', 'desc'))
                 ->paginate($request->get('limit', 20));
-            return response()->json([
+
+            return response()->jsonApi([
                 'type' => 'success',
                 'title' => "List all orders",
                 'message' => "List all orders",
                 'data' => $allOrders
             ], 200);
         } catch (Exception $e) {
-            return response()->json([
+            return response()->jsonApi([
                 'type' => 'danger',
                 'title' => 'List all orders',
                 'message' => 'Error in getting list of all orders',
@@ -240,21 +242,21 @@ class OrderController extends Controller
             $orderSaved = Order::create($request->all());
 
 
-            return response()->json([
+            return response()->jsonApi([
                 'type' => 'success',
                 'title' => "Create new order",
                 'message' => "Order was created",
                 'data' => $orderSaved
             ], 200);
         } catch (ValidationException $e) {
-            return response()->json([
+            return response()->jsonApi([
                 'type' => 'danger',
                 'title' => 'Create new order',
                 'message' => 'Error occurred when creating new order',
                 'data' => $e->getMessage()
             ], 400);
         } catch (Exception $e) {
-            return response()->json([
+            return response()->jsonApi([
                 'type' => 'danger',
                 'title' => 'Create new order',
                 'message' => 'Error occurred when creating new order',
@@ -306,17 +308,17 @@ class OrderController extends Controller
     {
         try {
             $order = Order::findOrFail($id);
-            $getallOrder = $order ? $order->with('product') : [];
+            $getallOrder = $order ? $order->with('product')->with('transaction') : [];
 
             // Return response
-            return response()->json([
+            return response()->jsonApi([
                 'type' => 'success',
                 'title' => "Get order",
                 'message' => "Get order",
                 'data' => $getallOrder
             ], 200);
         } catch (\Exception $e) {
-            return response()->json([
+            return response()->jsonApi([
                 'type' => 'danger',
                 'title' => 'Get order',
                 'message' => 'Error in getting order',
@@ -439,21 +441,21 @@ class OrderController extends Controller
             $orderUpdated->update($request->all());
 
             // Return response
-            return response()->json([
+            return response()->jsonApi([
                 'type' => 'success',
                 'title' => "Order was updated",
                 'message' => "Order was updated",
                 'data' => $orderUpdated
             ], 200);
         } catch (ValidationException $e) {
-            return response()->json([
+            return response()->jsonApi([
                 'type' => 'warning',
                 'title' => 'update Order',
                 'message' => 'Error occurred when updating order',
                 'data' => $e->getMessage()
             ], 400);
         } catch (Exception $e) {
-            return response()->json([
+            return response()->jsonApi([
                 'type' => 'danger',
                 'title' => 'Update Order',
                 'message' => 'Error occurred when updating order',
@@ -512,14 +514,14 @@ class OrderController extends Controller
             $approveOrder = $order->where('id', $id)->update(['status' => Order::STATUS_COMPLETED]);
 
             // Return response
-            return response()->json([
+            return response()->jsonApi([
                 'type' => 'success',
                 'title' => "Approve Order",
                 'message' => "Order was approved",
                 'data' => $approveOrder
             ], 200);
         } catch (\Exception $e) {
-            return response()->json([
+            return response()->jsonApi([
                 'type' => 'danger',
                 'title' => 'Approve Order',
                 'message' => 'Error occurred when approving order',
@@ -578,14 +580,14 @@ class OrderController extends Controller
                 ->update(['status' => Order::STATUS_CANCELED]);
 
             // Return response
-            return response()->json([
+            return response()->jsonApi([
                 'type' => 'success',
                 'title' => "Reject Order",
                 'message' => "Order was rejected",
                 'data' => $approveOrder
             ], 200);
         } catch (\Exception $e) {
-            return response()->json([
+            return response()->jsonApi([
                 'type' => 'danger',
                 'title' => 'Reject Order',
                 'message' => 'Error occurred when rejecting order',

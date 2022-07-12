@@ -60,9 +60,10 @@ class TransactionController extends Controller
 
             // Return response
             return response()->json([
-                'success' => true,
+                'type' => 'success',
                 'title' => "list of un-approved",
-                'transaction' => $result->toArray()
+                'message' => '',
+                'data' => $result->toArray()
             ]);
         } catch (Exception $e) {
             return response()->jsonApi([
@@ -200,7 +201,7 @@ class TransactionController extends Controller
      *  Store transaction data manually
      *
      * @OA\Post(
-     *     path="/admin/add-transaction",
+     *     path="/admin/transactions",
      *     description="Get all loans by filter",
      *     tags={"Admin | Transactions"},
      *
@@ -211,15 +212,6 @@ class TransactionController extends Controller
      *              "ManagerWrite"
      *          },
      *     }},
-     *
-     *     x={
-     *          "auth-type": "Applecation & Application Use",
-     *          "throttling-tier": "Unlimited",
-     *          "wso2-appliocation-security": {
-     *              "security-types": {"oauth2"},
-     *              "optional": "false"
-     *           },
-     *     },
      *
      *     @OA\Parameter(
      *         name="transaction_type",

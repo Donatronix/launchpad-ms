@@ -72,14 +72,14 @@ class DepositController extends Controller
                 ->paginate($request->get('limit', 20));
 
             // Return response
-            return response()->json([
+            return response()->jsonApi([
                 'type' => 'success',
                 'title' => "List all deposits",
                 'message' => "List all deposits",
                 'data' => $allDeposits
             ], 200);
         } catch (Exception $e) {
-            return response()->json([
+            return response()->jsonApi([
                 'type' => 'danger',
                 'title' => 'List all deposits',
                 'message' => 'Error in getting list of all deposits',
@@ -181,7 +181,7 @@ class DepositController extends Controller
             ]);
 
             // Return response
-            return response()->json([
+            return response()->jsonApi([
                 'type' => 'success',
                 'title' => "Create new deposit",
                 'message' => "Deposit was created",
@@ -195,7 +195,7 @@ class DepositController extends Controller
                 'data' => $e->getMessage()
             ], 400);
         } catch (Exception $e) {
-            return response()->json([
+            return response()->jsonApi([
                 'type' => 'danger',
                 'title' => 'Create new deposit',
                 'message' => 'Error occurred when creating new deposit',
@@ -251,14 +251,14 @@ class DepositController extends Controller
                 ->first();
 
             // Return response
-            return response()->json([
+            return response()->jsonApi([
                 'type' => 'success',
                 'title' => "Get deposit",
                 'message' => "Get deposit",
                 'data' => $deposit ? $deposit->with('order') : []
             ], 200);
         } catch (\Exception $e) {
-            return response()->json([
+            return response()->jsonApi([
                 'type' => 'danger',
                 'title' => 'Get deposit',
                 'message' => 'Error in getting deposit',
