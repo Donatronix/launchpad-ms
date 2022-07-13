@@ -178,9 +178,19 @@ class Order extends Model
      *
      * @return BelongsTo
      */
-    public function product(): BelongsTo
+    public function product()
     {
-        return $this->belongsTo(Product::class);
+        return $this->belongsTo(Product::class, 'product_id', 'id');
+    }
+
+    /**
+     * One Order have One Product relation
+     *
+     * @return BelongsTo
+     */
+    public function deposit()
+    {
+        return $this->hasMany(Deposit::class);
     }
 
     /**
@@ -192,4 +202,5 @@ class Order extends Model
     {
         return $this->belongsTo(Transaction::class, 'id', 'order_id');
     }
+
 }
