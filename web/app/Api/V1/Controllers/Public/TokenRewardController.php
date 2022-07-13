@@ -66,6 +66,7 @@ class TokenRewardController extends Controller
                 'type' => 'danger',
                 'title' => 'Token rewards list',
                 'message' => $e->getMessage(),
+                'data'=>null
             ], 400);
         }
     }

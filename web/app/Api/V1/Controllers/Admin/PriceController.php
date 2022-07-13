@@ -62,14 +62,14 @@ class PriceController extends Controller
                 'type' => 'success',
                 'title' => 'Product prices list',
                 'message' => "Product prices list has been received",
-                'data' => $price
+                'data' => $price->toArray()
             ], 200);
         } catch (ValidationException $e) {
             return response()->jsonApi([
-                'type' => 'warning',
+                'type' => 'danger',
                 'title' => 'Product price list ',
-                'message' => "Validation error",
-                'data' => $e->getMessage()
+                'message' => 'Validation error: '.$e->getMessage(),
+                'data' => null
             ], 400);
         }
     }
@@ -137,16 +137,16 @@ class PriceController extends Controller
             return response()->jsonApi([
                 'type' => 'success',
                 'title' => "Create new Price",
-                'message' => 'Price was successful created',
-                'data' => $price
+                'message' => 'Price was successfully created',
+                'data' => $price->toArray()
             ], 201);
 
         } catch (ValidationException $e) {
             return response()->jsonApi([
-                'type' => 'warning',
+                'type' => 'danger',
                 'title' => 'Saving new stage price',
-                'message' => "Validation error",
-                'data' => $e->getMessage()
+                'message' => 'Validation error: '.$e->getMessage(),
+                'data' => null
             ], 400);
         }
     }
@@ -221,14 +221,15 @@ class PriceController extends Controller
             return response()->jsonApi([
                 'type' => 'success',
                 'title' => 'Price Product List',
+                'message'=>'Price list received successfully',
                 'data' => $price
             ], 200);
         } catch (ValidationException $e) {
             return response()->jsonApi([
-                'type' => 'warning',
+                'type' => 'danger',
                 'title' => 'Price Product List',
-                'message' => "Validation error",
-                'data' => $e->getMessage()
+                'message' => 'Validation error: '.$e->getMessage(),
+                'data' => null
             ], 400);
         }
     }
@@ -315,10 +316,10 @@ class PriceController extends Controller
 
         } catch (ValidationException $e) {
             return response()->jsonApi([
-                'type' => 'warning',
+                'type' => 'danger',
                 'title' => 'Update Price',
-                'message' => "Validation error",
-                'data' => $e->getMessage()
+                'message' => 'Validation error: '.$e->getMessage(),
+                'data' => null
             ], 400);
         }
     }
@@ -387,10 +388,10 @@ class PriceController extends Controller
             ], 201);
         } catch (ValidationException $e) {
             return response()->jsonApi([
-                'type' => 'warning',
+                'type' => 'danger',
                 'title' => 'Delete Price',
-                'message' => "Validation error",
-                'data' => $e->getMessage()
+                'message' => 'Validation error: '.$e->getMessage(),
+                'data' => []
             ], 400);
         }
     }

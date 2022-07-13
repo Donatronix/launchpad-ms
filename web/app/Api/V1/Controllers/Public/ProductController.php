@@ -124,6 +124,7 @@ class ProductController extends Controller
                 'type' => 'danger',
                 'title' => 'Product detail',
                 'message' => $e->getMessage(),
+                'data'=> null
             ], 400);
         }
     }
