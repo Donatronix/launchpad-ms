@@ -95,7 +95,12 @@ class InvestorController extends Controller
              *
              */
             if (!$response->successful()) {
-                throw new \Exception("Error Processing Request", 500);
+                return response()->jsonApi([
+                    'type' => 'danger',
+                    'title' => 'Get Investor',
+                    'message' => $response->getMessage(),
+                    'data' => null
+                ], 419);
             }
 
             $investors = [];
@@ -134,53 +139,9 @@ class InvestorController extends Controller
             return response()->jsonApi([
                 'type' => 'danger',
                 'title' => 'Get Investor',
-                'message' => $e->getMessage()
+                'message' => $e->getMessage(),
+                'data' => null
             ], 400);
         }
-    }
-
-    /**
-     * Create new Resource
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        //
     }
 }

@@ -77,14 +77,14 @@ class DepositController extends Controller
                 'type' => 'success',
                 'title' => "List all deposits",
                 'message' => "List all deposits",
-                'data' => $allDeposits
+                'data' => $allDeposits->toArray()
             ], 200);
         } catch (Exception $e) {
             return response()->jsonApi([
                 'type' => 'danger',
                 'title' => 'List all deposits',
-                'message' => 'Error in getting list of all deposits',
-                'data' => $e->getMessage()
+                'message' => 'Error in getting list of all deposits: '.$e->getMessage(),
+                'data' => null
             ], 400);
         }
     }
@@ -434,7 +434,7 @@ class DepositController extends Controller
                 'type' => 'success',
                 'title' => "Soft delete deposit",
                 'message' => "Deleted successfully",
-                'data' => null
+                'data' => []
             ], 200);
         } catch (\Exception $e) {
             return response()->jsonApi([

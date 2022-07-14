@@ -75,7 +75,7 @@ class TransactionService
                 'type' => 'danger',
                 'title' => "Error adding transactions",
                 'message' => $e->getMessage->toArray(),
-                'data' => ''
+                'data' => null
             ], 404);
         }
     }

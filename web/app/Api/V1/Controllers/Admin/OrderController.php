@@ -124,14 +124,14 @@ class OrderController extends Controller
                 'type' => 'success',
                 'title' => "List all orders",
                 'message' => "List all orders",
-                'data' => $allOrders
+                'data' => $allOrders->toArray()
             ], 200);
         } catch (Exception $e) {
             return response()->jsonApi([
                 'type' => 'danger',
                 'title' => 'List all orders',
-                'message' => 'Error in getting list of all orders',
-                'data' => $e->getMessage()
+                'message' => 'Error in getting list of all orders: '.$e->getMessage(),
+                'data' => null
             ], 400);
         }
     }
@@ -246,21 +246,21 @@ class OrderController extends Controller
                 'type' => 'success',
                 'title' => "Create new order",
                 'message' => "Order was created",
-                'data' => $orderSaved
+                'data' => $orderSaved->toArray()
             ], 200);
         } catch (ValidationException $e) {
             return response()->jsonApi([
                 'type' => 'danger',
                 'title' => 'Create new order',
-                'message' => 'Error occurred when creating new order',
-                'data' => $e->getMessage()
+                'message' => 'Error occurred when creating new order: '.$e->getMessage(),
+                'data' => null
             ], 400);
         } catch (Exception $e) {
             return response()->jsonApi([
                 'type' => 'danger',
                 'title' => 'Create new order',
-                'message' => 'Error occurred when creating new order',
-                'data' => $e->getMessage()
+                'message' => 'Error occurred when creating new order: '.$e->getMessage(),
+                'data' => null
             ], 400);
         }
     }
@@ -320,8 +320,8 @@ class OrderController extends Controller
             return response()->jsonApi([
                 'type' => 'danger',
                 'title' => 'Get order',
-                'message' => 'Error in getting order',
-                'data' => $e->getMessage()
+                'message' => 'Error in getting order: '.$e->getMessage(),
+                'data' => null
             ], 400);
         }
     }
@@ -453,15 +453,15 @@ class OrderController extends Controller
             return response()->jsonApi([
                 'type' => 'warning',
                 'title' => 'update Order',
-                'message' => 'Error occurred when updating order',
-                'data' => $e->getMessage()
+                'message' => 'Error occurred when updating order: '.$e->getMessage(),
+                'data' => null
             ], 400);
         } catch (Exception $e) {
             return response()->jsonApi([
                 'type' => 'danger',
                 'title' => 'Update Order',
-                'message' => 'Error occurred when updating order',
-                'data' => $e->getMessage()
+                'message' => 'Error occurred when updating order: '.$e->getMessage(),
+                'data' => null
             ], 400);
         }
     }
@@ -526,8 +526,8 @@ class OrderController extends Controller
             return response()->jsonApi([
                 'type' => 'danger',
                 'title' => 'Approve Order',
-                'message' => 'Error occurred when approving order',
-                'data' => $e->getMessage()
+                'message' => 'Error occurred when approving order: '.$e->getMessage(),
+                'data' => null
             ], 400);
         }
     }
@@ -592,8 +592,8 @@ class OrderController extends Controller
             return response()->jsonApi([
                 'type' => 'danger',
                 'title' => 'Reject Order',
-                'message' => 'Error occurred when rejecting order',
-                'data' => $e->getMessage()
+                'message' => 'Error occurred when rejecting order: '.$e->getMessage(),
+                'data' => null
             ], 400);
         }
     }
