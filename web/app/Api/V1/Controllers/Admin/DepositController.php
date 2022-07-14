@@ -2,12 +2,13 @@
 
 namespace App\Api\V1\Controllers\Admin;
 
-use App\Api\V1\Controllers\Controller;
-use App\Models\Deposit;
 use Exception;
-use Illuminate\Http\JsonResponse;
+use App\Models\Order;
+use App\Models\Deposit;
 use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
+use App\Api\V1\Controllers\Controller;
 use Illuminate\Validation\ValidationException;
 
 /**
@@ -64,15 +65,15 @@ class DepositController extends Controller
      *
      * @return JsonResponse
      */
-    public function index(Request $request): JsonResponse
+    public function index(Request $request)
     {
         try {
-            $allDeposits = Deposit::orderBy('created_at', 'Desc')
-                ->with('order')
-                ->paginate($request->get('limit', 20));
+            $allDeposits = Deposit::with('order')
+                ->orderBy('created_at', 'desc')
+                ->paginate($request->get('limit', config('settings.pagination_limit')));
 
             // Return response
-            return response()->jsonApi([
+            return response()->json([
                 'type' => 'success',
                 'title' => "List all deposits",
                 'message' => "List all deposits",
@@ -114,10 +115,10 @@ class DepositController extends Controller
      *                 example="1500.00"
      *             ),
      *             @OA\Property(
-     *                 property="currency_id",
+     *                 property="currency_code",
      *                 type="string",
-     *                 description="currency id",
-     *                 example="8000000-3000000-20000"
+     *                 description="currency code",
+     *                 example="USD"
      *             ),
      *             @OA\Property(
      *                 property="order_id",
@@ -167,13 +168,24 @@ class DepositController extends Controller
         try {
             //validate input
             $this->validate($request, [
-                'currency_id' => 'required|string',
-                'amount' => 'required|decimal',
+                'currency_code' => 'required|string',
+                'amount' => 'required|numeric',
                 'order_id' => 'required|string',
             ]);
 
+            $checkIfOrderExists = Order::where('id', $request->order_id)->exists();
+
+            if(!$checkIfOrderExists){
+                return response()->jsonApi([
+                    'type' => 'warning',
+                    'title' => 'Create new deposit',
+                    'message' => 'Validation error',
+                    'data' => 'Order id is invalid'
+                ], 404);
+            }
+
             $depositSaved = Deposit::create([
-                'currency_id' => $request['currency_id'],
+                'currency_code' => $request['currency_code'],
                 'amount' => $request['amount'],
                 'order_id' => $request['order_id'],
                 'status' => Deposit::STATUS_CREATED,
@@ -232,30 +244,12 @@ class DepositController extends Controller
     public function show($id): JsonResponse
     {
         try {
-            $deposit = Deposit::findOrFail($id);
-            $allDeposits = $deposit->orderBy('created_at', 'Desc')
-                ->with(['order' => function ($query) {
-                    $query->select(
-                        'id',
-                        'product_id',
-                        'investment_amount',
-                        'deposit_percentage',
-                        'deposit_amount',
-                        'user_id',
-                        'status',
-                        'order_no',
-                        'amount_token',
-                        'amount_usd'
-                    );
-                }])
-                ->first();
-
-            // Return response
-            return response()->jsonApi([
+            $deposit = Deposit::with('order')->findOrFail($id);
+            return response()->json([
                 'type' => 'success',
                 'title' => "Get deposit",
                 'message' => "Get deposit",
-                'data' => $deposit ? $deposit->with('order') : []
+                'data' => $deposit
             ], 200);
         } catch (\Exception $e) {
             return response()->jsonApi([
@@ -294,10 +288,10 @@ class DepositController extends Controller
      *         @OA\JsonContent(
      *             type="object",
      *             @OA\Property(
-     *                 property="currency_id",
+     *                 property="currency_code",
      *                 type="string",
-     *                 description="currency id",
-     *                 example="8000000-3000000-20000"
+     *                 description="currency code",
+     *                 example="USD"
      *             ),
      *             @OA\Property(
      *                 property="amount",
@@ -341,13 +335,26 @@ class DepositController extends Controller
         try {
             //validate input
             $this->validate($request, [
-                'currency_id' => 'required|string',
-                'amount' => 'required|decimal',
+                'currency_code' => 'required|string',
+                'amount' => 'required|numeric',
                 'order_id' => 'required|string',
             ]);
 
-            $depositSaved = Deposit::where('id', $id)->update([
-                'currency_id' => $request['currency_id'],
+            $checkIfOrderExists = Order::where('id', $request->order_id)->exists();
+
+            if(!$checkIfOrderExists){
+                return response()->jsonApi([
+                    'type' => 'warning',
+                    'title' => 'Create new deposit',
+                    'message' => 'Validation error',
+                    'data' => 'Order id is invalid'
+                ], 404);
+            }
+
+            $deposit = Deposit::findOrFail($id);
+
+            $deposit->update([
+                'currency_code' => $request['currency_code'],
                 'amount' => $request['amount'],
                 'order_id' => $request['order_id'],
             ]);
@@ -357,7 +364,7 @@ class DepositController extends Controller
                 'type' => 'success',
                 'title' => "Update Deposit",
                 'message' => "Record was updated",
-                'data' => $depositSaved
+                'data' => $deposit
             ], 200);
         } catch (ValidationException $e) {
             return response()->jsonApi([

@@ -210,6 +210,7 @@ $router->group([
             $router->put('/{id}',    'OrderController@update');
             $router->delete('/{id}', 'OrderController@destroy');
             $router->get('/approve/{id}', 'OrderController@approve');
+            $router->get('/reject/{id}', 'OrderController@reject');
         });
 
         /**
