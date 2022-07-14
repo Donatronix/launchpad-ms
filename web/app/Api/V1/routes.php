@@ -116,10 +116,10 @@ $router->group([
     $router->group([
         'prefix' => 'admin',
         'namespace' => 'Admin',
-        'middleware' => [
-            'checkUser',
-            'checkAdmin'
-        ]
+        // 'middleware' => [
+        //     'checkUser',
+        //     'checkAdmin'
+        // ]
     ], function ($router) {
         /**
          * Products
@@ -171,14 +171,12 @@ $router->group([
          * Admin/Deposit
          */
         $router->group([
-            'namespace' => 'Admin',
-            'prefix' => 'admin/deposits',
+            'prefix' => 'deposits',
         ], function ($router) {
-            $router->get('/',       'DepositController@index');
-            $router->post('/',      'DepositController@store');
-
-            $router->get('{id}',    'DepositController@show');
-            $router->put('{id}',    'DepositController@update');
+            $router->get('/', 'DepositController@index');
+            $router->post('/', 'DepositController@store');
+            $router->get('{id}', 'DepositController@show');
+            $router->put('{id}', 'DepositController@update');
             $router->delete('{id}', 'DepositController@destroy');
         });
 
