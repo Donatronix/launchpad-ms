@@ -41,7 +41,7 @@ class DepositController extends Controller
      *         required=false,
      *         @OA\Schema(
      *             type="integer",
-     *             default=20,
+     *             default=20
      *         )
      *     ),
      *     @OA\Parameter(
@@ -234,7 +234,7 @@ class DepositController extends Controller
      *     @OA\Response(
      *         response="200",
      *         description="Success"
-     *     ),
+     *     )
      * )
      *
      * @param Request $request

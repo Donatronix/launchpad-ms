@@ -2,14 +2,20 @@
 
 namespace App\Api\V1\Controllers\Admin;
 
-use App\Api\V1\Services\TransactionService;
 use App\Api\V1\Controllers\Controller;
+use App\Api\V1\Services\TransactionService;
 use App\Models\Transaction;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 
+/**
+ * Class TransactionController
+ *
+ * @package App\Api\V1\Controllers\Admin
+ */
 class TransactionController extends Controller
 {
     /**
@@ -29,18 +35,37 @@ class TransactionController extends Controller
      *     }},
      *
      *     @OA\Parameter(
+     *         name="status",
+     *         in="query",
+     *         description="Transaction status (pending, approved, bonuses, canceled)",
+     *         @OA\Schema(
+     *             type="string"
+     *         )
+     *     ),
+     *     @OA\Parameter(
      *         name="limit",
      *         description="Count of transactions in one page",
      *         in="query",
      *         required=false,
      *         @OA\Schema(
      *             type="integer",
-     *              default=20
+     *             default=20
      *         )
      *     ),
+     *     @OA\Parameter(
+     *         name="page",
+     *         description="Page of list",
+     *         in="query",
+     *         required=false,
+     *         @OA\Schema(
+     *             type="integer",
+     *             default=1,
+     *         )
+     *     ),
+     *
      *     @OA\Response(
      *         response="200",
-     *         description="Success",
+     *         description="Success"
      *     )
      * )
      *
@@ -55,22 +80,36 @@ class TransactionController extends Controller
     public function index(Request $request)
     {
         try {
-            $result = Transaction::where('status', Transaction::STATUS_WAITING)
+            // Validate status if need
+            $this->validate($request, [
+                'status' => [
+                    'sometimes',
+                    Rule::in(['pending', 'approved', 'bonuses', 'canceled']),
+                ]
+            ]);
+
+            $result = Transaction::query()
+                ->when($request->has('status'), function ($q) use ($request) {
+                    $status = "STATUS_" . mb_strtoupper($request->get('status'));
+
+                    return $q->where('status', intval(constant("App\Models\Transaction::{$status}")));
+                })
                 ->paginate($request->get('limit', 20));
 
             // Return response
-            return response()->jsonApi([
-                'type' => 'success',
-                'title' => "list of un-approved",
-                'message' => 'Transaction list received',
-                'data' => $result->toArray()
-            ]);
+            return response()->jsonApi(
+                array_merge([
+                    'type' => 'success',
+                    'title' => "Transactions list",
+                    'message' => 'Transaction list received'
+                ], $result->toArray())
+            );
         } catch (Exception $e) {
             return response()->jsonApi([
                 'type' => 'danger',
                 'title' => 'Transactions list',
                 'message' => $e->getMessage(),
-                'data'=> null
+                'data' => null
             ], 400);
         }
     }
@@ -100,6 +139,7 @@ class TransactionController extends Controller
      *             type="integer"
      *         )
      *     ),
+     *
      *     @OA\Response(
      *         response="200",
      *         description="Success",
@@ -118,24 +158,24 @@ class TransactionController extends Controller
             if (!$transaction) {
                 return response()->jsonApi([
                     'type' => 'danger',
-                    'title'=> 'Transaction data',
+                    'title' => 'Transaction data',
                     'message' => 'No transaction data with id ' . $transaction_id,
-                    'data'=>null
+                    'data' => null
                 ], 400);
             }
 
             return response()->jsonApi([
                 'type' => 'success',
-                'title'=> 'Transaction data',
-                'message'=> 'Transaction data received',
+                'title' => 'Transaction data',
+                'message' => 'Transaction data received',
                 'data' => $transaction
             ]);
         } catch (Exception $e) {
             return response()->jsonApi([
                 'type' => 'danger',
-                'title'=> 'Transaction data',
+                'title' => 'Transaction data',
                 'message' => 'Get transaction data error: ' . $e->getMessage(),
-                'data'=>null
+                'data' => null
             ], 400);
         }
     }
@@ -165,9 +205,10 @@ class TransactionController extends Controller
      *             type="string"
      *         )
      *     ),
+     *
      *     @OA\Response(
      *         response="200",
-     *         description="Success",
+     *         description="Success"
      *     )
      * )
      *
@@ -181,14 +222,14 @@ class TransactionController extends Controller
             $transaction = Transaction::find($transaction_id);
 
             if (!$transaction)
-            return response()->jsonApi([
-                'type' => 'danger',
-                'title'=> 'Transaction data',
-                'message' => 'No transaction data with id ' . $transaction_id,
-                'data'=>null
-            ], 400);
+                return response()->jsonApi([
+                    'type' => 'danger',
+                    'title' => 'Transaction data',
+                    'message' => 'No transaction data with id ' . $transaction_id,
+                    'data' => null
+                ], 400);
 
-            $transaction->status = Transaction::STATUS_CONFIRMED;
+            $transaction->status = Transaction::STATUS_APPROVED;
             $transaction->save();
 
             return response()->jsonApi([
@@ -200,9 +241,9 @@ class TransactionController extends Controller
         } catch (Exception $e) {
             return response()->jsonApi([
                 'type' => 'danger',
-                'title'=> 'Transaction data',
+                'title' => 'Transaction data',
                 'message' => 'Update transaction data error: ' . $e->getMessage(),
-                'data'=>null
+                'data' => null
             ], 400);
         }
     }
@@ -216,11 +257,11 @@ class TransactionController extends Controller
      *     tags={"Admin | Transactions"},
      *
      *     security={{
-     *          "default" :{
-     *              "ManagerRead",
-     *              "Admin",
-     *              "ManagerWrite"
-     *          },
+     *         "default" :{
+     *             "ManagerRead",
+     *             "Admin",
+     *             "ManagerWrite"
+     *         }
      *     }},
      *
      *     @OA\Parameter(
@@ -358,29 +399,29 @@ class TransactionController extends Controller
         if ($validator->fails()) {
             return response()->jsonApi([
                 'type' => 'danger',
-                'title'=> 'Transaction data',
+                'title' => 'Transaction data',
                 'message' => 'Validation error: ' . $validator->errors()->toArray(),
-                'data'=>null
+                'data' => null
             ], 400);
         }
         // create new transaction
-        try{
-        $paramsTransactions = $request->all();
-        $transaction = (new TransactionService())->store($paramsTransactions);
+        try {
+            $paramsTransactions = $request->all();
+            $transaction = (new TransactionService())->store($paramsTransactions);
 
-        // Return response to client
-        return response()->jsonApi([
-            'type' => 'success',
-            'title' => 'New Transaction created',
-            'message' => "New Transaction has been added successfully",
-            'data' => $transaction->toArray()
-        ], 200);
-        }catch (Exception $e) {
+            // Return response to client
+            return response()->jsonApi([
+                'type' => 'success',
+                'title' => 'New Transaction created',
+                'message' => "New Transaction has been added successfully",
+                'data' => $transaction->toArray()
+            ], 200);
+        } catch (Exception $e) {
             return response()->jsonApi([
                 'type' => 'danger',
-                'title'=> 'Transaction data',
+                'title' => 'Transaction data',
                 'message' => 'Create new transaction data error: ' . $e->getMessage(),
-                'data'=>null
+                'data' => null
             ], 400);
         }
     }
@@ -424,12 +465,12 @@ class TransactionController extends Controller
     {
         try {
             $transaction = Transaction::find($transaction_id);
-            if (!$transaction){
+            if (!$transaction) {
                 return response()->jsonApi([
                     'type' => 'danger',
-                    'title'=> 'Transaction data',
+                    'title' => 'Transaction data',
                     'message' => 'No transaction  with id=' . $transaction_id,
-                    'data'=>null
+                    'data' => null
                 ], 400);
             }
             $transaction->delete();
@@ -443,9 +484,9 @@ class TransactionController extends Controller
         } catch (Exception $e) {
             return response()->jsonApi([
                 'type' => 'danger',
-                'title'=> 'Transaction data',
-                'message' => 'Delete transaction data error: '. $e->getMessage(),
-                'data'=>null
+                'title' => 'Transaction data',
+                'message' => 'Delete transaction data error: ' . $e->getMessage(),
+                'data' => null
             ], 400);
         }
     }

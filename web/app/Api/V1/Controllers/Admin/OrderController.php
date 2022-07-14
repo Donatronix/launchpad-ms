@@ -45,10 +45,12 @@ class OrderController extends Controller
      *     ),
      *     @OA\Parameter(
      *         name="page",
+     *         description="Page of list",
      *         in="query",
-     *         description="Count",
+     *         required=false,
      *         @OA\Schema(
-     *             type="number"
+     *              type="integer",
+     *              default=1,
      *         )
      *     ),
      *     @OA\Parameter(
@@ -59,18 +61,6 @@ class OrderController extends Controller
      *             type="string"
      *         )
      *     ),
-     *
-     *     @OA\Parameter(
-     *         name="page",
-     *         description="Page of list",
-     *         in="query",
-     *         required=false,
-     *         @OA\Schema(
-     *              type="integer",
-     *              default=1,
-     *         )
-     *     ),
-     *
      *     @OA\Parameter(
      *         name="sort-by",
      *         in="query",

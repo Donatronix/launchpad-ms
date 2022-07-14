@@ -23,8 +23,9 @@ class Transaction extends Model
     /**
      * Transaction status
      */
-    const STATUS_WAITING = 1;
-    const STATUS_CONFIRMED = 2;
+    const STATUS_PENDING = 1;
+    const STATUS_APPROVED = 2;
+    const STATUS_BONUSES = 3;
     const STATUS_CANCELED = 0;
 
     /**
@@ -32,8 +33,9 @@ class Transaction extends Model
      */
     public static $statuses = [
         self::STATUS_CANCELED,
-        self::STATUS_WAITING,
-        self::STATUS_CONFIRMED
+        self::STATUS_PENDING,
+        self::STATUS_APPROVED,
+        self::STATUS_BONUSES
     ];
 
     /**
