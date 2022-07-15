@@ -19,11 +19,8 @@ class InvestorController extends Controller
      *     tags={"Admin / Investors"},
      *
      *     security={{
-     *         "default": {
-     *             "ManagerRead",
-     *             "User",
-     *             "ManagerWrite"
-     *         }
+     *          "bearerAuth": {},
+     *          "apiKey": {}
      *     }},
      *
      *     @OA\Parameter(
@@ -57,8 +54,19 @@ class InvestorController extends Controller
      *         )
      *     ),
      *     @OA\Response(
-     *         response=200,
-     *         description="Success",
+     *         response="200",
+     *         description="Data fetched",
+     *         @OA\JsonContent(ref="#/components/schemas/OkResponse")
+     *     ),
+     *     @OA\Response(
+     *         response="400",
+     *         description="Error",
+     *         @OA\JsonContent(ref="#/components/schemas/WarningResponse")
+     *     ),
+     *     @OA\Response(
+     *         response="500",
+     *         description="Server error",
+     *         @OA\JsonContent(ref="#/components/schemas/DangerResponse")
      *     )
      * )
      *
@@ -95,7 +103,9 @@ class InvestorController extends Controller
              *
              */
             if (!$response->successful()) {
-                throw new \Exception("Error Processing Request", 500);
+                $status = $response->status() ?? 400;
+                $message = $response->getReasonPhrase() ?? 'Error Processing Request';
+                throw new \Exception($message, $status);
             }
 
             $investors = [];
@@ -182,7 +192,5 @@ class InvestorController extends Controller
     public function destroy($id)
     {
         //
-  'message' => $e->getMessage(),
-                'data' => null
-            ], 400);
-        }
+    }
+}

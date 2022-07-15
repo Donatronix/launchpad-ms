@@ -44,6 +44,28 @@ use Laravel\Lumen\Routing\Controller as BaseController;
  */
 
 /**
+ * @OA\SecurityScheme(
+ *      in="header",
+ *      type="http",
+ *      scheme="bearer",
+ *      name="bearerAuth",
+ *      bearerFormat="JWT",
+ *      description="Auth Token",
+ *      securityScheme="bearerAuth",
+ * ),
+ */
+
+/**
+ * @OA\SecurityScheme(
+ *      in="header",
+ *      type="apiKey",
+ *      name="User-Id",
+ *      description="Auth User ID",
+ *      securityScheme="apiKey",
+ * ),
+ */
+
+/**
  * ApiResponse Schema
  *
  * @OA\Schema(
@@ -65,6 +87,124 @@ use Laravel\Lumen\Routing\Controller as BaseController;
  *         description="Message of response"
  *     )
  * )
+ */
+
+/**
+ * Success Response
+ *
+ * @package App\Api\V1\Controllers
+ *
+ * @OA\Schema(
+ *      schema="OkResponse",
+ *
+ *      @OA\Property(
+ *          property="type",
+ *          type="string",
+ *          example="success"
+ *      ),
+ *      @OA\Property(
+ *          property="title",
+ *          type="string"
+ *      ),
+ *      @OA\Property(
+ *          property="message",
+ *          type="string"
+ *      ),
+ *      @OA\Property(
+ *          property="data",
+ *          type="object"
+ *      ),
+ * )
+ *
+ */
+
+
+/**
+ * Warning Response
+ *
+ * @package App\Api\V1\Controllers
+ *
+ * @OA\Schema(
+ *      schema="InfoResponse",
+ *
+ *      @OA\Property(
+ *          property="type",
+ *          type="string",
+ *          example="info"
+ *      ),
+ *      @OA\Property(
+ *          property="title",
+ *          type="string"
+ *      ),
+ *      @OA\Property(
+ *          property="message",
+ *          type="string"
+ *      ),
+ *      @OA\Property(
+ *          property="data",
+ *          type="object"
+ *      ),
+ * )
+ *
+ */
+
+/**
+ * Warning Response
+ *
+ * @package App\Api\V1\Controllers
+ *
+ * @OA\Schema(
+ *      schema="WarningResponse",
+ *
+ *      @OA\Property(
+ *          property="type",
+ *          type="string",
+ *          example="warning"
+ *      ),
+ *      @OA\Property(
+ *          property="title",
+ *          type="string"
+ *      ),
+ *      @OA\Property(
+ *          property="message",
+ *          type="string"
+ *      ),
+ *      @OA\Property(
+ *          property="data",
+ *          type="object"
+ *      ),
+ * )
+ *
+ */
+
+
+/**
+ * Danger Response
+ *
+ * @package App\Api\V1\Controllers
+ *
+ * @OA\Schema(
+ *      schema="DangerResponse",
+ *
+ *      @OA\Property(
+ *          property="type",
+ *          type="string",
+ *          example="danger"
+ *      ),
+ *      @OA\Property(
+ *          property="title",
+ *          type="string"
+ *      ),
+ *      @OA\Property(
+ *          property="message",
+ *          type="string"
+ *      ),
+ *      @OA\Property(
+ *          property="data",
+ *          type="object"
+ *      ),
+ * )
+ *
  */
 
 /**

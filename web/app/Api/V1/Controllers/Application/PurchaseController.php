@@ -201,11 +201,8 @@ class PurchaseController extends Controller
      *     tags={"Token"},
      *
      *     security={{
-     *         "default": {
-     *             "ManagerRead",
-     *             "User",
-     *             "ManagerWrite"
-     *         }
+     *          "bearerAuth": {},
+     *          "apiKey": {}
      *     }},
      *
      *     @OA\Parameter(

@@ -19,11 +19,8 @@ class AdminController extends Controller
      *     tags={"Admin / Admins"},
      *
      *     security={{
-     *         "default": {
-     *             "ManagerRead",
-     *             "User",
-     *             "ManagerWrite"
-     *         }
+     *          "bearerAuth": {},
+     *          "apiKey": {}
      *     }},
      *
      *     @OA\Parameter(
@@ -56,9 +53,20 @@ class AdminController extends Controller
      *              default=1,
      *         )
      *     ),
+     *      @OA\Response(
+     *         response="200",
+     *         description="Data fetched",
+     *         @OA\JsonContent(ref="#/components/schemas/OkResponse")
+     *     ),
      *     @OA\Response(
-     *         response=200,
-     *         description="Success",
+     *         response="400",
+     *         description="Error",
+     *         @OA\JsonContent(ref="#/components/schemas/WarningResponse")
+     *     ),
+     *     @OA\Response(
+     *         response="500",
+     *         description="Server error",
+     *         @OA\JsonContent(ref="#/components/schemas/DangerResponse")
      *     )
      * )
      *
@@ -86,7 +94,7 @@ class AdminController extends Controller
              * Get Details from IDS
              *
              */
-            $response = Http::withHeaders([
+            $response = Http::withToken($request->bearerToken())->withHeaders([
                 'User-Id' => Auth::user()->getAuthIdentifier()
             ])->get($url);
 
@@ -95,12 +103,9 @@ class AdminController extends Controller
              *
              */
             if (!$response->successful()) {
-                return response()->jsonApi([
-                    'type' => 'danger',
-                    'title' => 'Get Admin',
-                    'message' => $response->getMessage(),
-                    'data' => null
-                ], 419);
+                $status = $response->status() ?? 400;
+                $message = $response->getReasonPhrase() ?? 'Error Processing Request';
+                throw new \Exception($message, $status);
             }
 
             $admins = [];
@@ -130,7 +135,7 @@ class AdminController extends Controller
                 'type' => 'success',
                 'title' => 'Get Admins',
                 'message' => 'Avaialable Admins',
-                'data' => $data->toArray()
+                'data' => $data
             ], 200);
         }
         catch (\Exception $e) {
