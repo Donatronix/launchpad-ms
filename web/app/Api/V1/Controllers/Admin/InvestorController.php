@@ -86,7 +86,7 @@ class InvestorController extends Controller
              * Get Details from IDS
              *
              */
-            $response = Http::withHeaders([
+            $response = Http::withToken($request->bearerToken())->withHeaders([
                 'User-Id' => Auth::user()->getAuthIdentifier()
             ])->get($url);
 
