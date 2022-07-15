@@ -1,6 +1,9 @@
 <?php
 
 namespace Database\Seeders;
+use App\Models\Order;
+use App\Models\Product;
+use App\Models\Deposit;
 
 use Illuminate\Database\Seeder;
 
@@ -14,13 +17,13 @@ class DepositsTableSeeder extends Seeder
     public function run()
     {
         // Get products
-        //  $products = Product::all();
+        $orders = Order::where('status', 1)->get();
 
-        //  foreach($products as $product){
-        //      // Create Deposits
-        //      Deposit::factory()->count(10)->create([
-        //          'product_id' => $product->id
-        //      ]);
-        //  }
+         foreach($orders as $order){
+             // Create Deposits
+             Deposit::factory()->count(10)->create([
+                 'order_id' => $order->order_no
+             ]);
+         }
     }
 }
