@@ -147,7 +147,7 @@ class DashboardController extends Controller
                 'type' => 'danger',
                 'title' => "Get product",
                 'message' => "Product with id #{$id} not found: {$e->getMessage()}",
-                'data' => ''
+                'data' => []
             ], 404);
         }
     }

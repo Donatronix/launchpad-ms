@@ -4,6 +4,7 @@ namespace App\Api\V1\Controllers\Admin;
 
 use App\Api\V1\Controllers\Controller;
 use App\Models\Order;
+use App\Models\Product;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -44,10 +45,12 @@ class OrderController extends Controller
      *     ),
      *     @OA\Parameter(
      *         name="page",
+     *         description="Page of list",
      *         in="query",
-     *         description="Count",
+     *         required=false,
      *         @OA\Schema(
-     *             type="number"
+     *              type="integer",
+     *              default=1,
      *         )
      *     ),
      *     @OA\Parameter(
@@ -58,18 +61,6 @@ class OrderController extends Controller
      *             type="string"
      *         )
      *     ),
-     *
-     *     @OA\Parameter(
-     *         name="page",
-     *         description="Page of list",
-     *         in="query",
-     *         required=false,
-     *         @OA\Schema(
-     *              type="integer",
-     *              default=1,
-     *         )
-     *     ),
-     *
      *     @OA\Parameter(
      *         name="sort-by",
      *         in="query",
@@ -115,25 +106,22 @@ class OrderController extends Controller
     {
         try {
             $allOrders = Order::orderBy('created_at', 'Desc')
-                ->with(['product' => function ($query) {
-                    $query->select('title', 'ticker', 'supply', 'presale_percentage', 'start_date', 'end_date', 'icon');
-                }])
-                ->with(['transaction'])
+                ->with(['transaction', 'product'])
                 ->orderBy($request->get('sort-by', 'created_at'), $request->get('sort-order', 'desc'))
-                ->paginate($request->get('limit', 20));
+                ->paginate($request->get('limit', config('settings.pagination_limit')));
 
-            return response()->jsonApi([
+            return response()->json([
                 'type' => 'success',
                 'title' => "List all orders",
                 'message' => "List all orders",
-                'data' => $allOrders
+                'data' => $allOrders->toArray()
             ], 200);
         } catch (Exception $e) {
             return response()->jsonApi([
                 'type' => 'danger',
                 'title' => 'List all orders',
-                'message' => 'Error in getting list of all orders',
-                'data' => $e->getMessage()
+                'message' => 'Error in getting list of all orders: '.$e->getMessage(),
+                'data' => null
             ], 400);
         }
     }
@@ -172,12 +160,6 @@ class OrderController extends Controller
      *                 type="decimal",
      *                 description="deposit_amount",
      *                 example="1"
-     *             ),
-     *             @OA\Property(
-     *                 property="order_no",
-     *                 type="string",
-     *                 description="order number",
-     *                 example="283728323"
      *             ),
      *             @OA\Property(
      *                 property="amount_token",
@@ -230,14 +212,22 @@ class OrderController extends Controller
             //validate input
             $this->validate($request, [
                 'product_id' => 'required|string',
-                'investment_amount' => 'required|decimal',
-                'deposit_amount' => 'required|decimal',
-                'order_no' => 'required|string',
+                'investment_amount' => 'required|numeric',
+                'deposit_amount' => 'required|numeric',
                 'deposit_percentage' => 'required|string',
                 'amount_token' => 'required|string',
                 'amount_usd' => 'required|string',
                 'user_id' => 'required|string',
             ]);
+
+            if(!Product::where('id', $request->product_id)->exists()){
+                return response()->jsonApi([
+                    'type' => 'danger',
+                    'title' => 'Create new order',
+                    'message' => 'Error occurred when creating new order',
+                    'data' => "Product id is invalid"
+                ], 400);
+            }
 
             $orderSaved = Order::create($request->all());
 
@@ -246,21 +236,21 @@ class OrderController extends Controller
                 'type' => 'success',
                 'title' => "Create new order",
                 'message' => "Order was created",
-                'data' => $orderSaved
+                'data' => $orderSaved->toArray()
             ], 200);
         } catch (ValidationException $e) {
             return response()->jsonApi([
                 'type' => 'danger',
                 'title' => 'Create new order',
-                'message' => 'Error occurred when creating new order',
-                'data' => $e->getMessage()
+                'message' => 'Error occurred when creating new order: '.$e->getMessage(),
+                'data' => null
             ], 400);
         } catch (Exception $e) {
             return response()->jsonApi([
                 'type' => 'danger',
                 'title' => 'Create new order',
-                'message' => 'Error occurred when creating new order',
-                'data' => $e->getMessage()
+                'message' => 'Error occurred when creating new order: '.$e->getMessage(),
+                'data' => null
             ], 400);
         }
     }
@@ -307,22 +297,21 @@ class OrderController extends Controller
     public function show($id)
     {
         try {
-            $order = Order::findOrFail($id);
-            $getallOrder = $order ? $order->with('product')->with('transaction') : [];
+            $order = Order::with(['product', 'transaction'])->findOrFail($id);
 
             // Return response
-            return response()->jsonApi([
+            return response()->json([
                 'type' => 'success',
                 'title' => "Get order",
                 'message' => "Get order",
-                'data' => $getallOrder
+                'data' => $order
             ], 200);
         } catch (\Exception $e) {
             return response()->jsonApi([
                 'type' => 'danger',
                 'title' => 'Get order',
-                'message' => 'Error in getting order',
-                'data' => $e->getMessage()
+                'message' => 'Error in getting order: '.$e->getMessage(),
+                'data' => null
             ], 400);
         }
     }
@@ -377,12 +366,6 @@ class OrderController extends Controller
      *                    description="deposit_amount",
      *                    example="1"
      *                ),
-     *                @OA\Property(
-     *                    property="order_no",
-     *                    type="string",
-     *                    description="order number",
-     *                    example="283728323"
-     *                ),
      *               @OA\Property(
      *                    property="amount_token",
      *                    type="string",
@@ -429,14 +412,23 @@ class OrderController extends Controller
             //validate input
             $this->validate($request, [
                 'product_id' => 'required|string',
-                'investment_amount' => 'required|decimal',
-                'deposit_amount' => 'required|decimal',
-                'order_no' => 'required|string',
+                'investment_amount' => 'required|numeric',
+                'deposit_amount' => 'required|numeric',
                 'deposit_percentage' => 'required|string',
                 'amount_token' => 'required|string',
                 'amount_usd' => 'required|string',
                 'user_id' => 'required|string',
             ]);
+
+            if(!Product::where('id', $request->product_id)->exists()){
+                return response()->jsonApi([
+                    'type' => 'danger',
+                    'title' => 'Create new order',
+                    'message' => 'Error occurred when creating new order',
+                    'data' => "Product id is invalid"
+                ], 400);
+            }
+
             $orderUpdated = Order::findOrFail($id);
             $orderUpdated->update($request->all());
 
@@ -451,15 +443,15 @@ class OrderController extends Controller
             return response()->jsonApi([
                 'type' => 'warning',
                 'title' => 'update Order',
-                'message' => 'Error occurred when updating order',
-                'data' => $e->getMessage()
+                'message' => 'Error occurred when updating order: '.$e->getMessage(),
+                'data' => null
             ], 400);
         } catch (Exception $e) {
             return response()->jsonApi([
                 'type' => 'danger',
                 'title' => 'Update Order',
-                'message' => 'Error occurred when updating order',
-                'data' => $e->getMessage()
+                'message' => 'Error occurred when updating order: '.$e->getMessage(),
+                'data' => null
             ], 400);
         }
     }
@@ -468,7 +460,7 @@ class OrderController extends Controller
      * Approve single Order
      *
      * @OA\get(
-     *      path="/admin/order/approve/{id}",
+     *      path="/admin/orders/approve/{id}",
      *     description="Update one order",
      *      tags={"Admin / Orders"},
      *
@@ -524,8 +516,8 @@ class OrderController extends Controller
             return response()->jsonApi([
                 'type' => 'danger',
                 'title' => 'Approve Order',
-                'message' => 'Error occurred when approving order',
-                'data' => $e->getMessage()
+                'message' => 'Error occurred when approving order: '.$e->getMessage(),
+                'data' => null
             ], 400);
         }
     }
@@ -534,7 +526,7 @@ class OrderController extends Controller
      * Approve single Order
      *
      * @OA\get(
-     *      path="/admin/order/reject/{id}",
+     *      path="/admin/orders/reject/{id}",
      *     description="Update one order",
      *      tags={"Admin / Orders"},
      *
@@ -590,8 +582,8 @@ class OrderController extends Controller
             return response()->jsonApi([
                 'type' => 'danger',
                 'title' => 'Reject Order',
-                'message' => 'Error occurred when rejecting order',
-                'data' => $e->getMessage()
+                'message' => 'Error occurred when rejecting order: '.$e->getMessage(),
+                'data' => null
             ], 400);
         }
     }

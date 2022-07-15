@@ -47,7 +47,7 @@ return [
         ],
         'identity' => [
            'host' => env('API_IDENTITY_HOST', 'http://localhost:8200'),
-            'version' => env('API_IDENTITY_VERSION', '/v1')
+           'version' => env('API_IDENTITY_VERSION', '/v1')
         ]
     ],
 

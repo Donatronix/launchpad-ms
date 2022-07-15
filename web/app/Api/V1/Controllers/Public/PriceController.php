@@ -44,7 +44,7 @@ class PriceController extends Controller
         $order = Price::where('status', true)
             ->select(['stage', 'price', 'period_in_days', 'percent_profit', 'amount'])
             ->where('product_id', $request->product_id)
-            ->get();
+            ->paginate($request->get('limit', config('settings.pagination_limit')));
 
         return response()->jsonApi([
             'type' => 'success',
@@ -94,7 +94,7 @@ class PriceController extends Controller
                     ->first();
             }else{
             $prices = Price::where('stage', $stage)
-                ->get();
+                ->paginate($request->get('limit', config('settings.pagination_limit')));
             }
 
             return response()->jsonApi([

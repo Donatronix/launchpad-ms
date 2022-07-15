@@ -13,7 +13,7 @@ class PriceController extends Controller
      * Getting a listing of product prices
      *
      * @OA\Get(
-     *     path="/admin/prices",
+     *     path="/admin/price",
      *     summary="Getting a listing of product prices",
      *     description="Getting a listing of product prices",
      *     tags={"Admin / Prices"},
@@ -54,22 +54,23 @@ class PriceController extends Controller
         try {
             // Get order
             $price = Price::where('status', true)
-                ->select(['stage', 'price', 'period_in_days', 'percent_profit', 'amount'])
+                ->select(['stage', 'price', 'period_in_days', 'percent_profit', 'amount', 'id'])
                 //->where('product_id', $request->product_id)
-                ->get();
+                ->paginate($request->get('limit', config('settings.pagination_limit')));
+
 
             return response()->jsonApi([
                 'type' => 'success',
                 'title' => 'Product prices list',
                 'message' => "Product prices list has been received",
-                'data' => $price
+                'data' => $price->toArray()
             ], 200);
         } catch (ValidationException $e) {
             return response()->jsonApi([
-                'type' => 'warning',
+                'type' => 'danger',
                 'title' => 'Product price list ',
-                'message' => "Validation error",
-                'data' => $e->getMessage()
+                'message' => 'Validation error: '.$e->getMessage(),
+                'data' => null
             ], 400);
         }
     }
@@ -78,7 +79,7 @@ class PriceController extends Controller
      * Store a newly stage price in storage.
      *
      * @OA\Post(
-     *     path="/admin/prices",
+     *     path="/admin/price",
      *     summary="Saving new stage price",
      *     description="Saving new stage price",
      *     tags={"Admin / Prices"},
@@ -137,16 +138,16 @@ class PriceController extends Controller
             return response()->jsonApi([
                 'type' => 'success',
                 'title' => "Create new Price",
-                'message' => 'Price was successful created',
-                'data' => $price
+                'message' => 'Price was successfully created',
+                'data' => $price->toArray()
             ], 201);
 
         } catch (ValidationException $e) {
             return response()->jsonApi([
-                'type' => 'warning',
+                'type' => 'danger',
                 'title' => 'Saving new stage price',
-                'message' => "Validation error",
-                'data' => $e->getMessage()
+                'message' => 'Validation error: '.$e->getMessage(),
+                'data' => null
             ], 400);
         }
     }
@@ -155,7 +156,7 @@ class PriceController extends Controller
      * Getting a listing of product prices
      *
      * @OA\Get(
-     *     path="/admin/prices/{id}",
+     *     path="/admin/price/{id}",
      *     summary="Getting a listing of product prices",
      *     description="Getting a listing of product prices",
      *     tags={"Admin / Prices"},
@@ -214,21 +215,22 @@ class PriceController extends Controller
      *
      * @param Price $price
      */
-    public function show(Price $price)
+    public function show($id)
     {
         try {
-            $price->load('product');
-            return response()->jsonApi([
+            $price = Price::with('product')->findOrFail($id);
+            return response()->json([
                 'type' => 'success',
                 'title' => 'Price Product List',
+                'message'=>'Price list received successfully',
                 'data' => $price
             ], 200);
         } catch (ValidationException $e) {
             return response()->jsonApi([
-                'type' => 'warning',
+                'type' => 'danger',
                 'title' => 'Price Product List',
-                'message' => "Validation error",
-                'data' => $e->getMessage()
+                'message' => 'Validation error: '.$e->getMessage(),
+                'data' => null
             ], 400);
         }
     }
@@ -237,7 +239,7 @@ class PriceController extends Controller
      * Updates a stage price.
      *
      * @OA\Put(
-     *     path="/admin/prices",
+     *     path="/admin/price",
      *     description="Updates a stage price",
      *     tags={"Admin / Prices"},
      *
@@ -315,10 +317,10 @@ class PriceController extends Controller
 
         } catch (ValidationException $e) {
             return response()->jsonApi([
-                'type' => 'warning',
+                'type' => 'danger',
                 'title' => 'Update Price',
-                'message' => "Validation error",
-                'data' => $e->getMessage()
+                'message' => 'Validation error: '.$e->getMessage(),
+                'data' => null
             ], 400);
         }
     }
@@ -327,7 +329,7 @@ class PriceController extends Controller
      * Delete a particular Price based on ID.
      *
      * @OA\Delete(
-     *     path="/admin/prices/{id}",
+     *     path="/admin/price/{id}",
      *     description="Get a price",
      *     tags={"Admin / Prices"},
      *
@@ -387,10 +389,10 @@ class PriceController extends Controller
             ], 201);
         } catch (ValidationException $e) {
             return response()->jsonApi([
-                'type' => 'warning',
+                'type' => 'danger',
                 'title' => 'Delete Price',
-                'message' => "Validation error",
-                'data' => $e->getMessage()
+                'message' => 'Validation error: '.$e->getMessage(),
+                'data' => []
             ], 400);
         }
     }

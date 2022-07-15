@@ -82,12 +82,18 @@ class TokenRewardController extends Controller
             $result = TokenReward::paginate($request->get('limit', 20));
 
             // Return response
-            return response()->jsonApi($result->toArray());
+            return response()->jsonApi([
+                'type' => 'success',
+                'title' => 'Token rewards list',
+                'message' => 'Token lists received',
+                'data'=>$result->toArray()
+            ]);
         } catch (Exception $e) {
             return response()->jsonApi([
                 'type' => 'danger',
                 'title' => 'Token rewards list',
                 'message' => $e->getMessage(),
+                'data'=>null
             ], 400);
         }
     }
@@ -157,19 +163,25 @@ class TokenRewardController extends Controller
 
             if (!$tokenReward) {
                 return response()->jsonApi([
-                    'success' => false,
-                    'error' => 'No tokenReward of user with id=' . $token_reward_id,
+                    'type' => 'warning',
+                    'title'=> 'Get a token',
+                    'message' => 'No tokenReward of user with id=' . $token_reward_id,
+                    'data'=> null
                 ], 400);
             }
 
             return response()->jsonApi([
-                'success' => true,
-                'tokenReward' => new TokenRewardResource($tokenReward),
+                'type' => 'success',
+                'title'=> 'Get a token',
+                'message' => 'Token received',
+                'data' => new TokenRewardResource($tokenReward),
             ]);
         } catch (Exception $e) {
             return response()->jsonApi([
-                'success' => false,
-                'error' => $e->getMessage(),
+                'type' => 'danger',
+                'title' => 'Get token data error',
+                'message' => $e->getMessage(),
+                'data'=> null
             ], 400);
         }
     }
@@ -263,11 +275,18 @@ class TokenRewardController extends Controller
             });
         } catch (Exception $e) {
             return response()->jsonApi([
-                'success' => false,
-                'error' => $e->getMessage(),
+                'type' => 'danger',
+                'title'=> 'Reward token',
+                'message' => $e->getMessage(),
+                'data'=>null
             ], 400);
         }
-        return response()->jsonApi(['success' => true], 200);
+        return response()->jsonApi([
+            'type' => 'success',
+            'title' => "Reward token",
+            'message' => "Reward token created",
+            'data' => $tokenReward
+        ], 201);
     }
 
     /**
@@ -367,11 +386,18 @@ class TokenRewardController extends Controller
             });
         } catch (Exception $e) {
             return response()->jsonApi([
-                'success' => false,
-                'error' => $e->getMessage(),
+                'type' => 'danger',
+                'title'=> 'Reward token',
+                'message' => $e->getMessage(),
+                'data'=>null
             ], 400);
         }
-        return response()->jsonApi(['success' => true], 200);
+        return response()->jsonApi([
+            'type' => 'success',
+            'title' => "Reward token",
+            'message' => "Reward token received",
+            'data' => $tokenReward
+        ], 200);
     }
 
     /**
@@ -438,19 +464,25 @@ class TokenRewardController extends Controller
         try {
             $tokenReward = TokenReward::find($token_reward_id);
             if (!$tokenReward)
-                return response()->jsonApi([
-                    'success' => false,
-                    'error' => 'No token reward  with id=' . $token_reward_id,
-                ], 400);
-
-
+            return response()->jsonApi([
+                'type' => 'danger',
+                'title'=> 'Reward token',
+                'message' => 'No token reward  with id=' . $token_reward_id,
+                'data'=>null
+            ], 400);
             $tokenReward->delete();
-
-            return response()->jsonApi(['success' => true], 200);
+            return response()->jsonApi([
+                'type' => 'success',
+                'title' => "Reward token",
+                'message' => "Reward token received",
+                'data' => []
+            ], 200);
         } catch (Exception $e) {
             return response()->jsonApi([
-                'success' => false,
-                'error' => $e->getMessage(),
+                'type' => 'danger',
+                'title'=> 'Reward token',
+                'message' => 'No token reward  with id=' . $token_reward_id,
+                'data'=>null
             ], 400);
         }
     }

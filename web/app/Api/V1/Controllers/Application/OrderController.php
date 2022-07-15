@@ -264,7 +264,7 @@ class OrderController extends Controller
                 'type' => 'danger',
                 'title' => "Get order",
                 'message' => "Order with id #{$id} not found: {$e->getMessage()}",
-                'data' => ''
+                'data' => null
             ], 404);
         }
     }
