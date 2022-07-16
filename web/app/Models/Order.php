@@ -202,4 +202,5 @@ class Order extends Model
     {
         return $this->belongsTo(Transaction::class, 'id', 'order_id');
     }
+
 }

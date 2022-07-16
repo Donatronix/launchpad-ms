@@ -117,7 +117,7 @@ class ProductController extends Controller
             // Get products
             $products = $this->model
                 ->orderBy($request->get('sort-by', 'created_at'), $request->get('sort-order', 'desc'))
-                ->paginate($request->get('limit', 20));
+                ->paginate($request->get('limit', config('settings.pagination_limit')));
 
             // Return response
             return response()->jsonApi([
@@ -290,6 +290,7 @@ class ProductController extends Controller
                 'type' => 'danger',
                 'title' => 'Product detail',
                 'message' => $e->getMessage(),
+                'data'=>null
             ], 400);
         }
     }
@@ -309,7 +310,7 @@ class ProductController extends Controller
                 'type' => 'danger',
                 'title' => "Get product",
                 'message' => "Product with id #{$id} not found: {$e->getMessage()}",
-                'data' => ''
+                'data' => null
             ], 404);
         }
     }
@@ -502,7 +503,7 @@ class ProductController extends Controller
                 'type' => 'danger',
                 'title' => "Delete of product",
                 'message' => $e->getMessage(),
-                'data' => null
+                'data' => []
             ], 400);
         }
     }

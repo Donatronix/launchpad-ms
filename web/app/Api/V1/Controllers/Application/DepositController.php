@@ -66,14 +66,14 @@ class DepositController extends Controller
     {
         // Get deposit
         $deposit = Deposit::byOwner()
-            ->where('status', Deposit::STATUS_NEW)
+            ->where('status', Deposit::STATUS_CREATED)
             ->first();
 
         return response()->jsonApi([
             'type' => 'success',
             'title' => 'Deposit details data',
             'message' => "Deposit detail data has been received",
-            'data' => $deposit->toArray()
+            'data' => $deposit
         ], 200);
     }
 
@@ -163,7 +163,7 @@ class DepositController extends Controller
                 'deposit_percentage' => $request->get('deposit_percentage'),
                 'amount' => $request->get('deposit_amount'),
                 'user_id' => Auth::user()->getAuthIdentifier(),
-                'status' => Deposit::STATUS_NEW
+                'status' => Deposit::STATUS_CREATED
             ]);
 
             // create new transaction

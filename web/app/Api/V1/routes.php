@@ -9,6 +9,8 @@ $router->group([
 ], function ($router) {
     /**
      * PUBLIC ACCESS
+     *
+     * level with free access to the endpoint
      */
     $router->group([
         'namespace' => 'Public'
@@ -23,7 +25,10 @@ $router->group([
             $router->get('/{id}', 'ProductController@show');
         });
 
-        $router->get('/token-rewards', 'TokenRewardController@index');
+        /**
+         * Token Rewards
+         */
+        $router->get('/token-rewards', 'TokenRewardController');
 
         /**
          * Prices
@@ -31,17 +36,19 @@ $router->group([
         $router->group([
             'prefix' => 'prices',
         ], function ($router) {
-            $router->get('/', 'PriceController');
+            $router->get('/', 'PriceController@index');
             $router->get('/{stage}', 'PriceController@getPriceByStage');
         });
     });
 
     /**
      * USER APPLICATION PRIVATE ACCESS
+     *
+     * Application level for users
      */
     $router->group([
+        'namespace' => 'Application',
         'middleware' => 'checkUser',
-        'namespace' => 'Application'
     ], function ($router) {
         /**
          * Token Rewards
@@ -91,13 +98,11 @@ $router->group([
          * Token Purchase - shopping List
          */
         $router->group([
-            'namespace' => 'Application',
             'prefix' => 'purchase-token',
         ], function ($router) {
             $router->get('/', 'PurchaseController@index');
             $router->post('/', 'PurchaseController@store');
         });
-
 
         /**
          * Token Investors
@@ -112,14 +117,16 @@ $router->group([
 
     /**
      * ADMIN PANEL ACCESS
+     *
+     * Admin / super admin access level (E.g CEO company)
      */
     $router->group([
         'prefix' => 'admin',
         'namespace' => 'Admin',
-        // 'middleware' => [
-        //     'checkUser',
-        //     'checkAdmin'
-        // ]
+        'middleware' => [
+            'checkUser',
+            'checkAdmin'
+        ]
     ], function ($router) {
         /**
          * Products
@@ -162,10 +169,21 @@ $router->group([
         $router->group([
             'prefix' => 'transactions',
         ], function ($router) {
-            $router->get('/', 'TransactionController');
+            $router->get('/', 'TransactionController@index');
             $router->post('/', 'TransactionController@store');
+            $router->get('/{transaction_id}', 'TransactionController@show');
+            $router->put('/{transaction_id}', 'TransactionController@update');
+            $router->delete('/{transaction_id}', 'TransactionController@destroy');
         });
 
+        /**
+         *Dashboard
+         */
+        $router->group([
+            'prefix' => 'dashboard',
+        ], function ($router) {
+            $router->get('/',  'DashboardController@index');
+        });
 
         /**
          * Admin/Deposit
@@ -173,25 +191,64 @@ $router->group([
         $router->group([
             'prefix' => 'deposits',
         ], function ($router) {
-            $router->get('/', 'DepositController@index');
-            $router->post('/', 'DepositController@store');
-            $router->get('{id}', 'DepositController@show');
-            $router->put('{id}', 'DepositController@update');
-            $router->delete('{id}', 'DepositController@destroy');
+            $router->get('/',       'DepositController@index');
+            $router->post('/',      'DepositController@store');
+            $router->get('/{id}',    'DepositController@show');
+            $router->put('/{id}',    'DepositController@update');
+            $router->delete('/{id}', 'DepositController@destroy');
         });
 
         /**
          * Admin/Order
          */
         $router->group([
-            'namespace' => 'Admin',
-            'prefix' => 'admin/orders',
+            'prefix' => 'orders',
         ], function ($router) {
-            $router->get('/', 'OrderController@index');
-            $router->post('/', 'OrderController@store');
-            $router->get('{id}','OrderController@show');
-            $router->put('{id}','OrderController@update');
-            $router->delete('{id}', 'OrderController@destroy');
+            $router->get('/',       'OrderController@index');
+            $router->post('/',      'OrderController@store');
+            $router->get('/{id}',    'OrderController@show');
+            $router->put('/{id}',    'OrderController@update');
+            $router->delete('/{id}', 'OrderController@destroy');
+            $router->get('/approve/{id}', 'OrderController@approve');
+            $router->get('/reject/{id}', 'OrderController@reject');
         });
+
+        /**
+         * Investors
+         *
+         */
+        $router->group([
+            'prefix' => 'investors',
+        ], function ($router) {
+            $router->get('/',       'InvestorController@index');
+            $router->post('/',      'InvestorController@store');
+            $router->get('{id}',    'InvestorController@show');
+            $router->put('{id}',    'InvestorController@update');
+            $router->delete('{id}', 'InvestorController@destroy');
+        });
+
+        /**
+         * Admins
+         *
+         */
+        $router->group([], function ($router) {
+            $router->get('/',       'AdminController@index');
+            $router->post('/',      'AdminController@store');
+            $router->get('{id}',    'AdminController@show');
+            $router->put('{id}',    'AdminController@update');
+            $router->delete('{id}', 'AdminController@destroy');
+        });
+    });
+
+    /**
+     * WEBHOOKS
+     *
+     * Access level of external / internal software services
+     */
+    $router->group([
+        'prefix' => 'webhooks',
+        'namespace' => 'Webhooks'
+    ], function ($router) {
+        //
     });
 });

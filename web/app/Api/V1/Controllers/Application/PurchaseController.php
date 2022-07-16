@@ -4,25 +4,27 @@ namespace App\Api\V1\Controllers\Application;
 
 use App\Api\V1\Controllers\Controller;
 use App\Models\Purchase;
+use App\Models\Product;
 use Illuminate\Http\Request;
 use Exception;
+use PubSub;
 use Illuminate\Support\Facades\Validator;
-
-use function PHPUnit\Framework\throwException;
 
 class PurchaseController extends Controller
 {
+    private const RECEIVER_LISTENER = 'PurchaseToken';
+
     /**
      * @param Purchase $purchase
      */
     private Purchase $purchase;
 
-    public function __construct(Purchase $purchase)
+    public function __construct(Purchase $purchase, Product $product)
     {
         $this->purchase = $purchase;
+        $this->product = $product;
         $this->user_id = auth()->user()->getAuthIdentifier();
     }
-
 
     /**
      * Display list of all purchase - shopping List
@@ -80,13 +82,15 @@ class PurchaseController extends Controller
                 }])
                 ->paginate($request->get('limit', 20));
 
-            $resp['type'] = "Success";
-            $resp['title'] = "List all purchase";
-            $resp['message'] = "List all purchase";
-            $resp['data'] = $allPurchase;
-            return response()->json($resp, 200);
+            // Return response
+            return response()->jsonApi([
+                'type' => 'success',
+                'title' => 'List all purchase',
+                'message' => 'List all purchase',
+                'data' => $allPurchase
+            ], 200);
         } catch (Exception $e) {
-            return response()->json([
+            return response()->jsonApi([
                 'type' => 'danger',
                 'title' => 'List all purchase',
                 'message' => 'Error in getting list of all purchase',
@@ -103,7 +107,6 @@ class PurchaseController extends Controller
      *     summary="Purchase a token",
      *     description="Create a token purchase order",
      *     tags={"Token"},
-     *
      *
      *     @OA\RequestBody(
      *         required=true,
@@ -161,6 +164,17 @@ class PurchaseController extends Controller
                 'payment_status' => $request->get('payment_status'),
             ]);
 
+            // get the product details
+            $product = $this->product::find($request->get('product_id'));
+
+            // send token purchased to wallet
+            PubSub::transaction(function () {
+            })->publish(self::RECEIVER_LISTENER, [
+                'amount' => $purchase->token_amount,
+                'token' => $product->ticker,
+                'user_id' => $this->user_id,
+            ], "UltainfinityWalletsMS");
+
             // Return response to client
             return response()->jsonApi([
                 'type' => 'success',
@@ -182,21 +196,18 @@ class PurchaseController extends Controller
      * List Token investors
      *
      * @OA\Get(
-     *     path="/token-investors/{product_id}",
+     *     path="/token-investors",
      *     description="List the users that have invested in a token",
      *     tags={"Token"},
      *
      *     security={{
-     *         "default": {
-     *             "ManagerRead",
-     *             "User",
-     *             "ManagerWrite"
-     *         }
+     *          "bearerAuth": {},
+     *          "apiKey": {}
      *     }},
      *
      *     @OA\Parameter(
      *         name="id",
-     *         in="path",
+     *         in="query",
      *         required=true,
      *         description="Product Id",
      *         @OA\Schema(
@@ -240,26 +251,36 @@ class PurchaseController extends Controller
     {
         // Try to save purchased token data
         try {
-            if(!$request->has('product_id')){
+            if (!$request->has('product_id')) {
                 throw new Exception("Product_id required as query string");
             }
+
             // get unique user_id for the product
             $purchases = $this->purchase::where([
                 'product_id' => $request->get('product_id')
-                ])->select("user_id")->distinct()->get();
+            ])
+                ->select("user_id")
+                ->distinct()
+                ->get();
+
+            // Loop through each of the purchase to get the user details
             $investors = [];
+            foreach ($purchases as $key => $value) {
+                $user = \DB::connection('identity')
+                    ->table('users')
+                    ->where('id', $value['user_id'])
+                    ->select(["id", "first_name", "last_name", "phone", "email_verified_at", "status", "id_number"])
+                    ->first();
 
-                // Loop through each of the purchase to get the user details
-                foreach($purchases as $key => $value){
-                    $user = \DB::connection('identity')->table('users')->where('id',$value['user_id'])->select(["id","first_name","last_name","phone","email_verified_at", "status", "id_number"])->first();
-                    // sum the tokens for the user
-                    $tokens = $this->purchase::where([
-                        'product_id' => $request->get('product_id'), 'user_id' => $value['user_id']
-                        ])->sum("token_amount");
-                    $user->tokens = $tokens;
-                    array_push($investors, $user);
-                }
+                // sum the tokens for the user
+                $tokens = $this->purchase::where([
+                    'product_id' => $request->get('product_id'),
+                    'user_id' => $value['user_id']
+                ])->sum("token_amount");
 
+                $user->tokens = $tokens;
+                array_push($investors, $user);
+            }
 
             // Return response to client
             return response()->jsonApi([

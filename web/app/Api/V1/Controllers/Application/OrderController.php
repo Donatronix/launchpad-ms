@@ -2,13 +2,10 @@
 
 namespace App\Api\V1\Controllers\Application;
 
-use App\Api\V1\Services\TransactionService;
 use App\Api\V1\Controllers\Controller;
-use App\Models\Deposit;
+use App\Api\V1\Services\TransactionService;
 use App\Models\Order;
-use App\Models\PaymentType;
 use App\Models\Product;
-use Barryvdh\DomPDF\Facade\Pdf;
 use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
@@ -66,7 +63,8 @@ class OrderController extends Controller
     {
         // Get order
         $order = Order::byOwner()
-            ->where('status', Order::STATUS_NEW)->with(['transaction' => function ($query) {
+            ->where('status', Order::STATUS_NEW)
+            ->with(['transaction' => function ($query) {
                 $query->select('id', 'order_id', 'wallet_address', 'payment_type_id');
             }, 'transaction.payment_type'])
             ->get();
@@ -266,7 +264,7 @@ class OrderController extends Controller
                 'type' => 'danger',
                 'title' => "Get order",
                 'message' => "Order with id #{$id} not found: {$e->getMessage()}",
-                'data' => ''
+                'data' => null
             ], 404);
         }
     }
