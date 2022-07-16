@@ -3,7 +3,6 @@
 namespace App\Api\V1\Controllers\Admin;
 
 use App\Api\V1\Controllers\Controller;
-use App\Http\Resources\TokenRewardResource;
 use App\Models\TokenReward;
 use Exception;
 use Illuminate\Http\JsonResponse;
@@ -175,7 +174,7 @@ class TokenRewardController extends Controller
                 'type' => 'success',
                 'title'=> 'Get a token',
                 'message' => 'Token received',
-                'data' => new TokenRewardResource($tokenReward),
+                'data' => $tokenReward,
             ]);
         } catch (Exception $e) {
             return response()->jsonApi([

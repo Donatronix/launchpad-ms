@@ -37,10 +37,6 @@ class TokenRewardController extends Controller
      *         description="Invalid request"
      *     ),
      *     @OA\Response(
-     *         response="404",
-     *         description="not found"
-     *     ),
-     *     @OA\Response(
      *         response="500",
      *         description="Unknown error"
      *     )
@@ -57,18 +53,19 @@ class TokenRewardController extends Controller
     public function __invoke(Request $request)
     {
         try {
-            $result = TokenReward::paginate($request->get('limit', config('settings.pagination_limit')));
-
+            $list = TokenReward::paginate($request->get('limit', config('settings.pagination_limit')));
 
             // Return response
-            return response()->jsonApi($result->toArray());
+            return response()->jsonApi([
+                'title' => 'Token rewards list',
+                'message' => 'Token Rewards List received successfully',
+                'data' => $list
+            ]);
         } catch (Exception $e) {
             return response()->jsonApi([
-                'type' => 'danger',
                 'title' => 'Token rewards list',
-                'message' => $e->getMessage(),
-                'data'=>null
-            ], 400);
+                'message' => $e->getMessage()
+            ], $e->getCode());
         }
     }
 }
