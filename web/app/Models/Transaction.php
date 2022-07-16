@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -22,8 +23,9 @@ class Transaction extends Model
     /**
      * Transaction status
      */
-    const STATUS_WAITING = 1;
-    const STATUS_CONFIRMED = 2;
+    const STATUS_PENDING = 1;
+    const STATUS_APPROVED = 2;
+    const STATUS_BONUSES = 3;
     const STATUS_CANCELED = 0;
 
     /**
@@ -31,8 +33,9 @@ class Transaction extends Model
      */
     public static $statuses = [
         self::STATUS_CANCELED,
-        self::STATUS_WAITING,
-        self::STATUS_CONFIRMED
+        self::STATUS_PENDING,
+        self::STATUS_APPROVED,
+        self::STATUS_BONUSES
     ];
 
     /**
@@ -83,7 +86,7 @@ class Transaction extends Model
      * Auto relations for transaction Model
      */
 
-    protected $with = ['creditCardType', 'user'];
+    protected $with = ['creditCardType'];
 
     /**
      * Get the owning transactionable model.

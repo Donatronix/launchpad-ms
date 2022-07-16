@@ -65,11 +65,6 @@ class Deposit extends Model
     ];
 
     /**
-     * @var string
-     */
-    protected $table = 'deposits';
-
-    /**
      * @var string[]
      */
     protected $fillable = [
@@ -109,8 +104,8 @@ class Deposit extends Model
      *
      * @return BelongsTo
      */
-    public function order(): BelongsTo
+    public function order()
     {
-        return $this->belongsTo(Product::class);
+        return $this->belongsTo(Order::class, 'order_id', 'id');
     }
 }

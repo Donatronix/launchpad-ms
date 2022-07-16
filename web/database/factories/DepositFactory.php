@@ -3,8 +3,6 @@
 namespace Database\Factories;
 
 use App\Models\Deposit;
-use App\Models\Order;
-use App\Models\Product;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class DepositFactory extends Factory

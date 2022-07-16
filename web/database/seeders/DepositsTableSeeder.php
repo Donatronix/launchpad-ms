@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 use App\Models\Order;
-use App\Models\Product;
 use App\Models\Deposit;
 
 use Illuminate\Database\Seeder;
