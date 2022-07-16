@@ -22,11 +22,11 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 class DepositController extends Controller
 {
     /**
-     * Display admin deposits list
+     * Display list of all deposits
      *
      * @OA\Get(
      *     path="/admin/deposits",
-     *     description="Getting all admin deposits for all users",
+     *     description="Getting all data about deposits for all users",
      *     tags={"Admin / Deposits"},
      *
      *     security={{
@@ -160,7 +160,7 @@ class DepositController extends Controller
             return response()->jsonApi([
                 'type' => 'success',
                 'title' => "List all deposits",
-                'message' => "List of admin deposits retrieved successfully.",
+                'message' => "List all deposits retrieved successfully.",
                 'data' => $allDeposits->toArray()
             ], 200);
         } catch (Exception $e) {
@@ -208,16 +208,16 @@ class DepositController extends Controller
      *                 property="order_id",
      *                 type="string",
      *                 description="order id",
-     *                 example="JNB28NVGCLIP"
+     *                 example="5590000-9800000-38380000"
      *             )
      *        ),
      *    ),
      *
      *     @OA\Response(
-     *          response="201",
-     *          description="Success",
+     *         response="201",
+     *         description="Success",
      *
-     *          @OA\JsonContent(
+     *         @OA\JsonContent(
      *             type="object",
      *
      *             @OA\Property(
@@ -318,26 +318,40 @@ class DepositController extends Controller
                 'order_id' => 'required|string',
             ]);
 
+            $checkIfOrderExists = Order::where('id', $request->order_id)->exists();
+
+            if(!$checkIfOrderExists){
+                return response()->jsonApi([
+                    'type' => 'warning',
+                    'title' => 'Create new deposit',
+                    'message' => 'Validation error',
+                    'data' => 'Order id is invalid'
+                ], 404);
+            }
+
             $depositSaved = Deposit::create([
-                'currency_id'   => $request['currency_id'],
-                'amount'        => $request['amount'],
-                'order_id'      => $request['order_id'],
-                'user_id'       => Auth::user()->getAuthIdentifier(),
+                'currency_code' => $request['currency_code'],
+                'amount' => $request['amount'],
+                'order_id' => $request['order_id'],
+                'status' => Deposit::STATUS_CREATED,
+                'user_id' => Auth::user()->getAuthIdentifier(),
             ]);
 
-            $resp['type']   = "Success";
-            $resp['title'] = "Create new deposit";
-            $resp['message'] = "Deposit was created";
-            $resp['data'] = $depositSaved;
-            return response()->jsonApi($resp, 200);
+            // Return response
+            return response()->jsonApi([
+                'type' => 'success',
+                'title' => "Create new deposit",
+                'message' => "Deposit was created",
+                'data' => $depositSaved
+            ], 200);
         } catch (ValidationException $e) {
             return response()->jsonApi([
-                'type'      => 'warning',
-                'title'     => 'Create new deposit',
-                'message'   => 'Validation error',
-                'data'      => $e->getMessage()
+                'type' => 'warning',
+                'title' => 'Create new deposit',
+                'message' => 'Validation error',
+                'data' => $e->getMessage()
             ], 400);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return response()->jsonApi([
                 'type' => 'danger',
                 'title' => 'Create new deposit',
@@ -352,7 +366,7 @@ class DepositController extends Controller
      *
      * @OA\Get(
      *     path="/admin/deposits/{id}",
-     *     description="Get single admin deposit",
+     *     description="Get a single deposit",
      *     tags={"Admin / Deposits"},
      *
      *     @OA\Parameter(
@@ -551,10 +565,10 @@ class DepositController extends Controller
             ], 200);
         } catch (\Exception $e) {
             return response()->jsonApi([
-                'type'      => 'danger',
-                'title'     => 'Single Admin Deposit',
-                'message'   => 'Unable to retrieve single admin deposit.',
-                'data'      => $e->getMessage()
+                'type' => 'danger',
+                'title' => 'Get deposit',
+                'message' => 'Error in getting deposit',
+                'data' => $e->getMessage()
             ], 400);
         } catch (ModelNotFoundException $ex) {
             return response()->jsonApi([
@@ -594,28 +608,27 @@ class DepositController extends Controller
      *         @OA\JsonContent(
      *             type="object",
      *             @OA\Property(
-     *                    property="currency_id",
-     *                    type="string",
-     *                    description="currency id",
-     *                    example="8000000-3000000-20000"
+     *                 property="currency_code",
+     *                 type="string",
+     *                 description="currency code",
+     *                 example="USD"
      *             ),
      *             @OA\Property(
-     *                    property="amount",
-     *                    type="decimal",
-     *                    description="amount to deposit",
-     *                    example="100.00"
+     *                 property="amount",
+     *                 type="decimal",
+     *                 description="amount to deposit",
+     *                 example="100.00"
      *             ),
      *             @OA\Property(
-     *                    property="order_id",
-     *                    type="string",
-     *                    description="order id",
-     *                    example="490000-9800000-38380000"
-     *             ),
-     *         ),
+     *                 property="order_id",
+     *                 type="string",
+     *                 description="order id",
+     *                 example="490000-9800000-38380000"
+     *             )
+     *         )
      *     ),
      *
-     *
-      *     @OA\Response(
+     *     @OA\Response(
      *          response="201",
      *          description="Success",
      *
@@ -720,106 +733,6 @@ class DepositController extends Controller
                 'order_id' => 'required|string',
             ]);
 
-            if($validate->fails()){
-                return response()->jsonApi([
-                    'type' => 'warning',
-                    'title' => 'Update Admin Deposit',
-                    'message' => 'Validation errors occured.',
-                    'data' => null
-                ], 400);
-            }
-
-            $depositSaved = Deposit::where('id', $id)->update([
-                'currency_id' => $request['currency_id'],
-                'amount' => $request['amount'],
-                'order_id' => $request['order_id'],
-            ]);
-
-            $resp['type'] = "Success";
-            $resp['title'] = "Update Deposit";
-            $resp['message'] = "Record was updated";
-            $resp['data'] = $depositSaved;
-            return response()->jsonApi($resp, 200);
-        } catch (ValidationException $e) {
-            return response()->jsonApi([
-            $checkIfOrderExists = Order::where('id', $request->order_id)->exists();
-
-            if(!$checkIfOrderExists){
-                return response()->jsonApi([
-                    'type' => 'warning',
-                    'title' => 'Create new deposit',
-                    'message' => 'Validation error',
-                    'data' => 'Order id is invalid'
-                ], 404);
-            }
-
-            $depositSaved = Deposit::create([
-                'currency_code' => $request['currency_code'],
-                'amount' => $request['amount'],
-                'order_id' => $request['order_id'],
-                'status' => Deposit::STATUS_CREATED,
-                'user_id' => Auth::user()->getAuthIdentifier(),
-            ]);
-
-            // Return response
-            return response()->jsonApi([
-                'type' => 'success',
-                'title' => "Create new deposit",
-                'message' => "Deposit was created",
-                'data' => $depositSaved
-            ], 200);
-        } catch (ValidationException $e) {
-            return response()->jsonApi([
-                'type' => 'warning',
-                'title' => 'Create new deposit',
-                'message' => 'Validation error',
-                'data' => $e->getMessage()
-     *     @OA\RequestBody(
-     *         @OA\JsonContent(
-     *             type="object",
-     *             @OA\Property(
-     *                 property="currency_code",
-     *                 type="string",
-     *                 description="currency code",
-     *                 example="USD"
-     *             ),
-     *             @OA\Property(
-     *                 property="amount",
-     *                 type="decimal",
-     *                 description="amount to deposit",
-     *                 example="100.00"
-     *             ),
-     *             @OA\Property(
-     *                 property="order_id",
-     *                 type="string",
-     *                 description="order id",
-     *                 example="490000-9800000-38380000"
-     *             )
-     *         )
-     *     ),
-     *       @OA\RequestBody(
-     *            @OA\JsonContent(
-     *                type="object",
-     *                @OA\Property(
-     *                    property="amount",
-     *                    type="decimal",
-     *                    description="amount to deposit",
-     *                    example="1500.00"
-     *                ),
-     *                @OA\Property(
-     *                    property="currency_code",
-     *                    type="string",
-     *                    description="Deposit currency code",
-     *                    example="USD"
-     *                ),
-     *                @OA\Property(
-     *                    property="order_id",
-     *                    type="string",
-     *                    description="order id",
-     *                    example="JNB28NVGCLIP"
-     *                )
-     *           ),
-     *       ),
             $checkIfOrderExists = Order::where('id', $request->order_id)->exists();
 
             if(!$checkIfOrderExists){
@@ -838,6 +751,7 @@ class DepositController extends Controller
                 'amount' => $request['amount'],
                 'order_id' => $request['order_id'],
             ]);
+
             // Return response
             return response()->jsonApi([
                 'type' => 'success',
@@ -855,8 +769,8 @@ class DepositController extends Controller
         } catch (Exception $e) {
             return response()->jsonApi([
                 'type' => 'danger',
-                'title' => 'Update Admin Deposit',
-                'message' => 'Unable to update admin deposit',
+                'title' => 'Update deposit',
+                'message' => 'Error occurred when updating deposit',
                 'data' => $e->getMessage()
             ], 400);
         }
