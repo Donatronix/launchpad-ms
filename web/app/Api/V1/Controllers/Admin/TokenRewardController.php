@@ -79,7 +79,8 @@ class TokenRewardController extends Controller
     public function index(Request $request)
     {
         try {
-            $result = TokenReward::paginate($request->get('limit', 20));
+            $result = TokenReward::paginate($request->get('limit', config('settings.pagination_limit')));
+
 
             // Return response
             return response()->jsonApi([

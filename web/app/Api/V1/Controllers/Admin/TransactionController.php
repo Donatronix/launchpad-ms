@@ -94,7 +94,7 @@ class TransactionController extends Controller
 
                     return $q->where('status', intval(constant("App\Models\Transaction::{$status}")));
                 })
-                ->paginate($request->get('limit', 20));
+                ->paginate($request->get('limit', config('settings.pagination_limit')));
 
             // Return response
             return response()->jsonApi(
