@@ -19,11 +19,8 @@ class InvestorController extends Controller
      *     tags={"Admin / Investors"},
      *
      *     security={{
-     *         "default": {
-     *             "ManagerRead",
-     *             "User",
-     *             "ManagerWrite"
-     *         }
+     *          "bearerAuth": {},
+     *          "apiKey": {}
      *     }},
      *
      *     @OA\Parameter(
@@ -57,8 +54,19 @@ class InvestorController extends Controller
      *         )
      *     ),
      *     @OA\Response(
-     *         response=200,
-     *         description="Success",
+     *         response="200",
+     *         description="Data fetched",
+     *         @OA\JsonContent(ref="#/components/schemas/OkResponse")
+     *     ),
+     *     @OA\Response(
+     *         response="400",
+     *         description="Error",
+     *         @OA\JsonContent(ref="#/components/schemas/WarningResponse")
+     *     ),
+     *     @OA\Response(
+     *         response="500",
+     *         description="Server error",
+     *         @OA\JsonContent(ref="#/components/schemas/DangerResponse")
      *     )
      * )
      *
@@ -86,7 +94,7 @@ class InvestorController extends Controller
              * Get Details from IDS
              *
              */
-            $response = Http::withHeaders([
+            $response = Http::withToken($request->bearerToken())->withHeaders([
                 'User-Id' => Auth::user()->getAuthIdentifier()
             ])->get($url);
 
@@ -95,12 +103,9 @@ class InvestorController extends Controller
              *
              */
             if (!$response->successful()) {
-                return response()->jsonApi([
-                    'type' => 'danger',
-                    'title' => 'Get Investor',
-                    'message' => $response->getMessage(),
-                    'data' => null
-                ], 419);
+                $status = $response->status() ?? 400;
+                $message = $response->getReasonPhrase() ?? 'Error Processing Request';
+                throw new \Exception($message, $status);
             }
 
             $investors = [];
@@ -139,9 +144,53 @@ class InvestorController extends Controller
             return response()->jsonApi([
                 'type' => 'danger',
                 'title' => 'Get Investor',
-                'message' => $e->getMessage(),
-                'data' => null
+                'message' => $e->getMessage()
             ], 400);
         }
+    }
+
+    /**
+     * Create new Resource
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function store(Request $request)
+    {
+        //
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function show($id)
+    {
+        //
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function update(Request $request, $id)
+    {
+        //
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function destroy($id)
+    {
+        //
     }
 }
