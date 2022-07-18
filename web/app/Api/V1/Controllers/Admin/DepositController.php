@@ -210,7 +210,7 @@ class DepositController extends Controller
      *                 description="order id",
      *                 example="5590000-9800000-38380000"
      *             )
-     *        ),
+     *        )
      *    ),
      *
      *     @OA\Response(
@@ -378,90 +378,6 @@ class DepositController extends Controller
      *     ),
      *
      *     @OA\Response(
-     *          response="200",
-     *          description="Success",
-     *
-     *          @OA\JsonContent(
-     *             type="object",
-     *
-     *             @OA\Property(
-     *                 property="type",
-     *                 type="string",
-     *                 example="success"
-     *             ),
-     *             @OA\Property(
-     *                 property="title",
-     *                 type="string",
-     *                 example="Single Admin Deposit"
-     *             ),
-     *             @OA\Property(
-     *                 property="message",
-     *                 type="string",
-     *                 example="Single admin deposits retrieved successfully"
-     *             ),
-     *             @OA\Property(
-     *                 property="data",
-     *                 type="object"
-     *             )
-     *         )
-     *     ),
-     *    @OA\Response(
-     *          response="400",
-     *          description="Bad request",
-     *
-     *          @OA\JsonContent(
-     *             type="object",
-     *
-     *             @OA\Property(
-     *                 property="type",
-     *                 type="string",
-     *                 example="danger"
-     *             ),
-     *             @OA\Property(
-     *                 property="title",
-     *                 type="string",
-     *                 example="Single Admin Deposit"
-     *             ),
-     *             @OA\Property(
-     *                 property="message",
-     *                 type="string",
-     *                 example="Unable to retrieve of single admin deposit"
-     *             ),
-     *             @OA\Property(
-     *                 property="data",
-     *                 type="object"
-     *             )
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *          response="404",
-     *          description="Not Found",
-     *
-     *          @OA\JsonContent(
-     *             type="object",
-     *
-     *             @OA\Property(
-     *                 property="type",
-     *                 type="string",
-     *                 example="warning"
-     *             ),
-     *             @OA\Property(
-     *                 property="title",
-     *                 type="string",
-     *                 example="Single Admin Deposit"
-     *             ),
-     *             @OA\Property(
-     *                 property="message",
-     *                 type="string",
-     *                 example="Admin deposit found."
-     *             ),
-     *             @OA\Property(
-     *                 property="data",
-     *                 type="object"
-     *             )
-     *         )
-     *     )
      *          response="200",
      *          description="Success",
      *

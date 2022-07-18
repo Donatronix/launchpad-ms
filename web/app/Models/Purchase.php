@@ -47,6 +47,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  *         example="true"
  *     )
  * )
+ * 
+ * 
  */
 class Purchase extends Model
 {

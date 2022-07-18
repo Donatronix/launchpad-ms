@@ -224,8 +224,8 @@ class TokenRewardController extends Controller
      *                    property="reward_bonus",
      *                    type="integer",
      *                    description="Reward bonus for token",
-     *                ),
-     *           ),
+     *                )
+     *           )
      *       ),
      *
      *     @OA\Response(

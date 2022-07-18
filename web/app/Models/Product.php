@@ -60,9 +60,8 @@ use Sumra\SDK\Traits\UuidTrait;
  *         example="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAC1JREFUWEft0EERAAAAAUH6lxbDZxU4s815PffjAAECBAgQIECAAAECBAgQIDAaPwAh6O5R/QAAAABJRU5ErkJggg=="
  *     )
  * )
- */
-
-/**
+ *
+ * 
  * Class PossibleLoanAmount
  *
  * @package App\Models

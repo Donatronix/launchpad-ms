@@ -24,16 +24,6 @@ class AdminController extends Controller
      *     }},
      *
      *     @OA\Parameter(
-     *         name="search",
-     *         in="query",
-     *         description="Search string",
-     *         required=false,
-     *         @OA\Schema(
-     *              type="string",
-     *              default=20,
-     *         )
-     *     ),
-     *     @OA\Parameter(
      *         name="limit",
      *         description="Number of expected data in response",
      *         in="query",

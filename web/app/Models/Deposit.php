@@ -34,7 +34,7 @@ use Sumra\SDK\Traits\UuidTrait;
  *         type="string",
  *         description="User id",
  *         example="967a6aac-b6dc-4aa7-a6cd-6a612e39d4ee"
- *     ),
+ *     )
  * )
  */
 class Deposit extends Model

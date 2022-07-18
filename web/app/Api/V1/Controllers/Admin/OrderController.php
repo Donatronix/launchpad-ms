@@ -61,7 +61,7 @@ class OrderController extends Controller
      *         required=false,
      *         @OA\Schema(
      *             type="string",
-     *             default=created_at,
+     *             default="created_at",
      *         )
      *     ),
      *
@@ -72,7 +72,7 @@ class OrderController extends Controller
      *         required=false,
      *         @OA\Schema(
      *             type="string",
-     *             default=desc,
+     *             default="desc",
      *         )
      *     ),
      *     @OA\Parameter(
@@ -100,23 +100,26 @@ class OrderController extends Controller
      *         )
      *     ),
      *
-     *     @OA\Response(
-     *          response="200",
-     *          description="Success",
-     *     ),
-     *
-     *     @OA\Response(
-     *         response="500",
-     *         description="Unknown error"
+     *      @OA\Response(
+     *         response="200",
+     *         description="Data fetched",
+     *         @OA\JsonContent(ref="#/components/schemas/OkResponse")
      *     ),
      *     @OA\Response(
      *         response="400",
-     *         description="Invalid request"
+     *         description="Error",
+     *         @OA\JsonContent(ref="#/components/schemas/WarningResponse")
+     *     ),
+     *     @OA\Response(
+     *         response="500",
+     *         description="Server error",
+     *         @OA\JsonContent(ref="#/components/schemas/DangerResponse")
      *     ),
      *
      *     @OA\Response(
      *         response="404",
-     *         description="Not Found"
+     *         description="Not Found",
+     *         @OA\JsonContent(ref="#/components/schemas/DangerResponse")
      *     )
      * )
      *
@@ -163,7 +166,7 @@ class OrderController extends Controller
      *                 property="product_id",
      *                 type="string",
      *                 description="product id",
-     *                 example="2000-000-3000000-20000"
+     *                 example="969ff58b-5d48-4de4-8e9e-cb6bb39e6041"
      *             ),
      *             @OA\Property(
      *                 property="investment_amount",
@@ -175,7 +178,7 @@ class OrderController extends Controller
      *                 property="deposit_percentage",
      *                 type="integer",
      *                 description="deposit percentage",
-     *                 example="20000-9000000-90000"
+     *                 example="26"
      *             ),
      *             @OA\Property(
      *                 property="deposit_amount",
@@ -204,23 +207,20 @@ class OrderController extends Controller
      *         )
      *     ),
      *
-     *     @OA\Response(
+     *      @OA\Response(
      *         response="200",
-     *         description="Success",
-     *     ),
-     *
-     *     @OA\Response(
-     *         response="500",
-     *         description="Unknown error"
+     *         description="Data fetched",
+     *         @OA\JsonContent(ref="#/components/schemas/OkResponse")
      *     ),
      *     @OA\Response(
      *         response="400",
-     *         description="Invalid request"
+     *         description="Error",
+     *         @OA\JsonContent(ref="#/components/schemas/WarningResponse")
      *     ),
-     *
      *     @OA\Response(
-     *         response="404",
-     *         description="Not Found"
+     *         response="500",
+     *         description="Server error",
+     *         @OA\JsonContent(ref="#/components/schemas/DangerResponse")
      *     )
      * )
      *
@@ -228,7 +228,7 @@ class OrderController extends Controller
      *
      * @return JsonResponse
      */
-    public function store(Request $request)
+    public function store(Request $request):JsonResponse
     {
         try {
             //validate input
@@ -236,10 +236,10 @@ class OrderController extends Controller
                 'product_id' => 'required|string',
                 'investment_amount' => 'required|numeric',
                 'deposit_amount' => 'required|numeric',
-                'deposit_percentage' => 'required|string',
-                'amount_token' => 'required|string',
-                'amount_usd' => 'required|string',
-                'user_id' => 'required|string',
+                'deposit_percentage' => 'required|numeric',
+                'amount_token' => 'required|numeric',
+                'amount_usd' => 'required|numeric',
+                'user_id' => 'required|numeric',
             ]);
 
             if(!Product::where('id', $request->product_id)->exists()){
@@ -281,34 +281,37 @@ class OrderController extends Controller
      * Display a single order
      *
      * @OA\Get(
-     *     path="/admin/order/{id}",
+     *     path="/admin/orders/{id}",
      *     description="Get a single order",
      *     tags={"Admin / Orders"},
      *
      *     @OA\Parameter(
      *         name="id",
-     *         in="query",
+     *         in="path",
      *         description="order ID",
      *         required=true,
+     *         example="96c890e5-7246-4714-a4db-70b63b16c8ef"
      *      ),
      *
      *      @OA\Response(
-     *          response="200",
-     *          description="Success",
-     *     ),
-     *
-     *     @OA\Response(
-     *         response="500",
-     *         description="Unknown error"
+     *         response="200",
+     *         description="Data fetched",
+     *         @OA\JsonContent(ref="#/components/schemas/OkResponse")
      *     ),
      *     @OA\Response(
      *         response="400",
-     *         description="Invalid request"
+     *         description="Error",
+     *         @OA\JsonContent(ref="#/components/schemas/WarningResponse")
      *     ),
-     *
      *     @OA\Response(
      *         response="404",
-     *         description="Not Found"
+     *         description="Not Found",
+     *         @OA\JsonContent(ref="#/components/schemas/DangerResponse")
+     *     ),
+     *     @OA\Response(
+     *         response="500",
+     *         description="Server error",
+     *         @OA\JsonContent(ref="#/components/schemas/DangerResponse")
      *     )
      * )
      *
@@ -316,7 +319,7 @@ class OrderController extends Controller
      *
      * @return JsonResponse
      */
-    public function show($id)
+    public function show($id):JsonResponse
     {
         try {
             $order = Order::with(['product', 'transaction'])->findOrFail($id);
@@ -342,7 +345,7 @@ class OrderController extends Controller
      * Update single Order
      *
      * @OA\Put(
-     *      path="/admin/order/{id}",
+     *      path="/admin/orders/{id}",
      *     description="Update one order",
      *      tags={"Admin / Orders"},
      *
@@ -359,6 +362,7 @@ class OrderController extends Controller
      *         in="query",
      *         description="Order id",
      *         required=true,
+     *         example="96c890e5-7246-4714-a4db-70b63b16c8ef"
      *      ),
      *
      *    @OA\RequestBody(
@@ -368,7 +372,7 @@ class OrderController extends Controller
      *                    property="product_id",
      *                    type="string",
      *                    description="product id",
-     *                    example="2000-000-3000000-20000"
+     *                    example="969ff58b-5d48-4de4-8e9e-cb6bb39e6041"
      *                ),
      *                @OA\Property(
      *                    property="investment_amount",
@@ -405,30 +409,37 @@ class OrderController extends Controller
      *                    type="string",
      *                    description="user id",
      *                    example="550000-9000000-9000000"
-     *                ),
-     *           ),
+     *                )
+     *           )
      *       ),
      *
-     *     @OA\Response(
-     *         response="500",
-     *         description="Unknown error"
+     *      @OA\Response(
+     *         response="200",
+     *         description="Data fetched",
+     *         @OA\JsonContent(ref="#/components/schemas/OkResponse")
      *     ),
      *     @OA\Response(
      *         response="400",
-     *         description="Invalid request"
+     *         description="Error",
+     *         @OA\JsonContent(ref="#/components/schemas/WarningResponse")
      *     ),
-     *
      *     @OA\Response(
      *         response="404",
-     *         description="Not Found"
+     *         description="Not Found",
+     *         @OA\JsonContent(ref="#/components/schemas/DangerResponse")
      *     ),
+     *     @OA\Response(
+     *         response="500",
+     *         description="Server error",
+     *         @OA\JsonContent(ref="#/components/schemas/DangerResponse")
+     *     )
      * )
      *
      * @param \Illuminate\Http\Request $request
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, $id):JsonResponse
     {
         try {
             //validate input
@@ -499,29 +510,36 @@ class OrderController extends Controller
      *         in="query",
      *         description="Order id",
      *         required=true,
+     *         example="96c890e5-7246-4714-a4db-70b63b16c8ef"
      *      ),
-     *
-     *
-     *     @OA\Response(
-     *         response="500",
-     *         description="Unknown error"
+     * 
+     *      @OA\Response(
+     *         response="200",
+     *         description="Data fetched",
+     *         @OA\JsonContent(ref="#/components/schemas/OkResponse")
      *     ),
      *     @OA\Response(
      *         response="400",
-     *         description="Invalid request"
+     *         description="Error",
+     *         @OA\JsonContent(ref="#/components/schemas/WarningResponse")
      *     ),
-     *
      *     @OA\Response(
      *         response="404",
-     *         description="Not Found"
+     *         description="Not Found",
+     *         @OA\JsonContent(ref="#/components/schemas/DangerResponse")
      *     ),
+     *     @OA\Response(
+     *         response="500",
+     *         description="Server error",
+     *         @OA\JsonContent(ref="#/components/schemas/DangerResponse")
+     *     )
      * )
      *
      * @param \Illuminate\Http\Request $request
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function approve($id)
+    public function approve($id):JsonResponse
     {
         try {
             $order = Order::findOrFail($id);
@@ -565,28 +583,36 @@ class OrderController extends Controller
      *         in="query",
      *         description="Order id",
      *         required=true,
+     *         example="96c890e5-7246-4714-a4db-70b63b16c8ef"
      *      ),
      *
-     *     @OA\Response(
-     *         response="500",
-     *         description="Unknown error"
+     *      @OA\Response(
+     *         response="200",
+     *         description="Data fetched",
+     *         @OA\JsonContent(ref="#/components/schemas/OkResponse")
      *     ),
      *     @OA\Response(
      *         response="400",
-     *         description="Invalid request"
+     *         description="Error",
+     *         @OA\JsonContent(ref="#/components/schemas/WarningResponse")
      *     ),
-     *
      *     @OA\Response(
      *         response="404",
-     *         description="Not Found"
+     *         description="Not Found",
+     *         @OA\JsonContent(ref="#/components/schemas/DangerResponse")
      *     ),
+     *     @OA\Response(
+     *         response="500",
+     *         description="Server error",
+     *         @OA\JsonContent(ref="#/components/schemas/DangerResponse")
+     *     )
      * )
      *
      * @param \Illuminate\Http\Request $request
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function reject($id)
+    public function reject($id):JsonResponse
     {
         try {
             $order = Order::findOrFail($id);

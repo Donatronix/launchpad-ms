@@ -109,6 +109,8 @@ class ProductController extends Controller
      *     )
      * )
      *
+     * @param Request $request
+     * 
      * @return mixed
      */
     public function index(Request $request)
@@ -267,6 +269,7 @@ class ProductController extends Controller
      *          description="Getting product detail by platform"
      *     )
      * )
+     * 
      * @param $id
      */
     public function show($id)
@@ -479,6 +482,9 @@ class ProductController extends Controller
      *         description="Internal server error"
      *     )
      * )
+     * 
+     * 
+     * @return mixed
      */
     public function destroy($id)
     {

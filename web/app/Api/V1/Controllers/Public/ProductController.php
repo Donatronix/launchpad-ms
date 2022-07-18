@@ -34,6 +34,8 @@ class ProductController extends Controller
      *          description="Getting product list for start presale"
      *     )
      * )
+     * 
+     * 
      */
     public function index(Request $request)
     {
