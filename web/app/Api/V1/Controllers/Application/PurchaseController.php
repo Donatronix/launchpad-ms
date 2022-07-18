@@ -9,6 +9,9 @@ use Illuminate\Http\Request;
 use Exception;
 use PubSub;
 use Illuminate\Support\Facades\Validator;
+use Auth;
+use Illuminate\Support\Facades\Http;
+use Sumra\SDK\JsonApiResponse;
 
 class PurchaseController extends Controller
 {
@@ -206,7 +209,7 @@ class PurchaseController extends Controller
      *     }},
      *
      *     @OA\Parameter(
-     *         name="id",
+     *         name="product_id",
      *         in="query",
      *         required=true,
      *         description="Product Id",
@@ -214,88 +217,117 @@ class PurchaseController extends Controller
      *             type="string"
      *         )
      *     ),
-     *
      *     @OA\Response(
      *         response="200",
-     *         description="Successfully save"
-     *     ),
-     *     @OA\Response(
-     *         response="201",
-     *         description="Purchase created"
-     *     ),
-     *     @OA\Response(
-     *         response="400",
-     *         description="Invalid request"
+     *         description="Details Fetched",
+     *         @OA\JsonContent(ref="#/components/schemas/OkResponse")
      *     ),
      *     @OA\Response(
      *         response="401",
-     *         description="Unauthorized"
+     *         description="Unauthorized",
+     *         @OA\JsonContent(ref="#/components/schemas/WarningResponse")
      *     ),
      *     @OA\Response(
-     *         response="404",
-     *         description="Not Found"
-     *     ),
-     *     @OA\Response(
-     *         response="422",
-     *         description="Validation failed"
+     *         response="400",
+     *         description="Bad Request",
+     *         @OA\JsonContent(ref="#/components/schemas/WarningResponse")
      *     ),
      *     @OA\Response(
      *         response="500",
-     *         description="Unknown error"
-     *     )
+     *         description="Server Error",
+     *         @OA\JsonContent(ref="#/components/schemas/DangerResponse")
+     *     ),
      * )
      * @param Request $request
-     * @return mixed
+     * @return JsonApiResponse
      */
-    public function tokenInvestors(Request $request): mixed
+    public function tokenInvestors(Request $request): JsonApiResponse
     {
-        // Try to save purchased token data
         try {
             if (!$request->has('product_id')) {
                 throw new Exception("Product_id required as query string");
             }
 
-            // get unique user_id for the product
-            $purchases = $this->purchase::where([
-                'product_id' => $request->get('product_id')
-            ])
-                ->select("user_id")
-                ->distinct()
-                ->get();
-
-            // Loop through each of the purchase to get the user details
-            $investors = [];
-            foreach ($purchases as $key => $value) {
-                $user = \DB::connection('identity')
-                    ->table('users')
-                    ->where('id', $value['user_id'])
-                    ->select(["id", "first_name", "last_name", "phone", "email_verified_at", "status", "id_number"])
-                    ->first();
-
-                // sum the tokens for the user
-                $tokens = $this->purchase::where([
-                    'product_id' => $request->get('product_id'),
-                    'user_id' => $value['user_id']
-                ])->sum("token_amount");
-
-                $user->tokens = $tokens;
-                array_push($investors, $user);
+            // Check ID
+            $product = Product::find($request->product_id);
+            if (!$product) {
+                return response()->json([
+                    'type' => 'warning',
+                    'title' => 'Token Investors',
+                    'message' => 'The specified Token ID not recognized'
+                ], 400);
             }
+
+            $data = [];
+            $investors = [];
+
+            // Get unique user_id for the product
+            $paginator = $this->purchase::where('product_id', $request->get('product_id'))
+                ->select("user_id")->distinct()->latest()->paginate(20);
+
+            if ($paginator->items()) {
+
+                /**
+                 * Prep IDS endpoint
+                 *
+                 */
+                $endpoint = '/user-profile/details';
+                $IDS = config('settings.api.identity');
+                $url = $IDS['host'] . '/' . $IDS['version'] . $endpoint;
+
+                /**
+                 * Get Details from IDS
+                 *
+                 */
+                $response = Http::withToken($request->bearerToken())->withHeaders([
+                    'User-Id' => Auth::user()->getAuthIdentifier()
+                ])->post($url, [
+                    'users' => $paginator->items()
+                ]);
+
+                /**
+                 * Handle Response
+                 *
+                 */
+                if (!$response->successful()) {
+                    $status = $response->status() ?? 400;
+                    $message = $response->getReasonPhrase() ?? 'Error Processing Request';
+                    throw new \Exception($message, $status);
+                }
+
+                $data = $response->object()->data ?? null;
+            }
+
+            // Get Token details
+            if ($data) {
+                foreach ($data[0] as $key => $investor) {
+
+                    // Sum the tokens for the user
+                    $tokens = $this->purchase::where([
+                        'product_id' => $request->get('product_id'),
+                        'user_id' => $investor->id
+                    ])->sum("token_amount");
+
+                    $investor->tokens = $tokens;
+                    array_push($investors, $investor);
+                }
+            }
+
+            // Update paginator items
+            $paginator->setCollection(collect($investors));
 
             // Return response to client
             return response()->jsonApi([
-                'type' => 'success',
                 'title' => 'Token investors',
-                'message' => "Token investors listed successfully",
-                'data' => $investors
-            ], 200);
-        } catch (Exception $e) {
+                'message' => "Token investors fetched successfully",
+                'data' => $paginator->toArray()
+            ]);
+        }
+        catch (Exception $e) {
             return response()->jsonApi([
-                'type' => 'danger',
                 'title' => 'Token investors',
                 'message' => $e->getMessage(),
-                'data' => null
-            ], 400);
+            ], 500);
         }
     }
 }
