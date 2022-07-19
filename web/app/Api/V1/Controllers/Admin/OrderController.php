@@ -53,6 +53,28 @@ class OrderController extends Controller
      *              default=1,
      *         )
      *     ),
+     *
+     *     @OA\Parameter(
+     *         name="sort-by",
+     *         description="sort-by",
+     *         in="query",
+     *         required=false,
+     *         @OA\Schema(
+     *             type="string",
+     *             default=created_at,
+     *         )
+     *     ),
+     *
+     *     @OA\Parameter(
+     *         name="sort-order",
+     *         description="sort-order",
+     *         in="query",
+     *         required=false,
+     *         @OA\Schema(
+     *             type="string",
+     *             default=desc,
+     *         )
+     *     ),
      *     @OA\Parameter(
      *         name="search",
      *         in="query",
