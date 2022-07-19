@@ -123,10 +123,10 @@ $router->group([
     $router->group([
         'prefix' => 'admin',
         'namespace' => 'Admin',
-        'middleware' => [
-            'checkUser',
-            'checkAdmin'
-        ]
+        // 'middleware' => [
+        //     'checkUser',
+        //     'checkAdmin'
+        // ]
     ], function ($router) {
         /**
          * Products

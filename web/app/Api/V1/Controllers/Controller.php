@@ -113,7 +113,7 @@ use Laravel\Lumen\Routing\Controller as BaseController;
  *      @OA\Property(
  *          property="data",
  *          type="object"
- *      ),
+ *      )
  * )
  *
  */
@@ -143,7 +143,7 @@ use Laravel\Lumen\Routing\Controller as BaseController;
  *      @OA\Property(
  *          property="data",
  *          type="object"
- *      ),
+ *      )
  * )
  *
  */
@@ -172,7 +172,7 @@ use Laravel\Lumen\Routing\Controller as BaseController;
  *      @OA\Property(
  *          property="data",
  *          type="object"
- *      ),
+ *      )
  * )
  *
  */
@@ -202,7 +202,7 @@ use Laravel\Lumen\Routing\Controller as BaseController;
  *      @OA\Property(
  *          property="data",
  *          type="object"
- *      ),
+ *      )
  * )
  *
  */

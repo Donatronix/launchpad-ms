@@ -78,6 +78,7 @@ class DashboardController extends Controller
      *         description="Unknown error"
      *     )
      * )
+     * 
      * @param Request $request
      * @return mixed
      */

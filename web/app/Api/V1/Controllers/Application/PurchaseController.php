@@ -144,6 +144,7 @@ class PurchaseController extends Controller
      *         description="Unknown error"
      *     )
      * )
+     * 
      * @param Request $request
      * @return mixed
      */
@@ -236,9 +237,11 @@ class PurchaseController extends Controller
      *         response="500",
      *         description="Server Error",
      *         @OA\JsonContent(ref="#/components/schemas/DangerResponse")
-     *     ),
+     *     )
      * )
+     * 
      * @param Request $request
+     * 
      * @return JsonApiResponse
      */
     public function tokenInvestors(Request $request): JsonApiResponse

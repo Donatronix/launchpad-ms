@@ -128,6 +128,7 @@ class DepositController extends Controller
      *     )
      * )
      * @param Request $request
+     * 
      * @return mixed
      */
     public function store(Request $request): mixed

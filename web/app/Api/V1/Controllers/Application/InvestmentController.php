@@ -91,6 +91,7 @@ class InvestmentController extends Controller
      *         description="Unknown error"
      *     )
      * )
+     * 
      * @param Request $request
      * @return mixed
      */

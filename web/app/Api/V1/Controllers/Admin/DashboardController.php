@@ -32,7 +32,6 @@ class DashboardController extends Controller
      *     )
      * )
      *
-     * Method for transaction dashboard statistic
      *
      * @param Request $request
      *

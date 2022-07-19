@@ -146,9 +146,8 @@ class TransactionController extends Controller
      *     )
      * )
      *
-     * @param         $transaction_id
+     * @param $transaction_id
      *
-     * @return
      */
     public function show($transaction_id)
     {
@@ -302,7 +301,7 @@ class TransactionController extends Controller
      *         )
      *     ),
      *
-     * *    @OA\Parameter(
+     *     @OA\Parameter(
      *         name="transaction_token",
      *         in="query",
      *         description="Payment token",
@@ -311,7 +310,7 @@ class TransactionController extends Controller
      *         )
      *     ),
      *
-     * *    @OA\Parameter(
+     *     @OA\Parameter(
      *         name="wallet_address",
      *         in="query",
      *         description="Payment address",

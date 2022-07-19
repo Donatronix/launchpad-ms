@@ -208,12 +208,7 @@ class PriceController extends Controller
      *
      * @param Request $request
      * @return mixed
-     */
-
-    /**
-     * Display the specified resource.
-     *
-     * @param Price $price
+     * 
      */
     public function show($id)
     {
@@ -292,15 +287,11 @@ class PriceController extends Controller
      *     )
      * )
      *
-     * @param Request $request
-     * @return mixed
-     */
-
-    /**
-     * Update the specified resource in storage.
      *
      * @param Request $request
      * @param $id
+     * 
+     * @return mixed
      */
     public function update(Request $request, $id)
     {
@@ -367,10 +358,7 @@ class PriceController extends Controller
      *         description="Not found"
      *     )
      * )
-     */
-
-    /**
-     * Remove the specified resource from storage.
+     *
      *
      * @param $id
      * @return Response

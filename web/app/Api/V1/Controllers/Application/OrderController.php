@@ -38,7 +38,6 @@ class OrderController extends Controller
     }
 
     /**
-     *
      * @OA\Get(
      *     path="/orders",
      *     summary="Getting created order by user if exist",
