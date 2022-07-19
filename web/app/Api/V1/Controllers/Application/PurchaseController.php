@@ -144,7 +144,7 @@ class PurchaseController extends Controller
      *         description="Unknown error"
      *     )
      * )
-     * 
+     *
      * @param Request $request
      * @return mixed
      */
@@ -239,9 +239,9 @@ class PurchaseController extends Controller
      *         @OA\JsonContent(ref="#/components/schemas/DangerResponse")
      *     )
      * )
-     * 
+     *
      * @param Request $request
-     * 
+     *
      * @return JsonApiResponse
      */
     public function tokenInvestors(Request $request): JsonApiResponse
@@ -254,7 +254,7 @@ class PurchaseController extends Controller
             // Check ID
             $product = Product::find($request->product_id);
             if (!$product) {
-                return response()->json([
+                return response()->jsonApi([
                     'type' => 'warning',
                     'title' => 'Token Investors',
                     'message' => 'The specified Token ID not recognized'

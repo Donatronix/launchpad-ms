@@ -135,7 +135,7 @@ class OrderController extends Controller
                 ->orderBy($request->get('sort-by', 'created_at'), $request->get('sort-order', 'desc'))
                 ->paginate($request->get('limit', config('settings.pagination_limit')));
 
-            return response()->json([
+            return response()->jsonApi([
                 'type' => 'success',
                 'title' => "List all orders",
                 'message' => "List all orders",
@@ -325,7 +325,7 @@ class OrderController extends Controller
             $order = Order::with(['product', 'transaction'])->findOrFail($id);
 
             // Return response
-            return response()->json([
+            return response()->jsonApi([
                 'type' => 'success',
                 'title' => "Get order",
                 'message' => "Get order",
@@ -512,7 +512,7 @@ class OrderController extends Controller
      *         required=true,
      *         example="96c890e5-7246-4714-a4db-70b63b16c8ef"
      *      ),
-     * 
+     *
      *      @OA\Response(
      *         response="200",
      *         description="Data fetched",

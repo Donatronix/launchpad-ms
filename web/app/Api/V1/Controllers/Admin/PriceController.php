@@ -208,13 +208,13 @@ class PriceController extends Controller
      *
      * @param Request $request
      * @return mixed
-     * 
+     *
      */
     public function show($id)
     {
         try {
             $price = Price::with('product')->findOrFail($id);
-            return response()->json([
+            return response()->jsonApi([
                 'type' => 'success',
                 'title' => 'Price Product List',
                 'message'=>'Price list received successfully',
@@ -290,7 +290,7 @@ class PriceController extends Controller
      *
      * @param Request $request
      * @param $id
-     * 
+     *
      * @return mixed
      */
     public function update(Request $request, $id)
