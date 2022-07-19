@@ -42,7 +42,7 @@ class OrderController extends Controller
      *     path="/orders",
      *     summary="Getting created order by user if exist",
      *     description="Getting created order by user if exist",
-     *     tags={"Orders"},
+     *     tags={"Application | Orders"},
      *
      *     security={{
      *         "default": {
@@ -83,7 +83,7 @@ class OrderController extends Controller
      *     path="/orders",
      *     summary="Create a new investment order",
      *     description="Create a new investment order",
-     *     tags={"Orders"},
+     *     tags={"Application | Orders"},
      *
      *     security={{
      *         "default": {
@@ -154,7 +154,7 @@ class OrderController extends Controller
             // create new transaction
             $paramsTransactions = $request->all();
             $paramsTransactions['order_id'] = $order->id;
-            $transaction = (new TransactionService())->store($paramsTransactions);
+            // $transaction = (new TransactionService())->store($paramsTransactions);
             $order->transaction;
 
             // Return response to client
@@ -162,9 +162,7 @@ class OrderController extends Controller
                 'type' => 'success',
                 'title' => 'Creating new order',
                 'message' => "New order has been created successfully",
-                'data' => [
-                    'order' => $order->toArray()
-                ]
+                'data' => $order->toArray()
             ], 200);
         } catch (ValidationException $e) {
             return response()->jsonApi([
@@ -197,7 +195,7 @@ class OrderController extends Controller
      *     path="/orders/{id}",
      *     summary="Getting data about order",
      *     description="Getting data about order",
-     *     tags={"Orders"},
+     *     tags={"Application | Orders"},
      *
      *     security={{
      *         "default": {

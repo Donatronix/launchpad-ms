@@ -43,7 +43,7 @@ class DepositController extends Controller
      * Getting created deposit by user if exist
      *
      * @OA\Get(
-     *     path="/deposits",
+     *     path="/application/deposits",
      *     summary="Getting created deposit by user if exist",
      *     description="Getting created deposit by user if exist",
      *     tags={"Deposits"},
@@ -81,7 +81,7 @@ class DepositController extends Controller
      * Create a new investment deposit
      *
      * @OA\Post(
-     *     path="/deposits",
+     *     path="/application/deposits",
      *     summary="Create a new investment deposit",
      *     description="Create a new investment deposit",
      *     tags={"Deposits"},
@@ -194,7 +194,7 @@ class DepositController extends Controller
      * Getting data about deposit by deposit ID
      *
      * @OA\Get(
-     *     path="/deposits/{id}",
+     *     path="/application/deposits/{id}",
      *     summary="Getting data about deposit by deposit ID",
      *     description="Getting data about deposit by deposit ID",
      *     tags={"Deposits"},
