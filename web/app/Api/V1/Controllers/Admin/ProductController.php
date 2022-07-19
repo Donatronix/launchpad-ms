@@ -110,7 +110,7 @@ class ProductController extends Controller
      * )
      *
      * @param Request $request
-     * 
+     *
      * @return mixed
      */
     public function index(Request $request)
@@ -123,17 +123,14 @@ class ProductController extends Controller
 
             // Return response
             return response()->jsonApi([
-                'type' => 'success',
                 'title' => "Products list",
                 'message' => 'List of products successfully received',
                 'data' => $products->toArray()
-            ], 200);
+            ]);
         } catch (Exception $e) {
             return response()->jsonApi([
-                'type' => 'danger',
                 'title' => "Products list",
-                'message' => $e->getMessage(),
-                'data' => null
+                'message' => $e->getMessage()
             ], 400);
         }
     }
@@ -222,17 +219,14 @@ class ProductController extends Controller
 
             // Return response to client
             return response()->jsonApi([
-                'type' => 'success',
                 'title' => 'New product registration',
                 'message' => "Product successfully added",
                 'data' => $product->toArray()
-            ], 200);
+            ]);
         } catch (Exception $e) {
             return response()->jsonApi([
-                'type' => 'danger',
                 'title' => 'New product registration',
                 'message' => $e->getMessage(),
-                'data' => null
             ], 400);
         }
     }
@@ -269,7 +263,7 @@ class ProductController extends Controller
      *          description="Getting product detail by platform"
      *     )
      * )
-     * 
+     *
      * @param $id
      */
     public function show($id)
@@ -283,17 +277,14 @@ class ProductController extends Controller
             }
 
             return response()->jsonApi([
-                'type' => 'success',
                 'title' => 'Product detail',
                 'message' => "Product detail been received",
                 'data' => $product->toArray()
-            ], 200);
+            ]);
         } catch (Exception $e) {
             return response()->jsonApi([
-                'type' => 'danger',
                 'title' => 'Product detail',
                 'message' => $e->getMessage(),
-                'data'=>null
             ], 400);
         }
     }
@@ -310,10 +301,8 @@ class ProductController extends Controller
             return $this->model::findOrFail($id);
         } catch (ModelNotFoundException $e) {
             return response()->jsonApi([
-                'type' => 'danger',
                 'title' => "Get product",
                 'message' => "Product with id #{$id} not found: {$e->getMessage()}",
-                'data' => null
             ], 404);
         }
     }
@@ -416,17 +405,14 @@ class ProductController extends Controller
 
             // Return response to client
             return response()->jsonApi([
-                'type' => 'success',
                 'title' => 'Changing product',
                 'message' => "product successfully updated",
                 'data' => $product->toArray()
-            ], 200);
+            ]);
         } catch (Exception $e) {
             return response()->jsonApi([
-                'type' => 'danger',
                 'title' => 'Change a product',
                 'message' => $e->getMessage(),
-                'data' => null
             ], 400);
         }
     }
@@ -482,8 +468,7 @@ class ProductController extends Controller
      *         description="Internal server error"
      *     )
      * )
-     * 
-     * 
+     *
      * @return mixed
      */
     public function destroy($id)
@@ -499,17 +484,13 @@ class ProductController extends Controller
             $product->delete();
 
             return response()->jsonApi([
-                'type' => 'success',
                 'title' => "Delete product",
                 'message' => 'product is successfully deleted',
-                'data' => null
-            ], 200);
+            ]);
         } catch (Exception $e) {
             return response()->jsonApi([
-                'type' => 'danger',
                 'title' => "Delete of product",
-                'message' => $e->getMessage(),
-                'data' => []
+                'message' => $e->getMessage()
             ], 400);
         }
     }

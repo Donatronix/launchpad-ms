@@ -158,17 +158,14 @@ class DepositController extends Controller
 
             // Return response
             return response()->jsonApi([
-                'type' => 'success',
                 'title' => "List all deposits",
                 'message' => "List all deposits retrieved successfully.",
                 'data' => $allDeposits->toArray()
-            ], 200);
+            ]);
         } catch (Exception $e) {
             return response()->jsonApi([
-                'type' => 'danger',
                 'title' => 'List all deposits',
-                'message' => 'Error in getting list of all deposits: '.$e->getMessage(),
-                'data' => null
+                'message' => 'Error in getting list of all deposits: '.$e->getMessage()
             ], 400);
         }
     }
@@ -322,7 +319,6 @@ class DepositController extends Controller
 
             if(!$checkIfOrderExists){
                 return response()->jsonApi([
-                    'type' => 'warning',
                     'title' => 'Create new deposit',
                     'message' => 'Validation error',
                     'data' => 'Order id is invalid'
@@ -339,21 +335,18 @@ class DepositController extends Controller
 
             // Return response
             return response()->jsonApi([
-                'type' => 'success',
                 'title' => "Create new deposit",
                 'message' => "Deposit was created",
                 'data' => $depositSaved
-            ], 200);
+            ]);
         } catch (ValidationException $e) {
             return response()->jsonApi([
-                'type' => 'warning',
                 'title' => 'Create new deposit',
                 'message' => 'Validation error',
                 'data' => $e->getMessage()
-            ], 400);
+            ], 422);
         } catch (Exception $e) {
             return response()->jsonApi([
-                'type' => 'danger',
                 'title' => 'Create new deposit',
                 'message' => 'Error occurred when creating new deposit',
                 'data' => $e->getMessage()
@@ -474,14 +467,12 @@ class DepositController extends Controller
             $deposit = Deposit::with('order')->findOrFail($id);
 
             return response()->jsonApi([
-                'type' => 'success',
                 'title' => 'Admin Deposit',
                 'message' => "Single admin deposits retrieved successfully.",
                 'data' => $deposit
-            ], 200);
+            ]);
         } catch (\Exception $e) {
             return response()->jsonApi([
-                'type' => 'danger',
                 'title' => 'Get deposit',
                 'message' => 'Error in getting deposit',
                 'data' => $e->getMessage()
@@ -653,7 +644,6 @@ class DepositController extends Controller
 
             if(!$checkIfOrderExists){
                 return response()->jsonApi([
-                    'type' => 'warning',
                     'title' => 'Create new deposit',
                     'message' => 'Validation error',
                     'data' => 'Order id is invalid'
@@ -670,21 +660,18 @@ class DepositController extends Controller
 
             // Return response
             return response()->jsonApi([
-                'type' => 'success',
                 'title' => "Update Deposit",
                 'message' => "Record was updated",
                 'data' => $deposit
-            ], 200);
+            ]);
         } catch (ValidationException $e) {
             return response()->jsonApi([
-                'type' => 'warning',
                 'title' => 'Update deposit',
                 'message' => 'Validation Error',
                 'data' => $e->getMessage()
-            ], 400);
+            ], 422);
         } catch (Exception $e) {
             return response()->jsonApi([
-                'type' => 'danger',
                 'title' => 'Update deposit',
                 'message' => 'Error occurred when updating deposit',
                 'data' => $e->getMessage()
@@ -817,21 +804,17 @@ class DepositController extends Controller
             Deposit::findOrFail($id)->delete();
 
             return response()->jsonApi([
-                'type' => 'success',
                 'title' => "Soft delete deposit",
                 'message' => "Deleted successfully",
-                'data' => []
-            ], 200);
+            ]);
         } catch (\Exception $e) {
             return response()->jsonApi([
-                'type' => 'danger',
                 'title' => 'Delete Single Deposit',
                 'message' => 'Unable to delete deposit',
                 'data' => $e->getMessage()
             ], 400);
         } catch (ModelNotFoundException $ex) {
             return response()->jsonApi([
-                'type'      => 'warning',
                 'title'     => 'Single Admin Deposit',
                 'message'   => 'Admin deposit not found',
                 'data'      => $ex->getMessage()

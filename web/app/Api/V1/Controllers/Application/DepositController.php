@@ -70,11 +70,10 @@ class DepositController extends Controller
             ->first();
 
         return response()->jsonApi([
-            'type' => 'success',
             'title' => 'Deposit details data',
             'message' => "Deposit detail data has been received",
             'data' => $deposit
-        ], 200);
+        ]);
     }
 
     /**
@@ -128,7 +127,7 @@ class DepositController extends Controller
      *     )
      * )
      * @param Request $request
-     * 
+     *
      * @return mixed
      */
     public function store(Request $request): mixed
@@ -138,17 +137,15 @@ class DepositController extends Controller
             $this->validate($request, $this->model::validationRules());
         } catch (ValidationException $e) {
             return response()->jsonApi([
-                'type' => 'warning',
                 'title' => 'New Deposit details data',
                 'message' => "Validation error",
                 'data' => $e->getMessage()
-            ], 400);
+            ], 422);
         }
 
         $product = Product::where('ticker', $request->get('product_id',))->first();
         if (!$product) {
             return response()->jsonApi([
-                'type' => 'warning',
                 'title' => 'New Deposit details data',
                 'message' => "This product does not exist",
                 'data' => null
@@ -175,17 +172,14 @@ class DepositController extends Controller
 
             // Return response to client
             return response()->jsonApi([
-                'type' => 'success',
                 'title' => 'New deposit registration',
                 'message' => "New deposit has been created successfully",
                 'data' => $deposit->toArray()
-            ], 200);
+            ]);
         } catch (Exception $e) {
             return response()->jsonApi([
-                'type' => 'danger',
                 'title' => 'New deposit registration',
                 'message' => $e->getMessage(),
-                'data' => null
             ], 400);
         }
     }
@@ -241,11 +235,10 @@ class DepositController extends Controller
         ]);
 
         return response()->jsonApi([
-            'type' => 'success',
             'title' => 'Deposit details data',
             'message' => "Deposit detail data has been received",
             'data' => $deposit->toArray()
-        ], 200);
+        ]);
     }
 
     /**
@@ -260,7 +253,6 @@ class DepositController extends Controller
             return $this->model::findOrFail($id);
         } catch (ModelNotFoundException $e) {
             return response()->jsonApi([
-                'type' => 'danger',
                 'title' => "Get deposit",
                 'message' => "Deposit with id #{$id} not found: {$e->getMessage()}",
                 'data' => null
@@ -285,15 +277,13 @@ class DepositController extends Controller
             }
 
             return response()->jsonApi([
-                'type' => 'success',
                 'title' => 'Deposit details data',
                 'message' => "Deposit detail data has been received",
                 'data' => $transaction->toArray()
-            ], 200);
+            ]);
 
         } catch (ModelNotFoundException $e) {
             return response()->jsonApi([
-                'type' => 'danger',
                 'title' => "Get deposit",
                 'message' => "Transaction with id #{$transaction_id} not found: {$e->getMessage()}",
                 'data' => null

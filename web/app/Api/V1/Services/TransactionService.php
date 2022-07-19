@@ -72,10 +72,8 @@ class TransactionService
             return $transaction;
         } catch (Exception $e) {
             return response()->jsonApi([
-                'type' => 'danger',
                 'title' => "Error adding transactions",
                 'message' => $e->getMessage->toArray(),
-                'data' => null
             ], 404);
         }
     }

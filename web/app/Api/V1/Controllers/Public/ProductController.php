@@ -34,8 +34,8 @@ class ProductController extends Controller
      *          description="Getting product list for start presale"
      *     )
      * )
-     * 
-     * 
+     *
+     *
      */
     public function index(Request $request)
     {
@@ -63,14 +63,12 @@ class ProductController extends Controller
 
             // Return response
             return response()->jsonApi([
-                'type' => 'success',
                 'title' => 'Products list',
                 'message' => "Products list been received",
                 'data' => $products->toArray(),
-            ], 200);
+            ]);
         } catch (Exception $e) {
             return response()->jsonApi([
-                'type' => 'danger',
                 'title' => 'Products list',
                 'message' => $e->getMessage(),
                 'data'=>null
@@ -117,17 +115,14 @@ class ProductController extends Controller
                 ->get();
 
             return response()->jsonApi([
-                'type' => 'success',
                 'title' => 'Product detail',
                 'message' => "Product detail been received",
                 'data' => $product->toArray(),
-            ], 200);
+            ]);
         } catch (Exception $e) {
             return response()->jsonApi([
-                'type' => 'danger',
                 'title' => 'Product detail',
                 'message' => $e->getMessage(),
-                'data'=> null
             ], 400);
         }
     }
