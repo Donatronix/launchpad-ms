@@ -73,6 +73,7 @@ class ProductController extends Controller
                 'type' => 'danger',
                 'title' => 'Products list',
                 'message' => $e->getMessage(),
+                'data'=>null
             ], 400);
         }
     }

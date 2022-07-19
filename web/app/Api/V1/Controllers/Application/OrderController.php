@@ -39,7 +39,7 @@ class OrderController extends Controller
 
     /**
      * @OA\Get(
-     *     path="/orders",
+     *     path="/application/orders",
      *     summary="Getting created order by user if exist",
      *     description="Getting created order by user if exist",
      *     tags={"Application | Orders"},
@@ -80,7 +80,7 @@ class OrderController extends Controller
      * Create a new investment order
      *
      * @OA\Post(
-     *     path="/orders",
+     *     path="/application/orders",
      *     summary="Create a new investment order",
      *     description="Create a new investment order",
      *     tags={"Application | Orders"},
@@ -192,7 +192,7 @@ class OrderController extends Controller
      * Getting data about order
      *
      * @OA\Get(
-     *     path="/orders/{id}",
+     *     path="/application/orders/{id}",
      *     summary="Getting data about order",
      *     description="Getting data about order",
      *     tags={"Application | Orders"},

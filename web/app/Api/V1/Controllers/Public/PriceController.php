@@ -108,6 +108,7 @@ class PriceController extends Controller
                 'type' => 'danger',
                 'title' => 'Prices list',
                 'message' => $e->getMessage(),
+                'data'=> null
             ], 400);
         }
     }

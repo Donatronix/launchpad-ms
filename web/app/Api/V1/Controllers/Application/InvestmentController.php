@@ -17,10 +17,10 @@ class InvestmentController extends Controller
      * Create a first investment after registration
      *
      * @OA\Post(
-     *     path="/investment",
+     *     path="/application/investment",
      *     summary="Create a first investment after registration",
      *     description="Create a first investment after registration",
-     *     tags={"Investment"},
+     *     tags={"Application | Investment"},
      *
      *     security={{
      *         "default": {

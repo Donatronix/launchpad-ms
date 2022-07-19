@@ -46,7 +46,7 @@ class DepositController extends Controller
      *     path="/application/deposits",
      *     summary="Getting created deposit by user if exist",
      *     description="Getting created deposit by user if exist",
-     *     tags={"Deposits"},
+     *     tags={"Application | Deposits"},
      *
      *     security={{
      *         "default": {
@@ -84,7 +84,7 @@ class DepositController extends Controller
      *     path="/application/deposits",
      *     summary="Create a new investment deposit",
      *     description="Create a new investment deposit",
-     *     tags={"Deposits"},
+     *     tags={"Application | Deposits"},
      *
      *     security={{
      *         "default": {
@@ -151,7 +151,7 @@ class DepositController extends Controller
                 'type' => 'warning',
                 'title' => 'New Deposit details data',
                 'message' => "This product does not exist",
-                'data' => []
+                'data' => null
             ], 400);
         }
 
@@ -197,7 +197,7 @@ class DepositController extends Controller
      *     path="/application/deposits/{id}",
      *     summary="Getting data about deposit by deposit ID",
      *     description="Getting data about deposit by deposit ID",
-     *     tags={"Deposits"},
+     *     tags={"Application | Deposits"},
      *
      *     security={{
      *         "default": {
@@ -263,7 +263,7 @@ class DepositController extends Controller
                 'type' => 'danger',
                 'title' => "Get deposit",
                 'message' => "Deposit with id #{$id} not found: {$e->getMessage()}",
-                'data' => ''
+                'data' => null
             ], 404);
         }
     }
@@ -296,7 +296,7 @@ class DepositController extends Controller
                 'type' => 'danger',
                 'title' => "Get deposit",
                 'message' => "Transaction with id #{$transaction_id} not found: {$e->getMessage()}",
-                'data' => ''
+                'data' => null
             ], 404);
         }
     }
