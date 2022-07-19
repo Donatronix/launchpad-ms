@@ -87,11 +87,8 @@ class OrderController extends Controller
      *     tags={"Orders"},
      *
      *     security={{
-     *         "default": {
-     *             "ManagerRead",
-     *             "User",
-     *             "ManagerWrite"
-     *         }
+     *          "bearerAuth": {},
+     *          "apiKey": {}
      *     }},
      *
      *     @OA\RequestBody(
