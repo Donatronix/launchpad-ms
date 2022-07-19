@@ -236,7 +236,7 @@ class OrderController extends Controller
                 'deposit_percentage' => 'required|numeric',
                 'amount_token' => 'required|numeric',
                 'amount_usd' => 'required|numeric',
-                'user_id' => 'required|numeric',
+                'user_id' => 'required|string',
             ]);
 
             if(!Product::where('id', $request->product_id)->exists()){
