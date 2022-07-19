@@ -87,14 +87,12 @@ class PurchaseController extends Controller
 
             // Return response
             return response()->jsonApi([
-                'type' => 'success',
                 'title' => 'List all purchase',
                 'message' => 'List all purchase',
                 'data' => $allPurchase
-            ], 200);
+            ]);
         } catch (Exception $e) {
             return response()->jsonApi([
-                'type' => 'danger',
                 'title' => 'List all purchase',
                 'message' => 'Error in getting list of all purchase',
                 'data' => $e->getMessage()
@@ -181,17 +179,14 @@ class PurchaseController extends Controller
 
             // Return response to client
             return response()->jsonApi([
-                'type' => 'success',
                 'title' => 'Creating new token purchase order',
                 'message' => "New token purchase order has been created successfully",
                 'data' => $purchase->toArray()
-            ], 200);
+            ]);
         } catch (Exception $e) {
             return response()->jsonApi([
-                'type' => 'danger',
                 'title' => 'Creating new token purchase order',
-                'message' => $e->getMessage(),
-                'data' => null
+                'message' => $e->getMessage()
             ], 400);
         }
     }
@@ -255,7 +250,6 @@ class PurchaseController extends Controller
             $product = Product::find($request->product_id);
             if (!$product) {
                 return response()->jsonApi([
-                    'type' => 'warning',
                     'title' => 'Token Investors',
                     'message' => 'The specified Token ID not recognized'
                 ], 400);

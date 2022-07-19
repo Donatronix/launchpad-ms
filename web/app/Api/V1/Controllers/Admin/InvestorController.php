@@ -134,15 +134,12 @@ class InvestorController extends Controller
             }
 
             return response()->jsonApi([
-                'type' => 'success',
                 'title' => 'Get Investor',
                 'message' => 'Avaialable Investors',
-                'data' => $data,
-            ], 200);
+            ]);
         }
         catch (\Exception $e) {
             return response()->jsonApi([
-                'type' => 'danger',
                 'title' => 'Get Investor',
                 'message' => $e->getMessage()
             ], 400);

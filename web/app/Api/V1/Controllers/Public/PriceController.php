@@ -47,11 +47,10 @@ class PriceController extends Controller
             ->paginate($request->get('limit', config('settings.pagination_limit')));
 
         return response()->jsonApi([
-            'type' => 'success',
             'title' => 'Product prices list',
             'message' => "Product prices list has been received",
             'data' => $order->toArray(),
-        ], 200);
+        ]);
     }
 
     /**
@@ -98,14 +97,12 @@ class PriceController extends Controller
             }
 
             return response()->jsonApi([
-                'type' => 'success',
                 'title' => 'Product prices list by stage',
                 'message' => "Product prices list by stage has been received",
                 'data' => $prices->toArray(),
-            ], 200);
+            ]);
         } catch (Exception $e) {
             return response()->jsonApi([
-                'type' => 'danger',
                 'title' => 'Prices list',
                 'message' => $e->getMessage(),
             ], 400);

@@ -136,17 +136,14 @@ class OrderController extends Controller
                 ->paginate($request->get('limit', config('settings.pagination_limit')));
 
             return response()->jsonApi([
-                'type' => 'success',
                 'title' => "List all orders",
                 'message' => "List all orders",
                 'data' => $allOrders->toArray()
-            ], 200);
+            ]);
         } catch (Exception $e) {
             return response()->jsonApi([
-                'type' => 'danger',
                 'title' => 'List all orders',
-                'message' => 'Error in getting list of all orders: '.$e->getMessage(),
-                'data' => null
+                'message' => 'Error in getting list of all orders: '.$e->getMessage()
             ], 400);
         }
     }
@@ -244,7 +241,6 @@ class OrderController extends Controller
 
             if(!Product::where('id', $request->product_id)->exists()){
                 return response()->jsonApi([
-                    'type' => 'danger',
                     'title' => 'Create new order',
                     'message' => 'Error occurred when creating new order',
                     'data' => "Product id is invalid"
@@ -255,24 +251,19 @@ class OrderController extends Controller
 
 
             return response()->jsonApi([
-                'type' => 'success',
                 'title' => "Create new order",
                 'message' => "Order was created",
                 'data' => $orderSaved->toArray()
-            ], 200);
+            ]);
         } catch (ValidationException $e) {
             return response()->jsonApi([
-                'type' => 'danger',
                 'title' => 'Create new order',
                 'message' => 'Error occurred when creating new order: '.$e->getMessage(),
-                'data' => null
-            ], 400);
+            ], 422);
         } catch (Exception $e) {
             return response()->jsonApi([
-                'type' => 'danger',
                 'title' => 'Create new order',
-                'message' => 'Error occurred when creating new order: '.$e->getMessage(),
-                'data' => null
+                'message' => 'Error occurred when creating new order: '.$e->getMessage()
             ], 400);
         }
     }
@@ -326,17 +317,14 @@ class OrderController extends Controller
 
             // Return response
             return response()->jsonApi([
-                'type' => 'success',
                 'title' => "Get order",
                 'message' => "Get order",
                 'data' => $order
-            ], 200);
+            ]);
         } catch (\Exception $e) {
             return response()->jsonApi([
-                'type' => 'danger',
                 'title' => 'Get order',
-                'message' => 'Error in getting order: '.$e->getMessage(),
-                'data' => null
+                'message' => 'Error in getting order: '.$e->getMessage()
             ], 400);
         }
     }
@@ -455,7 +443,6 @@ class OrderController extends Controller
 
             if(!Product::where('id', $request->product_id)->exists()){
                 return response()->jsonApi([
-                    'type' => 'danger',
                     'title' => 'Create new order',
                     'message' => 'Error occurred when creating new order',
                     'data' => "Product id is invalid"
@@ -467,24 +454,19 @@ class OrderController extends Controller
 
             // Return response
             return response()->jsonApi([
-                'type' => 'success',
                 'title' => "Order was updated",
                 'message' => "Order was updated",
                 'data' => $orderUpdated
-            ], 200);
+            ]);
         } catch (ValidationException $e) {
             return response()->jsonApi([
-                'type' => 'warning',
                 'title' => 'update Order',
-                'message' => 'Error occurred when updating order: '.$e->getMessage(),
-                'data' => null
-            ], 400);
+                'message' => 'Error occurred when updating order: '.$e->getMessage()
+            ], 422);
         } catch (Exception $e) {
             return response()->jsonApi([
-                'type' => 'danger',
                 'title' => 'Update Order',
                 'message' => 'Error occurred when updating order: '.$e->getMessage(),
-                'data' => null
             ], 400);
         }
     }
@@ -547,17 +529,14 @@ class OrderController extends Controller
 
             // Return response
             return response()->jsonApi([
-                'type' => 'success',
                 'title' => "Approve Order",
                 'message' => "Order was approved",
                 'data' => $approveOrder
-            ], 200);
+            ]);
         } catch (\Exception $e) {
             return response()->jsonApi([
-                'type' => 'danger',
                 'title' => 'Approve Order',
                 'message' => 'Error occurred when approving order: '.$e->getMessage(),
-                'data' => null
             ], 400);
         }
     }
@@ -621,17 +600,14 @@ class OrderController extends Controller
 
             // Return response
             return response()->jsonApi([
-                'type' => 'success',
                 'title' => "Reject Order",
                 'message' => "Order was rejected",
                 'data' => $approveOrder
-            ], 200);
+            ]);
         } catch (\Exception $e) {
             return response()->jsonApi([
-                'type' => 'danger',
                 'title' => 'Reject Order',
                 'message' => 'Error occurred when rejecting order: '.$e->getMessage(),
-                'data' => null
             ], 400);
         }
     }
