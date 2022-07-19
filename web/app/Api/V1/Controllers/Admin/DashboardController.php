@@ -59,17 +59,14 @@ class DashboardController extends Controller
             ];
 
             return response()->jsonApi([
-                'type' => 'success',
                 'title' => 'Operation was success',
                 'message' => 'The data was displayed successfully',
                 'Transactions' => $data,
-            ], 200);
+            ]);
         } catch (Exception $e) {
             return response()->jsonApi([
-                'type' => 'danger',
                 'title' => "Getting transaction dashboard data failed",
-                'message' => $e->getMessage(),
-                'data' => null,
+                'message' => $e->getMessage()
             ], 404);
         }
     }

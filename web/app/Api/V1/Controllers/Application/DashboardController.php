@@ -78,7 +78,7 @@ class DashboardController extends Controller
      *         description="Unknown error"
      *     )
      * )
-     * 
+     *
      * @param Request $request
      * @return mixed
      */
@@ -89,11 +89,9 @@ class DashboardController extends Controller
             // check if product id is available
             if (!$request->has("product_id")) {
                 return response()->jsonApi([
-                    'type' => 'danger',
                     'title' => 'Token Sales Progress',
                     'message' => "You must send product_id as a parameter",
-                    'data' => null
-                ], 400);
+                ], 422);
             }
 
             // Read product model
@@ -118,17 +116,14 @@ class DashboardController extends Controller
 
             // Return response to client
             return response()->jsonApi([
-                'type' => 'success',
                 'title' => 'Token Sales Progress',
                 'message' => "Token sales progress generate",
                 'data' => $data
-            ], 200);
+            ]);
         } catch (Exception $e) {
             return response()->jsonApi([
-                'type' => 'danger',
                 'title' => 'Creating new token purchase order',
                 'message' => $e->getMessage(),
-                'data' => null
             ], 400);
         }
     }
@@ -145,10 +140,8 @@ class DashboardController extends Controller
             return $this->product::findOrFail($id);
         } catch (ModelNotFoundException $e) {
             return response()->jsonApi([
-                'type' => 'danger',
                 'title' => "Get product",
                 'message' => "Product with id #{$id} not found: {$e->getMessage()}",
-                'data' => []
             ], 404);
         }
     }

@@ -91,7 +91,7 @@ class InvestmentController extends Controller
      *         description="Unknown error"
      *     )
      * )
-     * 
+     *
      * @param Request $request
      * @return mixed
      */
@@ -132,7 +132,6 @@ class InvestmentController extends Controller
 
             // Return response to client
             return response()->jsonApi([
-                'type' => 'success',
                 'title' => 'Application for participation in the presale',
                 'message' => "Application for participation in the presale has been successfully created",
                 'data' => [
@@ -147,24 +146,18 @@ class InvestmentController extends Controller
             ], 201);
         } catch (ValidationException $e) {
             return response()->jsonApi([
-                'type' => 'warning',
                 'title' => 'Application for participation in the presale',
-                'message' => "Validation error: " . $e->getMessage(),
-                'data' => null
+                'message' => "Validation error: " . $e->getMessage()
             ], 422);
         } catch (ModelNotFoundException $e) {
             return response()->jsonApi([
-                'type' => 'warning',
                 'title' => 'Application for participation in the presale',
                 'message' => "This product does not exist",
-                'data' => null
             ], 404);
         } catch (\Exception $e) {
             return response()->jsonApi([
-                'type' => 'danger',
                 'title' => 'Application for participation in the presale',
                 'message' => $e->getMessage(),
-                'data' => null
             ], $e->getCode());
         }
     }

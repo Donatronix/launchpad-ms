@@ -97,20 +97,16 @@ class TransactionController extends Controller
                 ->paginate($request->get('limit', config('settings.pagination_limit')));
 
             // Return response
-            return response()->jsonApi(
-                array_merge([
-                    'type' => 'success',
-                    'title' => "Transactions list",
-                    'message' => 'Transaction list received'
-                ], $result->toArray())
-            );
+            return response()->jsonApi([
+                'title' => "Transactions list",
+                'message' => 'Transaction list received',
+                'data' => $result
+            ]);
         } catch (Exception $e) {
             return response()->jsonApi([
-                'type' => 'danger',
                 'title' => 'Transactions list',
-                'message' => $e->getMessage(),
-                'data' => null
-            ], 400);
+                'message' => $e->getMessage()
+            ], $e->getCode());
         }
     }
 
@@ -156,25 +152,20 @@ class TransactionController extends Controller
 
             if (!$transaction) {
                 return response()->jsonApi([
-                    'type' => 'danger',
                     'title' => 'Transaction data',
                     'message' => 'No transaction data with id ' . $transaction_id,
-                    'data' => null
                 ], 400);
             }
 
             return response()->jsonApi([
-                'type' => 'success',
                 'title' => 'Transaction data',
                 'message' => 'Transaction data received',
                 'data' => $transaction
             ]);
         } catch (Exception $e) {
             return response()->jsonApi([
-                'type' => 'danger',
                 'title' => 'Transaction data',
                 'message' => 'Get transaction data error: ' . $e->getMessage(),
-                'data' => null
             ], 400);
         }
     }
@@ -222,27 +213,22 @@ class TransactionController extends Controller
 
             if (!$transaction)
                 return response()->jsonApi([
-                    'type' => 'danger',
                     'title' => 'Transaction data',
                     'message' => 'No transaction data with id ' . $transaction_id,
-                    'data' => null
                 ], 400);
 
             $transaction->status = Transaction::STATUS_APPROVED;
             $transaction->save();
 
             return response()->jsonApi([
-                'success' => true,
                 'title' => 'Transaction approved',
                 'message' => "Transaction updated successfully",
                 'data' => $transaction
-            ], 200);
+            ]);
         } catch (Exception $e) {
             return response()->jsonApi([
-                'type' => 'danger',
                 'title' => 'Transaction data',
                 'message' => 'Update transaction data error: ' . $e->getMessage(),
-                'data' => null
             ], 400);
         }
     }
@@ -397,10 +383,8 @@ class TransactionController extends Controller
 
         if ($validator->fails()) {
             return response()->jsonApi([
-                'type' => 'danger',
                 'title' => 'Transaction data',
                 'message' => 'Validation error: ' . $validator->errors()->toArray(),
-                'data' => null
             ], 400);
         }
         // create new transaction
@@ -410,17 +394,14 @@ class TransactionController extends Controller
 
             // Return response to client
             return response()->jsonApi([
-                'type' => 'success',
                 'title' => 'New Transaction created',
                 'message' => "New Transaction has been added successfully",
                 'data' => $transaction->toArray()
-            ], 200);
+            ]);
         } catch (Exception $e) {
             return response()->jsonApi([
-                'type' => 'danger',
                 'title' => 'Transaction data',
                 'message' => 'Create new transaction data error: ' . $e->getMessage(),
-                'data' => null
             ], 400);
         }
     }
@@ -466,26 +447,20 @@ class TransactionController extends Controller
             $transaction = Transaction::find($transaction_id);
             if (!$transaction) {
                 return response()->jsonApi([
-                    'type' => 'danger',
                     'title' => 'Transaction data',
                     'message' => 'No transaction  with id=' . $transaction_id,
-                    'data' => null
                 ], 400);
             }
             $transaction->delete();
+
             return response()->jsonApi([
-                'type' => 'success',
                 'title' => 'Delete Transaction',
                 'message' => "Transaction has been deleted successfully",
-                'data' => []
-            ], 200);
-            return response()->jsonApi(['success' => true], 200);
+            ]);
         } catch (Exception $e) {
             return response()->jsonApi([
-                'type' => 'danger',
                 'title' => 'Transaction data',
                 'message' => 'Delete transaction data error: ' . $e->getMessage(),
-                'data' => null
             ], 400);
         }
     }

@@ -122,18 +122,15 @@ class AdminController extends Controller
             }
 
             return response()->jsonApi([
-                'type' => 'success',
                 'title' => 'Get Admins',
                 'message' => 'Avaialable Admins',
                 'data' => $data
-            ], 200);
+            ]);
         }
         catch (\Exception $e) {
             return response()->jsonApi([
-                'type' => 'danger',
                 'title' => 'Get Admin',
-                'message' => $e->getMessage(),
-                'data' => null
+                'message' => $e->getMessage()
             ], 400);
         }
     }

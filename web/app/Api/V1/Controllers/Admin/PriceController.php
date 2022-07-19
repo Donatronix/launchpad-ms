@@ -58,20 +58,16 @@ class PriceController extends Controller
                 //->where('product_id', $request->product_id)
                 ->paginate($request->get('limit', config('settings.pagination_limit')));
 
-
             return response()->jsonApi([
-                'type' => 'success',
                 'title' => 'Product prices list',
                 'message' => "Product prices list has been received",
-                'data' => $price->toArray()
-            ], 200);
-        } catch (ValidationException $e) {
+                'data' => $price
+            ]);
+        } catch (\Exception $e) {
             return response()->jsonApi([
-                'type' => 'danger',
-                'title' => 'Product price list ',
-                'message' => 'Validation error: '.$e->getMessage(),
-                'data' => null
-            ], 400);
+                'title' => 'Product price list',
+                'message' => $e->getMessage(),
+            ], $e->getCode());
         }
     }
 
@@ -134,21 +130,25 @@ class PriceController extends Controller
         // Validate input
         try {
             $this->validate($request, Price::validationRules());
+
             $price = Price::create($request->all());
+
             return response()->jsonApi([
-                'type' => 'success',
                 'title' => "Create new Price",
                 'message' => 'Price was successfully created',
                 'data' => $price->toArray()
-            ], 201);
-
+            ]);
         } catch (ValidationException $e) {
             return response()->jsonApi([
-                'type' => 'danger',
                 'title' => 'Saving new stage price',
-                'message' => 'Validation error: '.$e->getMessage(),
-                'data' => null
-            ], 400);
+                'message' => 'Validation error',
+                'data' => $e->getMessage()
+            ], 422);
+        } catch (\Exception $e) {
+            return response()->jsonApi([
+                'title' => 'Price Product List',
+                'message' => $e->getMessage(),
+            ], $e->getCode());
         }
     }
 
@@ -214,19 +214,17 @@ class PriceController extends Controller
     {
         try {
             $price = Price::with('product')->findOrFail($id);
+
             return response()->jsonApi([
-                'type' => 'success',
                 'title' => 'Price Product List',
-                'message'=>'Price list received successfully',
+                'message' => 'Price list received successfully',
                 'data' => $price
-            ], 200);
-        } catch (ValidationException $e) {
+            ]);
+        } catch (\Exception $e) {
             return response()->jsonApi([
-                'type' => 'danger',
                 'title' => 'Price Product List',
-                'message' => 'Validation error: '.$e->getMessage(),
-                'data' => null
-            ], 400);
+                'message' => $e->getMessage(),
+            ], $e->getCode());
         }
     }
 
@@ -297,22 +295,20 @@ class PriceController extends Controller
     {
         try {
             $this->validate($request, Price::validationRules());
+
             $price = Price::findOrFail($id);
             $price->update($request->all());
+
             return response()->jsonApi([
-                'type' => 'success',
                 'title' => "Update Price",
                 'message' => 'Price was successful updated',
                 'data' => $price
-            ], 201);
-
-        } catch (ValidationException $e) {
+            ]);
+        } catch (\Exception $e) {
             return response()->jsonApi([
-                'type' => 'danger',
                 'title' => 'Update Price',
-                'message' => 'Validation error: '.$e->getMessage(),
-                'data' => null
-            ], 400);
+                'message' => $e->getMessage()
+            ], $e->getCode());
         }
     }
 
@@ -368,20 +364,19 @@ class PriceController extends Controller
         try {
             // get price with id
             $price = Price::findOrFail($id);
+
             // delete price
             $price->delete();
+
             return response()->jsonApi([
-                'type' => 'success',
                 'title' => "Delete Price",
                 'message' => 'Price was successful deleted',
-            ], 201);
-        } catch (ValidationException $e) {
+            ]);
+        } catch (\Exception $e) {
             return response()->jsonApi([
-                'type' => 'danger',
                 'title' => 'Delete Price',
-                'message' => 'Validation error: '.$e->getMessage(),
-                'data' => []
-            ], 400);
+                'message' => $e->getMessage(),
+            ], $e->getCode());
         }
     }
 }

@@ -66,7 +66,7 @@ $router->group([
          * Init first Investment (registration)
          */
         $router->group([
-            'prefix' => 'investment',
+            'prefix' => 'application/investment',
         ], function ($router) {
             $router->post('/', 'InvestmentController');
         });
@@ -75,7 +75,7 @@ $router->group([
          * Orders
          */
         $router->group([
-            'prefix' => 'orders',
+            'prefix' => 'application/orders',
         ], function ($router) {
             $router->get('/', 'OrderController@index');
             $router->get('/{id}', 'OrderController@show');
@@ -86,7 +86,7 @@ $router->group([
          * Deposits
          */
         $router->group([
-            'prefix' => 'deposits',
+            'prefix' => 'application/deposits',
         ], function ($router) {
             $router->get('/', 'DepositController@index');
             $router->get('/{id}', 'DepositController@show');
@@ -98,7 +98,7 @@ $router->group([
          * Token Purchase - shopping List
          */
         $router->group([
-            'prefix' => 'purchase-token',
+            'prefix' => 'application/purchase-token',
         ], function ($router) {
             $router->get('/', 'PurchaseController@index');
             $router->post('/', 'PurchaseController@store');

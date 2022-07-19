@@ -42,7 +42,7 @@ class OrderController extends Controller
      *     path="/orders",
      *     summary="Getting created order by user if exist",
      *     description="Getting created order by user if exist",
-     *     tags={"Orders"},
+     *     tags={"Application | Orders"},
      *
      *     security={{
      *         "default": {
@@ -69,11 +69,10 @@ class OrderController extends Controller
             ->get();
 
         return response()->jsonApi([
-            'type' => 'success',
             'title' => 'Order details data',
             'message' => "Order detail data has been received",
             'data' => $order->toArray()
-        ], 200);
+        ]);
     }
 
     /**
@@ -83,7 +82,7 @@ class OrderController extends Controller
      *     path="/orders",
      *     summary="Create a new investment order",
      *     description="Create a new investment order",
-     *     tags={"Orders"},
+     *     tags={"Application | Orders"},
      *
      *     security={{
      *         "default": {
@@ -154,38 +153,29 @@ class OrderController extends Controller
             // create new transaction
             $paramsTransactions = $request->all();
             $paramsTransactions['order_id'] = $order->id;
-            $transaction = (new TransactionService())->store($paramsTransactions);
+            // $transaction = (new TransactionService())->store($paramsTransactions);
             $order->transaction;
 
             // Return response to client
             return response()->jsonApi([
-                'type' => 'success',
                 'title' => 'Creating new order',
                 'message' => "New order has been created successfully",
-                'data' => [
-                    'order' => $order->toArray()
-                ]
-            ], 200);
+                'data' => $order
+            ]);
         } catch (ValidationException $e) {
             return response()->jsonApi([
-                'type' => 'warning',
                 'title' => 'Creating new order',
-                'message' => "Validation error: " . $e->getMessage(),
-                'data' => null
-            ], 400);
+                'message' => "Validation error: " . $e->getMessage()
+            ], 422);
         } catch (ModelNotFoundException $e) {
             return response()->jsonApi([
-                'type' => 'warning',
                 'title' => 'Creating new order',
                 'message' => "This product does not exist",
-                'data' => null
-            ], 400);
+            ], 404);
         } catch (Exception $e) {
             return response()->jsonApi([
-                'type' => 'danger',
                 'title' => 'Creating new order',
-                'message' => $e->getMessage(),
-                'data' => null
+                'message' => $e->getMessage()
             ], 400);
         }
     }
@@ -197,7 +187,7 @@ class OrderController extends Controller
      *     path="/orders/{id}",
      *     summary="Getting data about order",
      *     description="Getting data about order",
-     *     tags={"Orders"},
+     *     tags={"Application | Orders"},
      *
      *     security={{
      *         "default": {
@@ -241,11 +231,10 @@ class OrderController extends Controller
         ]);
 
         return response()->jsonApi([
-            'type' => 'success',
             'title' => 'Order details data',
             'message' => "Order detail data has been received",
             'data' => $order->toArray()
-        ], 200);
+        ]);
     }
 
     /**
@@ -260,10 +249,8 @@ class OrderController extends Controller
             return $this->model::findOrFail($id);
         } catch (ModelNotFoundException $e) {
             return response()->jsonApi([
-                'type' => 'danger',
                 'title' => "Get order",
-                'message' => "Order with id #{$id} not found: {$e->getMessage()}",
-                'data' => null
+                'message' => "Order with id #{$id} not found: {$e->getMessage()}"
             ], 404);
         }
     }
