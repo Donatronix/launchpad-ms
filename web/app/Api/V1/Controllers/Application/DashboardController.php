@@ -8,7 +8,7 @@ use App\Models\Purchase;
 use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
-use Sumra\SDK\JsonApiResponse;
+use Sumra\SDK\Services\JsonApiResponse;
 
 class DashboardController extends Controller
 {

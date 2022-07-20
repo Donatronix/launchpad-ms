@@ -2,11 +2,13 @@
 
 namespace App\Api\V1\Controllers\Admin;
 
-use Illuminate\Http\Request;
 use App\Api\V1\Controllers\Controller;
-use Illuminate\Support\Facades\Http;
-use Auth;
 use App\Models\Purchase;
+use Auth;
+use Exception;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
 
 class AdminController extends Controller
 {
@@ -60,9 +62,9 @@ class AdminController extends Controller
      *     )
      * )
      *
-     * @param \Illuminate\Http\Request $request
+     * @param Request $request
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function index(Request $request)
     {
@@ -95,7 +97,7 @@ class AdminController extends Controller
             if (!$response->successful()) {
                 $status = $response->status() ?? 400;
                 $message = $response->getReasonPhrase() ?? 'Error Processing Request';
-                throw new \Exception($message, $status);
+                throw new Exception($message, $status);
             }
 
             $admins = [];
@@ -126,8 +128,7 @@ class AdminController extends Controller
                 'message' => 'Avaialable Admins',
                 'data' => $data
             ]);
-        }
-        catch (\Exception $e) {
+        } catch (Exception $e) {
             return response()->jsonApi([
                 'title' => 'Get Admin',
                 'message' => $e->getMessage()

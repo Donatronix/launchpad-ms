@@ -10,7 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Validator;
 use PubSub;
-use Sumra\SDK\JsonApiResponse;
+use Sumra\SDK\Services\JsonApiResponse;
 
 class ProductController extends Controller
 {

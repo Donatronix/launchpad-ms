@@ -143,7 +143,7 @@ class OrderController extends Controller
         } catch (Exception $e) {
             return response()->jsonApi([
                 'title' => 'List all orders',
-                'message' => 'Error in getting list of all orders: '.$e->getMessage()
+                'message' => 'Error in getting list of all orders: ' . $e->getMessage()
             ], 400);
         }
     }
@@ -225,7 +225,7 @@ class OrderController extends Controller
      *
      * @return JsonResponse
      */
-    public function store(Request $request):JsonResponse
+    public function store(Request $request): JsonResponse
     {
         try {
             //validate input
@@ -239,7 +239,7 @@ class OrderController extends Controller
                 'user_id' => 'required|string',
             ]);
 
-            if(!Product::where('id', $request->product_id)->exists()){
+            if (!Product::where('id', $request->product_id)->exists()) {
                 return response()->jsonApi([
                     'title' => 'Create new order',
                     'message' => 'Error occurred when creating new order',
@@ -258,12 +258,12 @@ class OrderController extends Controller
         } catch (ValidationException $e) {
             return response()->jsonApi([
                 'title' => 'Create new order',
-                'message' => 'Error occurred when creating new order: '.$e->getMessage(),
+                'message' => 'Error occurred when creating new order: ' . $e->getMessage(),
             ], 422);
         } catch (Exception $e) {
             return response()->jsonApi([
                 'title' => 'Create new order',
-                'message' => 'Error occurred when creating new order: '.$e->getMessage()
+                'message' => 'Error occurred when creating new order: ' . $e->getMessage()
             ], 400);
         }
     }
@@ -310,7 +310,7 @@ class OrderController extends Controller
      *
      * @return JsonResponse
      */
-    public function show($id):JsonResponse
+    public function show($id): JsonResponse
     {
         try {
             $order = Order::with(['product', 'transaction'])->findOrFail($id);
@@ -321,10 +321,10 @@ class OrderController extends Controller
                 'message' => "Get order",
                 'data' => $order
             ]);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return response()->jsonApi([
                 'title' => 'Get order',
-                'message' => 'Error in getting order: '.$e->getMessage()
+                'message' => 'Error in getting order: ' . $e->getMessage()
             ], 400);
         }
     }
@@ -423,11 +423,11 @@ class OrderController extends Controller
      *     )
      * )
      *
-     * @param \Illuminate\Http\Request $request
+     * @param Request $request
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
-    public function update(Request $request, $id):JsonResponse
+    public function update(Request $request, $id): JsonResponse
     {
         try {
             //validate input
@@ -441,7 +441,7 @@ class OrderController extends Controller
                 'user_id' => 'required|string',
             ]);
 
-            if(!Product::where('id', $request->product_id)->exists()){
+            if (!Product::where('id', $request->product_id)->exists()) {
                 return response()->jsonApi([
                     'title' => 'Create new order',
                     'message' => 'Error occurred when creating new order',
@@ -461,12 +461,12 @@ class OrderController extends Controller
         } catch (ValidationException $e) {
             return response()->jsonApi([
                 'title' => 'update Order',
-                'message' => 'Error occurred when updating order: '.$e->getMessage()
+                'message' => 'Error occurred when updating order: ' . $e->getMessage()
             ], 422);
         } catch (Exception $e) {
             return response()->jsonApi([
                 'title' => 'Update Order',
-                'message' => 'Error occurred when updating order: '.$e->getMessage(),
+                'message' => 'Error occurred when updating order: ' . $e->getMessage(),
             ], 400);
         }
     }
@@ -517,11 +517,11 @@ class OrderController extends Controller
      *     )
      * )
      *
-     * @param \Illuminate\Http\Request $request
+     * @param Request $request
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
-    public function approve($id):JsonResponse
+    public function approve($id): JsonResponse
     {
         try {
             $order = Order::findOrFail($id);
@@ -533,10 +533,10 @@ class OrderController extends Controller
                 'message' => "Order was approved",
                 'data' => $approveOrder
             ]);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return response()->jsonApi([
                 'title' => 'Approve Order',
-                'message' => 'Error occurred when approving order: '.$e->getMessage(),
+                'message' => 'Error occurred when approving order: ' . $e->getMessage(),
             ], 400);
         }
     }
@@ -587,11 +587,11 @@ class OrderController extends Controller
      *     )
      * )
      *
-     * @param \Illuminate\Http\Request $request
+     * @param Request $request
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
-    public function reject($id):JsonResponse
+    public function reject($id): JsonResponse
     {
         try {
             $order = Order::findOrFail($id);
@@ -604,10 +604,10 @@ class OrderController extends Controller
                 'message' => "Order was rejected",
                 'data' => $approveOrder
             ]);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return response()->jsonApi([
                 'title' => 'Reject Order',
-                'message' => 'Error occurred when rejecting order: '.$e->getMessage(),
+                'message' => 'Error occurred when rejecting order: ' . $e->getMessage(),
             ], 400);
         }
     }

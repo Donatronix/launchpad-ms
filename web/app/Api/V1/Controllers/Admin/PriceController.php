@@ -4,6 +4,7 @@ namespace App\Api\V1\Controllers\Admin;
 
 use App\Api\V1\Controllers\Controller;
 use App\Models\Price;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 
@@ -63,7 +64,7 @@ class PriceController extends Controller
                 'message' => "Product prices list has been received",
                 'data' => $price
             ]);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return response()->jsonApi([
                 'title' => 'Product price list',
                 'message' => $e->getMessage(),
@@ -144,7 +145,7 @@ class PriceController extends Controller
                 'message' => 'Validation error',
                 'data' => $e->getMessage()
             ], 422);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return response()->jsonApi([
                 'title' => 'Price Product List',
                 'message' => $e->getMessage(),
@@ -220,7 +221,7 @@ class PriceController extends Controller
                 'message' => 'Price list received successfully',
                 'data' => $price
             ]);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return response()->jsonApi([
                 'title' => 'Price Product List',
                 'message' => $e->getMessage(),
@@ -304,7 +305,7 @@ class PriceController extends Controller
                 'message' => 'Price was successful updated',
                 'data' => $price
             ]);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return response()->jsonApi([
                 'title' => 'Update Price',
                 'message' => $e->getMessage()
@@ -372,7 +373,7 @@ class PriceController extends Controller
                 'title' => "Delete Price",
                 'message' => 'Price was successful deleted',
             ]);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return response()->jsonApi([
                 'title' => 'Delete Price',
                 'message' => $e->getMessage(),

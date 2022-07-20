@@ -3,10 +3,13 @@
 namespace App\Api\V1\Controllers\Admin;
 
 use App\Api\V1\Controllers\Controller;
-use Illuminate\Http\Request;
 use App\Models\Purchase;
-use Illuminate\Support\Facades\Http;
 use Auth;
+use Exception;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Http;
 
 class InvestorController extends Controller
 {
@@ -70,9 +73,9 @@ class InvestorController extends Controller
      *     )
      * )
      *
-     * @param \Illuminate\Http\Request $request
+     * @param Request $request
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function index(Request $request)
     {
@@ -105,7 +108,7 @@ class InvestorController extends Controller
             if (!$response->successful()) {
                 $status = $response->status() ?? 400;
                 $message = $response->getReasonPhrase() ?? 'Error Processing Request';
-                throw new \Exception($message, $status);
+                throw new Exception($message, $status);
             }
 
             $investors = [];
@@ -137,8 +140,7 @@ class InvestorController extends Controller
                 'title' => 'Get Investor',
                 'message' => 'Avaialable Investors',
             ]);
-        }
-        catch (\Exception $e) {
+        } catch (Exception $e) {
             return response()->jsonApi([
                 'title' => 'Get Investor',
                 'message' => $e->getMessage()
@@ -149,8 +151,8 @@ class InvestorController extends Controller
     /**
      * Create new Resource
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @param Request $request
+     * @return Response
      */
     public function store(Request $request)
     {
@@ -160,8 +162,8 @@ class InvestorController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param int $id
+     * @return Response
      */
     public function show($id)
     {
@@ -171,9 +173,9 @@ class InvestorController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param Request $request
+     * @param int $id
+     * @return Response
      */
     public function update(Request $request, $id)
     {
@@ -183,8 +185,8 @@ class InvestorController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param int $id
+     * @return Response
      */
     public function destroy($id)
     {

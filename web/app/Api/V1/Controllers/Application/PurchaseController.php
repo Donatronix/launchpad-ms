@@ -11,7 +11,7 @@ use PubSub;
 use Illuminate\Support\Facades\Validator;
 use Auth;
 use Illuminate\Support\Facades\Http;
-use Sumra\SDK\JsonApiResponse;
+use Sumra\SDK\Services\JsonApiResponse;
 
 class PurchaseController extends Controller
 {

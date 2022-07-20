@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
-use Sumra\SDK\JsonApiResponse;
+use Sumra\SDK\Services\JsonApiResponse;
 
 /**
  * Class OrderController

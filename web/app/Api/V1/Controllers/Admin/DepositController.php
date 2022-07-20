@@ -4,15 +4,13 @@ namespace App\Api\V1\Controllers\Admin;
 
 use App\Api\V1\Controllers\Controller;
 use App\Models\Deposit;
-use App\Models\Price;
-use Exception;
 use App\Models\Order;
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Http\Request;
+use Exception;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 /**
  * Class DepositController
@@ -165,7 +163,7 @@ class DepositController extends Controller
         } catch (Exception $e) {
             return response()->jsonApi([
                 'title' => 'List all deposits',
-                'message' => 'Error in getting list of all deposits: '.$e->getMessage()
+                'message' => 'Error in getting list of all deposits: ' . $e->getMessage()
             ], 400);
         }
     }
@@ -317,7 +315,7 @@ class DepositController extends Controller
 
             $checkIfOrderExists = Order::where('id', $request->order_id)->exists();
 
-            if(!$checkIfOrderExists){
+            if (!$checkIfOrderExists) {
                 return response()->jsonApi([
                     'title' => 'Create new deposit',
                     'message' => 'Validation error',
@@ -471,7 +469,7 @@ class DepositController extends Controller
                 'message' => "Single admin deposits retrieved successfully.",
                 'data' => $deposit
             ]);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return response()->jsonApi([
                 'title' => 'Get deposit',
                 'message' => 'Error in getting deposit',
@@ -479,10 +477,10 @@ class DepositController extends Controller
             ], 400);
         } catch (ModelNotFoundException $ex) {
             return response()->jsonApi([
-                'type'      => 'warning',
-                'title'     => 'Single Admin Deposit',
-                'message'   => 'Single admin deposit not found',
-                'data'      => $ex->getMessage()
+                'type' => 'warning',
+                'title' => 'Single Admin Deposit',
+                'message' => 'Single admin deposit not found',
+                'data' => $ex->getMessage()
             ], 404);
         }
     }
@@ -642,7 +640,7 @@ class DepositController extends Controller
 
             $checkIfOrderExists = Order::where('id', $request->order_id)->exists();
 
-            if(!$checkIfOrderExists){
+            if (!$checkIfOrderExists) {
                 return response()->jsonApi([
                     'title' => 'Create new deposit',
                     'message' => 'Validation error',
@@ -807,7 +805,7 @@ class DepositController extends Controller
                 'title' => "Soft delete deposit",
                 'message' => "Deleted successfully",
             ]);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return response()->jsonApi([
                 'title' => 'Delete Single Deposit',
                 'message' => 'Unable to delete deposit',
@@ -815,9 +813,9 @@ class DepositController extends Controller
             ], 400);
         } catch (ModelNotFoundException $ex) {
             return response()->jsonApi([
-                'title'     => 'Single Admin Deposit',
-                'message'   => 'Admin deposit not found',
-                'data'      => $ex->getMessage()
+                'title' => 'Single Admin Deposit',
+                'message' => 'Admin deposit not found',
+                'data' => $ex->getMessage()
             ], 404);
         }
     }
