@@ -60,20 +60,39 @@ class OrderController extends Controller
      */
     public function index()
     {
-        // Get order
-        $order = Order::byOwner()
-            ->where('status', Order::STATUS_NEW)
-            ->with(['transaction' => function ($query) {
-                $query->select('id', 'order_id', 'wallet_address', 'payment_type_id');
-            }, 'transaction.payment_type'])
-            ->get();
+        try {
+            // Get order
+            $order = Order::where('status', Order::STATUS_NEW)
+                ->with(['transaction' => function ($query) {
+                    $query->select('id', 'order_id', 'wallet_address', 'payment_type_id');
+                }, 'transaction.payment_type'])
+                ->get();
 
-        return response()->jsonApi([
-            'type' => 'success',
-            'title' => 'Order details data',
-            'message' => "Order detail data has been received",
-            'data' => $order->toArray()
-        ], 200);
+            if(!empty($order) && $order!=null){
+                return response()->jsonApi([
+                    'type' => 'success',
+                    'title' => 'Order details data',
+                    'message' => "Order detail data has been received",
+                    'data' => $order
+                ], 200);
+            }
+
+            return response()->jsonApi([
+                'type' => 'success',
+                'title' => 'Order details data',
+                'message' => "Order detail data was NOT received",
+                'data' => null
+            ], 404);
+
+        } catch (Exception $e) {
+            //throw $th;
+            return response()->jsonApi([
+                'type' => 'success',
+                'title' => 'Order details data',
+                'message' => "Unable to retrieve order details",
+                'data' => $e->getMessage()
+            ], 400);
+        }
     }
 
     /**

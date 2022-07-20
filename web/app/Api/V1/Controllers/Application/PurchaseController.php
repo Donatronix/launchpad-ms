@@ -154,8 +154,14 @@ class PurchaseController extends Controller
         try {
             // Validate input
             $validator = Validator::make($request->all(), $this->purchase::validationRules());
+            
             if ($validator->fails()) {
-                throw new Exception($validator->errors()->first());
+                return response()->jsonApi([
+                    'type' => 'warning',
+                    'title' => 'Creating new token purchase order',
+                    'message' => "Validation error occured!",
+                    'data' => null
+                ], 400);
             }
 
             // Create new token purchase order

@@ -19,7 +19,7 @@ use Illuminate\Validation\Rule;
 class TransactionController extends Controller
 {
     /**
-     * Method for list of un-approved user's transaction.
+     * Method for list of user's transaction by their status.
      *
      * @OA\Get(
      *     path="/admin/transactions",
@@ -97,13 +97,12 @@ class TransactionController extends Controller
                 ->paginate($request->get('limit', config('settings.pagination_limit')));
 
             // Return response
-            return response()->jsonApi(
-                array_merge([
+            return response()->jsonApi([
                     'type' => 'success',
                     'title' => "Transactions list",
-                    'message' => 'Transaction list received'
-                ], $result->toArray())
-            );
+                    'message' => 'Transaction list received',
+                    'data' => $result->toArray()
+                ], 200);
         } catch (Exception $e) {
             return response()->jsonApi([
                 'type' => 'danger',

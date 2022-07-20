@@ -158,7 +158,15 @@ class OrderController extends Controller
      *     path="/admin/orders",
      *     description="Adding new orders",
      *     tags={"Admin / Orders"},
-     *
+     * 
+     *     security={{
+     *         "default": {
+     *             "ManagerRead",
+     *             "User",
+     *             "ManagerWrite"
+     *         }
+     *     }},
+     * 
      *     @OA\RequestBody(
      *         @OA\JsonContent(
      *             type="object",
@@ -284,7 +292,15 @@ class OrderController extends Controller
      *     path="/admin/orders/{id}",
      *     description="Get a single order",
      *     tags={"Admin / Orders"},
-     *
+     * 
+     *     security={{
+     *         "default": {
+     *             "ManagerRead",
+     *             "User",
+     *             "ManagerWrite"
+     *         }
+     *     }},
+     * 
      *     @OA\Parameter(
      *         name="id",
      *         in="path",
@@ -322,7 +338,7 @@ class OrderController extends Controller
     public function show($id):JsonResponse
     {
         try {
-            $order = Order::with(['product', 'transaction'])->findOrFail($id);
+            $order = Order::findOrFail($id);
 
             // Return response
             return response()->json([
@@ -332,6 +348,20 @@ class OrderController extends Controller
                 'data' => $order
             ], 200);
         } catch (\Exception $e) {
+            return response()->jsonApi([
+                'type' => 'danger',
+                'title' => 'Get order',
+                'message' => 'Error in getting order: '.$e->getMessage(),
+                'data' => null
+            ], 400);
+        }catch (\Exception $e) {
+            return response()->jsonApi([
+                'type' => 'danger',
+                'title' => 'Get order',
+                'message' => 'Error in getting order: '.$e->getMessage(),
+                'data' => null
+            ], 400);
+        }catch (ModelNotFoundException $e) {
             return response()->jsonApi([
                 'type' => 'danger',
                 'title' => 'Get order',

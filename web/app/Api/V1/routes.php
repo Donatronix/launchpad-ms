@@ -48,7 +48,7 @@ $router->group([
      */
     $router->group([
         'namespace' => 'Application',
-        'middleware' => 'checkUser',
+        // 'middleware' => 'checkUser',
     ], function ($router) {
         /**
          * Token Rewards
@@ -123,10 +123,10 @@ $router->group([
     $router->group([
         'prefix' => 'admin',
         'namespace' => 'Admin',
-        // 'middleware' => [
-        //     'checkUser',
-        //     'checkAdmin'
-        // ]
+        'middleware' => [
+            'checkUser',
+            'checkAdmin'
+        ]
     ], function ($router) {
         /**
          * Products
