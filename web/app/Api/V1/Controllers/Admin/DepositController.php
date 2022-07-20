@@ -25,14 +25,11 @@ class DepositController extends Controller
      * @OA\Get(
      *     path="/admin/deposits",
      *     description="Getting all data about deposits for all users",
-     *     tags={"Admin / Deposits"},
+     *     tags={"Admin | Deposits"},
      *
      *     security={{
-     *         "default": {
-     *             "ManagerRead",
-     *             "User",
-     *             "ManagerWrite"
-     *         }
+     *         "bearerAuth": {},
+     *         "apiKey": {}
      *     }},
      *
      *     @OA\Parameter(
@@ -57,90 +54,20 @@ class DepositController extends Controller
      *     ),
      *
      *     @OA\Response(
-     *          response="200",
-     *          description="Success",
-     *
-     *          @OA\JsonContent(
-     *             type="object",
-     *
-     *             @OA\Property(
-     *                 property="type",
-     *                 type="string",
-     *                 example="success"
-     *             ),
-     *             @OA\Property(
-     *                 property="title",
-     *                 type="string",
-     *                 example="Admin Deposit List"
-     *             ),
-     *             @OA\Property(
-     *                 property="message",
-     *                 type="string",
-     *                 example="List of admin deposits retrieved successfully"
-     *             ),
-     *             @OA\Property(
-     *                 property="data",
-     *                 type="object"
-     *             )
-     *         )
+     *         response="200",
+     *         description="Data fetched",
+     *         @OA\JsonContent(ref="#/components/schemas/OkResponse")
      *     ),
-     *    @OA\Response(
-     *          response="400",
-     *          description="Bad request",
-     *
-     *          @OA\JsonContent(
-     *             type="object",
-     *
-     *             @OA\Property(
-     *                 property="type",
-     *                 type="string",
-     *                 example="danger"
-     *             ),
-     *             @OA\Property(
-     *                 property="title",
-     *                 type="string",
-     *                 example="Admin Deposit List"
-     *             ),
-     *             @OA\Property(
-     *                 property="message",
-     *                 type="string",
-     *                 example="Unable to retrieve of admin deposit list"
-     *             ),
-     *             @OA\Property(
-     *                 property="data",
-     *                 type="object"
-     *             )
-     *         )
-     *     ),
-     *
      *     @OA\Response(
-     *          response="404",
-     *          description="Not Found",
-     *
-     *          @OA\JsonContent(
-     *             type="object",
-     *
-     *             @OA\Property(
-     *                 property="type",
-     *                 type="string",
-     *                 example="warning"
-     *             ),
-     *             @OA\Property(
-     *                 property="title",
-     *                 type="string",
-     *                 example="Admin Deposit List"
-     *             ),
-     *             @OA\Property(
-     *                 property="message",
-     *                 type="string",
-     *                 example="No admin deposit found."
-     *             ),
-     *             @OA\Property(
-     *                 property="data",
-     *                 type="object"
-     *             )
-     *         )
-     *     )
+     *         response="400",
+     *         description="Error",
+     *         @OA\JsonContent(ref="#/components/schemas/DangerResponse")
+     *     ),
+     *     @OA\Response(
+     *         response="404",
+     *         description="Not Found",
+     *         @OA\JsonContent(ref="#/components/schemas/WarningResponse")
+     *     ),
      * )
      *
      * @param Request $request
@@ -174,14 +101,11 @@ class DepositController extends Controller
      * @OA\Post(
      *     path="/admin/deposits",
      *     description="Adding new deposit for user",
-     *     tags={"Admin / Deposits"},
+     *     tags={"Admin | Deposits"},
      *
      *     security={{
-     *         "default": {
-     *             "ManagerRead",
-     *             "User",
-     *             "ManagerWrite"
-     *         }
+     *         "bearerAuth": {},
+     *         "apiKey": {}
      *     }},
      *
      *     @OA\RequestBody(
@@ -205,93 +129,23 @@ class DepositController extends Controller
      *                 description="order id",
      *                 example="5590000-9800000-38380000"
      *             )
-     *        )
-     *    ),
+     *         )
+     *     ),
      *
      *     @OA\Response(
      *         response="201",
-     *         description="Success",
-     *
-     *         @OA\JsonContent(
-     *             type="object",
-     *
-     *             @OA\Property(
-     *                 property="type",
-     *                 type="string",
-     *                 example="success"
-     *             ),
-     *             @OA\Property(
-     *                 property="title",
-     *                 type="string",
-     *                 example="Create Admin Deposit"
-     *             ),
-     *             @OA\Property(
-     *                 property="message",
-     *                 type="string",
-     *                 example="Admin deposit created successfully"
-     *             ),
-     *             @OA\Property(
-     *                 property="data",
-     *                 type="object"
-     *             )
-     *         )
+     *         description="New record addedd successfully",
+     *         @OA\JsonContent(ref="#/components/schemas/OkResponse")
      *     ),
-     *    @OA\Response(
-     *          response="400",
-     *          description="Bad request",
-     *
-     *          @OA\JsonContent(
-     *             type="object",
-     *
-     *             @OA\Property(
-     *                 property="type",
-     *                 type="string",
-     *                 example="danger"
-     *             ),
-     *             @OA\Property(
-     *                 property="title",
-     *                 type="string",
-     *                 example="Create Admin Deposit"
-     *             ),
-     *             @OA\Property(
-     *                 property="message",
-     *                 type="string",
-     *                 example="Unable to create admin deposit"
-     *             ),
-     *             @OA\Property(
-     *                 property="data",
-     *                 type="object"
-     *             )
-     *         )
-     *     ),
-     *
      *     @OA\Response(
-     *          response="422",
-     *          description="Validation Failed",
-     *
-     *          @OA\JsonContent(
-     *             type="object",
-     *
-     *             @OA\Property(
-     *                 property="type",
-     *                 type="string",
-     *                 example="warning"
-     *             ),
-     *             @OA\Property(
-     *                 property="title",
-     *                 type="string",
-     *                 example="Create Admin Deposit"
-     *             ),
-     *             @OA\Property(
-     *                 property="message",
-     *                 type="string",
-     *                 example="Validation error occured"
-     *             ),
-     *             @OA\Property(
-     *                 property="data",
-     *                 type="object"
-     *             )
-     *         )
+     *         response="400",
+     *         description="Error",
+     *         @OA\JsonContent(ref="#/components/schemas/DangerResponse")
+     *     ),
+     *     @OA\Response(
+     *         response="422",
+     *         description="Validation Failed",
+     *         @OA\JsonContent(ref="#/components/schemas/WarningResponse")
      *     ),
      *     @OA\Response(
      *         response="500",
@@ -358,7 +212,7 @@ class DepositController extends Controller
      * @OA\Get(
      *     path="/admin/deposits/{id}",
      *     description="Get a single deposit",
-     *     tags={"Admin / Deposits"},
+     *     tags={"Admin | Deposits"},
      *
      *     @OA\Parameter(
      *         name="id",
@@ -369,90 +223,20 @@ class DepositController extends Controller
      *     ),
      *
      *     @OA\Response(
-     *          response="200",
-     *          description="Success",
-     *
-     *          @OA\JsonContent(
-     *             type="object",
-     *
-     *             @OA\Property(
-     *                 property="type",
-     *                 type="string",
-     *                 example="success"
-     *             ),
-     *             @OA\Property(
-     *                 property="title",
-     *                 type="string",
-     *                 example="Single Admin Deposit"
-     *             ),
-     *             @OA\Property(
-     *                 property="message",
-     *                 type="string",
-     *                 example="Single admin deposits retrieved successfully"
-     *             ),
-     *             @OA\Property(
-     *                 property="data",
-     *                 type="object"
-     *             )
-     *         )
+     *         response="200",
+     *         description="Data fetched",
+     *         @OA\JsonContent(ref="#/components/schemas/OkResponse")
      *     ),
-     *    @OA\Response(
-     *          response="400",
-     *          description="Bad request",
-     *
-     *          @OA\JsonContent(
-     *             type="object",
-     *
-     *             @OA\Property(
-     *                 property="type",
-     *                 type="string",
-     *                 example="danger"
-     *             ),
-     *             @OA\Property(
-     *                 property="title",
-     *                 type="string",
-     *                 example="Single Admin Deposit"
-     *             ),
-     *             @OA\Property(
-     *                 property="message",
-     *                 type="string",
-     *                 example="Unable to retrieve of single admin deposit"
-     *             ),
-     *             @OA\Property(
-     *                 property="data",
-     *                 type="object"
-     *             )
-     *         )
-     *     ),
-     *
      *     @OA\Response(
-     *          response="404",
-     *          description="Not Found",
-     *
-     *          @OA\JsonContent(
-     *             type="object",
-     *
-     *             @OA\Property(
-     *                 property="type",
-     *                 type="string",
-     *                 example="warning"
-     *             ),
-     *             @OA\Property(
-     *                 property="title",
-     *                 type="string",
-     *                 example="Single Admin Deposit"
-     *             ),
-     *             @OA\Property(
-     *                 property="message",
-     *                 type="string",
-     *                 example="Admin deposit found."
-     *             ),
-     *             @OA\Property(
-     *                 property="data",
-     *                 type="object"
-     *             )
-     *         )
-     *     )
+     *         response="400",
+     *         description="Error",
+     *         @OA\JsonContent(ref="#/components/schemas/DangerResponse")
+     *     ),
+     *     @OA\Response(
+     *         response="404",
+     *         description="Not Found",
+     *         @OA\JsonContent(ref="#/components/schemas/WarningResponse")
+     *     ),
      * )
      *
      * @param Request $request
@@ -491,14 +275,11 @@ class DepositController extends Controller
      * @OA\Put(
      *     path="/admin/deposits/{id}",
      *     description="Update one deposit",
-     *     tags={"Admin / Deposits"},
+     *     tags={"Admin | Deposits"},
      *
      *     security={{
-     *         "default": {
-     *             "ManagerRead",
-     *             "User",
-     *             "ManagerWrite"
-     *         }
+     *         "bearerAuth": {},
+     *         "apiKey": {}
      *     }},
      *
      *     @OA\Parameter(
@@ -534,89 +315,19 @@ class DepositController extends Controller
      *     ),
      *
      *     @OA\Response(
-     *          response="201",
-     *          description="Success",
-     *
-     *          @OA\JsonContent(
-     *             type="object",
-     *
-     *             @OA\Property(
-     *                 property="type",
-     *                 type="string",
-     *                 example="success"
-     *             ),
-     *             @OA\Property(
-     *                 property="title",
-     *                 type="string",
-     *                 example="Update Admin Deposit"
-     *             ),
-     *             @OA\Property(
-     *                 property="message",
-     *                 type="string",
-     *                 example="Admin deposit update successfully"
-     *             ),
-     *             @OA\Property(
-     *                 property="data",
-     *                 type="object"
-     *             )
-     *         )
+     *         response="201",
+     *         description="New record addedd successfully",
+     *         @OA\JsonContent(ref="#/components/schemas/OkResponse")
      *     ),
-     *    @OA\Response(
-     *          response="400",
-     *          description="Bad request",
-     *
-     *          @OA\JsonContent(
-     *             type="object",
-     *
-     *             @OA\Property(
-     *                 property="type",
-     *                 type="string",
-     *                 example="danger"
-     *             ),
-     *             @OA\Property(
-     *                 property="title",
-     *                 type="string",
-     *                 example="Update Admin Deposit"
-     *             ),
-     *             @OA\Property(
-     *                 property="message",
-     *                 type="string",
-     *                 example="Unable to update admin deposit"
-     *             ),
-     *             @OA\Property(
-     *                 property="data",
-     *                 type="object"
-     *             )
-     *         )
-     *     ),
-     *
      *     @OA\Response(
-     *          response="422",
-     *          description="Validation Failed",
-     *
-     *          @OA\JsonContent(
-     *             type="object",
-     *
-     *             @OA\Property(
-     *                 property="type",
-     *                 type="string",
-     *                 example="warning"
-     *             ),
-     *             @OA\Property(
-     *                 property="title",
-     *                 type="string",
-     *                 example="Update Admin Deposit"
-     *             ),
-     *             @OA\Property(
-     *                 property="message",
-     *                 type="string",
-     *                 example="Validation error occured"
-     *             ),
-     *             @OA\Property(
-     *                 property="data",
-     *                 type="object"
-     *             )
-     *         )
+     *         response="400",
+     *         description="Error",
+     *         @OA\JsonContent(ref="#/components/schemas/DangerResponse")
+     *     ),
+     *     @OA\Response(
+     *         response="422",
+     *         description="Validation Failed",
+     *         @OA\JsonContent(ref="#/components/schemas/WarningResponse")
      *     ),
      *     @OA\Response(
      *         response="500",
@@ -683,14 +394,11 @@ class DepositController extends Controller
      * @OA\Delete(
      *     path="/admin/deposits/{id}",
      *     description="Deletes one deposit",
-     *     tags={"Admin / Deposits"},
+     *     tags={"Admin | Deposits"},
      *
      *     security={{
-     *         "default": {
-     *             "ManagerRead",
-     *             "User",
-     *             "ManagerWrite"
-     *         }
+     *         "bearerAuth": {},
+     *         "apiKey": {}
      *     }},
      *
      *     @OA\Parameter(
@@ -702,89 +410,19 @@ class DepositController extends Controller
      *     ),
      *
      *     @OA\Response(
-     *          response="200",
-     *          description="Success",
-     *
-     *          @OA\JsonContent(
-     *             type="object",
-     *
-     *             @OA\Property(
-     *                 property="type",
-     *                 type="string",
-     *                 example="success"
-     *             ),
-     *             @OA\Property(
-     *                 property="title",
-     *                 type="string",
-     *                 example="Delete Single Deposit"
-     *             ),
-     *             @OA\Property(
-     *                 property="message",
-     *                 type="string",
-     *                 example="Admin deposit deleted successfully"
-     *             ),
-     *             @OA\Property(
-     *                 property="data",
-     *                 type="object"
-     *             )
-     *         )
+     *         response="200",
+     *         description="Data fetched",
+     *         @OA\JsonContent(ref="#/components/schemas/OkResponse")
      *     ),
-     *    @OA\Response(
-     *          response="400",
-     *          description="Bad request",
-     *
-     *          @OA\JsonContent(
-     *             type="object",
-     *
-     *             @OA\Property(
-     *                 property="type",
-     *                 type="string",
-     *                 example="danger"
-     *             ),
-     *             @OA\Property(
-     *                 property="title",
-     *                 type="string",
-     *                 example="Delete Single Deposit"
-     *             ),
-     *             @OA\Property(
-     *                 property="message",
-     *                 type="string",
-     *                 example="Unable to delete of admin deposit"
-     *             ),
-     *             @OA\Property(
-     *                 property="data",
-     *                 type="object"
-     *             )
-     *         )
-     *     ),
-     *
      *     @OA\Response(
-     *          response="404",
-     *          description="Not Found",
-     *
-     *          @OA\JsonContent(
-     *             type="object",
-     *
-     *             @OA\Property(
-     *                 property="type",
-     *                 type="string",
-     *                 example="warning"
-     *             ),
-     *             @OA\Property(
-     *                 property="title",
-     *                 type="string",
-     *                 example="Delete Single Deposit"
-     *             ),
-     *             @OA\Property(
-     *                 property="message",
-     *                 type="string",
-     *                 example="No admin deposit found."
-     *             ),
-     *             @OA\Property(
-     *                 property="data",
-     *                 type="object"
-     *             )
-     *         )
+     *         response="400",
+     *         description="Error",
+     *         @OA\JsonContent(ref="#/components/schemas/DangerResponse")
+     *     ),
+     *     @OA\Response(
+     *         response="404",
+     *         description="Not Found",
+     *         @OA\JsonContent(ref="#/components/schemas/WarningResponse")
      *     ),
      *     @OA\Response(
      *         response="500",

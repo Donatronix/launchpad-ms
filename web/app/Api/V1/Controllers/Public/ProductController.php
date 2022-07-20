@@ -30,12 +30,13 @@ class ProductController extends Controller
      *     ),
      *
      *     @OA\Response(
-     *          response="200",
-     *          description="Getting product list for start presale"
-     *     )
+     *         response="200",
+     *         description="Getting product list for start presale",
+     *         @OA\JsonContent(ref="#/components/schemas/OkResponse")
+     *     ),
      * )
-     *
-     *
+     * @param Request $request
+     * @return mixed
      */
     public function index(Request $request)
     {
@@ -94,8 +95,9 @@ class ProductController extends Controller
      *         )
      *     ),
      *     @OA\Response(
-     *          response="200",
-     *          description="Getting product detail by platform"
+     *         response="200",
+     *         description="Data fetched",
+     *         @OA\JsonContent(ref="#/components/schemas/OkResponse")
      *     )
      * )
      * @param $id
@@ -116,7 +118,7 @@ class ProductController extends Controller
             return response()->jsonApi([
                 'title' => 'Product detail',
                 'message' => "Product detail been received",
-                'data' => $product->toArray(),
+                'data' => $product,
             ]);
         } catch (Exception $e) {
             return response()->jsonApi([

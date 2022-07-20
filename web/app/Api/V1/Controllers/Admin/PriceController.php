@@ -17,19 +17,17 @@ class PriceController extends Controller
      *     path="/admin/price",
      *     summary="Getting a listing of product prices",
      *     description="Getting a listing of product prices",
-     *     tags={"Admin / Prices"},
+     *     tags={"Admin | Prices"},
      *
      *     security={{
-     *         "default": {
-     *             "ManagerRead",
-     *             "User",
-     *             "ManagerWrite"
-     *         }
+     *         "bearerAuth": {},
+     *         "apiKey": {}
      *     }},
      *
-     *      @OA\Response(
-     *          response="200",
-     *          description="Success",
+     *     @OA\Response(
+     *         response="200",
+     *         description="Data fetched",
+     *         @OA\JsonContent(ref="#/components/schemas/OkResponse")
      *     ),
      *
      *     @OA\Response(
@@ -38,12 +36,13 @@ class PriceController extends Controller
      *     ),
      *     @OA\Response(
      *         response="400",
-     *         description="Invalid request"
+     *         description="Error",
+     *         @OA\JsonContent(ref="#/components/schemas/DangerResponse")
      *     ),
-     *
      *     @OA\Response(
      *         response="404",
-     *         description="Not Found"
+     *         description="Not Found",
+     *         @OA\JsonContent(ref="#/components/schemas/WarningResponse")
      *     ),
      * )
      *
@@ -79,31 +78,32 @@ class PriceController extends Controller
      *     path="/admin/price",
      *     summary="Saving new stage price",
      *     description="Saving new stage price",
-     *     tags={"Admin / Prices"},
+     *     tags={"Admin | Prices"},
      *
      *     security={{
-     *         "default": {
-     *             "ManagerRead",
-     *             "User",
-     *             "ManagerWrite"
-     *         }
+     *         "bearerAuth": {},
+     *         "apiKey": {}
      *     }},
      *
      *     @OA\RequestBody(
      *         required=true,
      *         @OA\JsonContent(ref="#/components/schemas/ProductPrice")
      *     ),
+     *
      *     @OA\Response(
      *         response="200",
-     *         description="Successfully save"
+     *         description="Data fetched",
+     *         @OA\JsonContent(ref="#/components/schemas/OkResponse")
      *     ),
      *     @OA\Response(
      *         response="201",
-     *         description="Price created"
+     *         description="New record addedd successfully",
+     *         @OA\JsonContent(ref="#/components/schemas/OkResponse")
      *     ),
      *     @OA\Response(
      *         response="400",
-     *         description="Invalid request"
+     *         description="Error",
+     *         @OA\JsonContent(ref="#/components/schemas/DangerResponse")
      *     ),
      *     @OA\Response(
      *         response="401",
@@ -111,11 +111,13 @@ class PriceController extends Controller
      *     ),
      *     @OA\Response(
      *         response="404",
-     *         description="Not Found"
+     *         description="Not Found",
+     *         @OA\JsonContent(ref="#/components/schemas/WarningResponse")
      *     ),
      *     @OA\Response(
      *         response="422",
-     *         description="Validation failed"
+     *         description="Validation Failed",
+     *         @OA\JsonContent(ref="#/components/schemas/WarningResponse")
      *     ),
      *     @OA\Response(
      *         response="500",
@@ -160,14 +162,11 @@ class PriceController extends Controller
      *     path="/admin/price/{id}",
      *     summary="Getting a listing of product prices",
      *     description="Getting a listing of product prices",
-     *     tags={"Admin / Prices"},
+     *     tags={"Admin | Prices"},
      *
      *     security={{
-     *         "default": {
-     *             "ManagerRead",
-     *             "User",
-     *             "ManagerWrite"
-     *         }
+     *         "bearerAuth": {},
+     *         "apiKey": {}
      *     }},
      *
      *     @OA\Parameter(
@@ -179,15 +178,18 @@ class PriceController extends Controller
      *
      *     @OA\Response(
      *         response="200",
-     *         description="Successfully save"
+     *         description="Data fetched",
+     *         @OA\JsonContent(ref="#/components/schemas/OkResponse")
      *     ),
      *     @OA\Response(
      *         response="201",
-     *         description="Price created"
+     *         description="New record addedd successfully",
+     *         @OA\JsonContent(ref="#/components/schemas/OkResponse")
      *     ),
      *     @OA\Response(
      *         response="400",
-     *         description="Invalid request"
+     *         description="Error",
+     *         @OA\JsonContent(ref="#/components/schemas/DangerResponse")
      *     ),
      *     @OA\Response(
      *         response="401",
@@ -195,11 +197,13 @@ class PriceController extends Controller
      *     ),
      *     @OA\Response(
      *         response="404",
-     *         description="not found"
+     *         description="Not Found",
+     *         @OA\JsonContent(ref="#/components/schemas/WarningResponse")
      *     ),
      *     @OA\Response(
      *         response="422",
-     *         description="Validation failed"
+     *         description="Validation Failed",
+     *         @OA\JsonContent(ref="#/components/schemas/WarningResponse")
      *     ),
      *     @OA\Response(
      *         response="500",
@@ -235,14 +239,11 @@ class PriceController extends Controller
      * @OA\Put(
      *     path="/admin/price",
      *     description="Updates a stage price",
-     *     tags={"Admin / Prices"},
+     *     tags={"Admin | Prices"},
      *
      *     security={{
-     *         "default": {
-     *             "ManagerRead",
-     *             "User",
-     *             "ManagerWrite"
-     *         }
+     *         "bearerAuth": {},
+     *         "apiKey": {}
      *     }},
      *
      *     @OA\Parameter(
@@ -258,15 +259,18 @@ class PriceController extends Controller
      *     ),
      *     @OA\Response(
      *         response="200",
-     *         description="Successfully save"
+     *         description="Data fetched",
+     *         @OA\JsonContent(ref="#/components/schemas/OkResponse")
      *     ),
      *     @OA\Response(
      *         response="201",
-     *         description="Price created"
+     *         description="New record addedd successfully",
+     *         @OA\JsonContent(ref="#/components/schemas/OkResponse")
      *     ),
      *     @OA\Response(
      *         response="400",
-     *         description="Invalid request"
+     *         description="Error",
+     *         @OA\JsonContent(ref="#/components/schemas/DangerResponse")
      *     ),
      *     @OA\Response(
      *         response="401",
@@ -274,11 +278,13 @@ class PriceController extends Controller
      *     ),
      *     @OA\Response(
      *         response="404",
-     *         description="Not Found"
+     *         description="Not Found",
+     *         @OA\JsonContent(ref="#/components/schemas/WarningResponse")
      *     ),
      *     @OA\Response(
      *         response="422",
-     *         description="Validation failed"
+     *         description="Validation Failed",
+     *         @OA\JsonContent(ref="#/components/schemas/WarningResponse")
      *     ),
      *     @OA\Response(
      *         response="500",
@@ -319,14 +325,11 @@ class PriceController extends Controller
      * @OA\Delete(
      *     path="/admin/price/{id}",
      *     description="Get a price",
-     *     tags={"Admin / Prices"},
+     *     tags={"Admin | Prices"},
      *
      *     security={{
-     *         "default": {
-     *             "ManagerRead",
-     *             "User",
-     *             "ManagerWrite"
-     *         }
+     *         "bearerAuth": {},
+     *         "apiKey": {}
      *     }},
      *
      *     @OA\Parameter(
@@ -340,7 +343,8 @@ class PriceController extends Controller
      *
      *     @OA\Response(
      *         response="200",
-     *         description="Success"
+     *         description="Data fetched",
+     *         @OA\JsonContent(ref="#/components/schemas/OkResponse")
      *     ),
      *     @OA\Response(
      *         response="401",
@@ -348,12 +352,14 @@ class PriceController extends Controller
      *     ),
      *     @OA\Response(
      *         response="400",
-     *         description="Invalid request"
+     *         description="Error",
+     *         @OA\JsonContent(ref="#/components/schemas/DangerResponse")
      *     ),
      *     @OA\Response(
      *         response="404",
-     *         description="Not found"
-     *     )
+     *         description="Not Found",
+     *         @OA\JsonContent(ref="#/components/schemas/WarningResponse")
+     *     ),
      * )
      *
      *

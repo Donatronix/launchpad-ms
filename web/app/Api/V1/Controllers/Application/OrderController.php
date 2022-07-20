@@ -3,7 +3,6 @@
 namespace App\Api\V1\Controllers\Application;
 
 use App\Api\V1\Controllers\Controller;
-use App\Api\V1\Services\TransactionService;
 use App\Models\Order;
 use App\Models\Product;
 use Exception;
@@ -39,23 +38,21 @@ class OrderController extends Controller
 
     /**
      * @OA\Get(
-     *     path="/orders",
+     *     path="/app/orders",
      *     summary="Getting created order by user if exist",
      *     description="Getting created order by user if exist",
      *     tags={"Application | Orders"},
      *
      *     security={{
-     *         "default": {
-     *             "ManagerRead",
-     *             "User",
-     *             "ManagerWrite"
-     *         }
+     *         "bearerAuth": {},
+     *         "apiKey": {}
      *     }},
      *
      *     @OA\Response(
-     *          response="200",
-     *          description="Detail data of order"
-     *     )
+     *         response="200",
+     *         description="Getting product list for start presale",
+     *         @OA\JsonContent(ref="#/components/schemas/OkResponse")
+     *     ),
      * )
      */
     public function index()
@@ -79,17 +76,14 @@ class OrderController extends Controller
      * Create a new investment order
      *
      * @OA\Post(
-     *     path="/orders",
+     *     path="/app/orders",
      *     summary="Create a new investment order",
      *     description="Create a new investment order",
      *     tags={"Application | Orders"},
      *
      *     security={{
-     *         "default": {
-     *             "ManagerRead",
-     *             "User",
-     *             "ManagerWrite"
-     *         }
+     *         "bearerAuth": {},
+     *         "apiKey": {}
      *     }},
      *
      *     @OA\RequestBody(
@@ -98,15 +92,18 @@ class OrderController extends Controller
      *     ),
      *     @OA\Response(
      *         response="200",
-     *         description="Successfully save"
+     *         description="Getting product list for start presale",
+     *         @OA\JsonContent(ref="#/components/schemas/OkResponse")
      *     ),
      *     @OA\Response(
      *         response="201",
-     *         description="Order created"
+     *         description="New record addedd successfully",
+     *         @OA\JsonContent(ref="#/components/schemas/OkResponse")
      *     ),
      *     @OA\Response(
      *         response="400",
-     *         description="Invalid request"
+     *         description="Error",
+     *         @OA\JsonContent(ref="#/components/schemas/DangerResponse")
      *     ),
      *     @OA\Response(
      *         response="401",
@@ -114,11 +111,13 @@ class OrderController extends Controller
      *     ),
      *     @OA\Response(
      *         response="404",
-     *         description="Not Found"
+     *         description="Not Found",
+     *         @OA\JsonContent(ref="#/components/schemas/WarningResponse")
      *     ),
      *     @OA\Response(
      *         response="422",
-     *         description="Validation failed"
+     *         description="Validation Failed",
+     *         @OA\JsonContent(ref="#/components/schemas/WarningResponse")
      *     ),
      *     @OA\Response(
      *         response="500",
@@ -184,17 +183,14 @@ class OrderController extends Controller
      * Getting data about order
      *
      * @OA\Get(
-     *     path="/orders/{id}",
+     *     path="/app/orders/{id}",
      *     summary="Getting data about order",
      *     description="Getting data about order",
      *     tags={"Application | Orders"},
      *
      *     security={{
-     *         "default": {
-     *             "ManagerRead",
-     *             "User",
-     *             "ManagerWrite"
-     *         }
+     *         "bearerAuth": {},
+     *         "apiKey": {}
      *     }},
      *
      *     @OA\Parameter(
@@ -207,13 +203,15 @@ class OrderController extends Controller
      *         )
      *     ),
      *     @OA\Response(
-     *          response="200",
-     *          description="Detail data of order"
+     *         response="200",
+     *         description="Getting product list for start presale",
+     *         @OA\JsonContent(ref="#/components/schemas/OkResponse")
      *     ),
      *     @OA\Response(
-     *          response="404",
-     *          description="Order not found"
-     *     )
+     *         response="404",
+     *         description="Not Found",
+     *         @OA\JsonContent(ref="#/components/schemas/WarningResponse")
+     *     ),
      * )
      */
     public function show($id)

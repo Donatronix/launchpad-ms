@@ -43,23 +43,21 @@ class DepositController extends Controller
      * Getting created deposit by user if exist
      *
      * @OA\Get(
-     *     path="/deposits",
+     *     path="/app/deposits",
      *     summary="Getting created deposit by user if exist",
      *     description="Getting created deposit by user if exist",
      *     tags={"Application | Deposits"},
      *
      *     security={{
-     *         "default": {
-     *             "ManagerRead",
-     *             "User",
-     *             "ManagerWrite"
-     *         }
+     *         "bearerAuth": {},
+     *         "apiKey": {}
      *     }},
      *
      *     @OA\Response(
-     *          response="200",
-     *          description="Detail data of deposit"
-     *     )
+     *         response="200",
+     *         description="Getting product list for start presale",
+     *         @OA\JsonContent(ref="#/components/schemas/OkResponse")
+     *     ),
      * )
      */
     public function index()
@@ -80,17 +78,14 @@ class DepositController extends Controller
      * Create a new investment deposit
      *
      * @OA\Post(
-     *     path="/deposits",
+     *     path="/app/deposits",
      *     summary="Create a new investment deposit",
      *     description="Create a new investment deposit",
      *     tags={"Application | Deposits"},
      *
      *     security={{
-     *         "default": {
-     *             "ManagerRead",
-     *             "User",
-     *             "ManagerWrite"
-     *         }
+     *         "bearerAuth": {},
+     *         "apiKey": {}
      *     }},
      *
      *     @OA\RequestBody(
@@ -99,15 +94,18 @@ class DepositController extends Controller
      *     ),
      *     @OA\Response(
      *         response="200",
-     *         description="Successfully save"
+     *         description="Getting product list for start presale",
+     *         @OA\JsonContent(ref="#/components/schemas/OkResponse")
      *     ),
      *     @OA\Response(
      *         response="201",
-     *         description="Deposit created"
+     *         description="New record addedd successfully",
+     *         @OA\JsonContent(ref="#/components/schemas/OkResponse")
      *     ),
      *     @OA\Response(
      *         response="400",
-     *         description="Invalid request"
+     *         description="Error",
+     *         @OA\JsonContent(ref="#/components/schemas/DangerResponse")
      *     ),
      *     @OA\Response(
      *         response="401",
@@ -115,11 +113,13 @@ class DepositController extends Controller
      *     ),
      *     @OA\Response(
      *         response="404",
-     *         description="Not Found"
+     *         description="Not Found",
+     *         @OA\JsonContent(ref="#/components/schemas/WarningResponse")
      *     ),
      *     @OA\Response(
      *         response="422",
-     *         description="Validation failed"
+     *         description="Validation Failed",
+     *         @OA\JsonContent(ref="#/components/schemas/WarningResponse")
      *     ),
      *     @OA\Response(
      *         response="500",
@@ -187,17 +187,14 @@ class DepositController extends Controller
      * Getting data about deposit by deposit ID
      *
      * @OA\Get(
-     *     path="/deposits/{id}",
+     *     path="/app/deposits/{id}",
      *     summary="Getting data about deposit by deposit ID",
      *     description="Getting data about deposit by deposit ID",
      *     tags={"Application | Deposits"},
      *
      *     security={{
-     *         "default": {
-     *             "ManagerRead",
-     *             "User",
-     *             "ManagerWrite"
-     *         }
+     *         "bearerAuth": {},
+     *         "apiKey": {}
      *     }},
      *
      *     @OA\Parameter(
@@ -210,13 +207,15 @@ class DepositController extends Controller
      *         )
      *     ),
      *     @OA\Response(
-     *          response="200",
-     *          description="Detail data of deposit"
+     *         response="200",
+     *         description="Getting product list for start presale",
+     *         @OA\JsonContent(ref="#/components/schemas/OkResponse")
      *     ),
      *     @OA\Response(
-     *          response="404",
-     *          description="Deposit not found"
-     *     )
+     *         response="404",
+     *         description="Not Found",
+     *         @OA\JsonContent(ref="#/components/schemas/WarningResponse")
+     *     ),
      * )
      */
     public function show($id)
@@ -258,6 +257,10 @@ class DepositController extends Controller
         }
     }
 
+    /**
+     * @param $transaction_id
+     * @return \Illuminate\Http\Response
+     */
     public function generatePdfForTransaction($transaction_id)
     {
         try {

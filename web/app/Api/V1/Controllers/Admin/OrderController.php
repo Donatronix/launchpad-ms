@@ -23,14 +23,11 @@ class OrderController extends Controller
      * @OA\Get(
      *     path="/admin/orders",
      *     description="Getting all data about order for all users",
-     *     tags={"Admin / Orders"},
+     *     tags={"Admin | Orders"},
      *
      *     security={{
-     *         "default": {
-     *             "ManagerRead",
-     *             "User",
-     *             "ManagerWrite"
-     *         }
+     *         "bearerAuth": {},
+     *         "apiKey": {}
      *     }},
      *
      *     @OA\Parameter(
@@ -100,7 +97,7 @@ class OrderController extends Controller
      *         )
      *     ),
      *
-     *      @OA\Response(
+     *     @OA\Response(
      *         response="200",
      *         description="Data fetched",
      *         @OA\JsonContent(ref="#/components/schemas/OkResponse")
@@ -108,19 +105,18 @@ class OrderController extends Controller
      *     @OA\Response(
      *         response="400",
      *         description="Error",
-     *         @OA\JsonContent(ref="#/components/schemas/WarningResponse")
+     *         @OA\JsonContent(ref="#/components/schemas/DangerResponse")
      *     ),
      *     @OA\Response(
      *         response="500",
      *         description="Server error",
      *         @OA\JsonContent(ref="#/components/schemas/DangerResponse")
      *     ),
-     *
      *     @OA\Response(
      *         response="404",
      *         description="Not Found",
-     *         @OA\JsonContent(ref="#/components/schemas/DangerResponse")
-     *     )
+     *         @OA\JsonContent(ref="#/components/schemas/WarningResponse")
+     *     ),
      * )
      *
      * @param Request $request
@@ -154,7 +150,7 @@ class OrderController extends Controller
      * @OA\Post(
      *     path="/admin/orders",
      *     description="Adding new orders",
-     *     tags={"Admin / Orders"},
+     *     tags={"Admin | Orders"},
      *
      *     @OA\RequestBody(
      *         @OA\JsonContent(
@@ -204,7 +200,7 @@ class OrderController extends Controller
      *         )
      *     ),
      *
-     *      @OA\Response(
+     *     @OA\Response(
      *         response="200",
      *         description="Data fetched",
      *         @OA\JsonContent(ref="#/components/schemas/OkResponse")
@@ -212,7 +208,7 @@ class OrderController extends Controller
      *     @OA\Response(
      *         response="400",
      *         description="Error",
-     *         @OA\JsonContent(ref="#/components/schemas/WarningResponse")
+     *         @OA\JsonContent(ref="#/components/schemas/DangerResponse")
      *     ),
      *     @OA\Response(
      *         response="500",
@@ -249,7 +245,6 @@ class OrderController extends Controller
 
             $orderSaved = Order::create($request->all());
 
-
             return response()->jsonApi([
                 'title' => "Create new order",
                 'message' => "Order was created",
@@ -274,7 +269,7 @@ class OrderController extends Controller
      * @OA\Get(
      *     path="/admin/orders/{id}",
      *     description="Get a single order",
-     *     tags={"Admin / Orders"},
+     *     tags={"Admin | Orders"},
      *
      *     @OA\Parameter(
      *         name="id",
@@ -282,9 +277,9 @@ class OrderController extends Controller
      *         description="order ID",
      *         required=true,
      *         example="96c890e5-7246-4714-a4db-70b63b16c8ef"
-     *      ),
+     *     ),
      *
-     *      @OA\Response(
+     *     @OA\Response(
      *         response="200",
      *         description="Data fetched",
      *         @OA\JsonContent(ref="#/components/schemas/OkResponse")
@@ -292,12 +287,12 @@ class OrderController extends Controller
      *     @OA\Response(
      *         response="400",
      *         description="Error",
-     *         @OA\JsonContent(ref="#/components/schemas/WarningResponse")
+     *         @OA\JsonContent(ref="#/components/schemas/DangerResponse")
      *     ),
      *     @OA\Response(
      *         response="404",
      *         description="Not Found",
-     *         @OA\JsonContent(ref="#/components/schemas/DangerResponse")
+     *         @OA\JsonContent(ref="#/components/schemas/WarningResponse")
      *     ),
      *     @OA\Response(
      *         response="500",
@@ -333,16 +328,13 @@ class OrderController extends Controller
      * Update single Order
      *
      * @OA\Put(
-     *      path="/admin/orders/{id}",
+     *     path="/admin/orders/{id}",
      *     description="Update one order",
-     *      tags={"Admin / Orders"},
+     *     tags={"Admin | Orders"},
      *
      *     security={{
-     *         "default": {
-     *             "ManagerRead",
-     *             "User",
-     *             "ManagerWrite"
-     *         }
+     *         "bearerAuth": {},
+     *         "apiKey": {}
      *     }},
      *
      *     @OA\Parameter(
@@ -351,57 +343,57 @@ class OrderController extends Controller
      *         description="Order id",
      *         required=true,
      *         example="96c890e5-7246-4714-a4db-70b63b16c8ef"
-     *      ),
+     *     ),
      *
-     *    @OA\RequestBody(
-     *            @OA\JsonContent(
-     *                type="object",
-     *                @OA\Property(
-     *                    property="product_id",
-     *                    type="string",
-     *                    description="product id",
-     *                    example="969ff58b-5d48-4de4-8e9e-cb6bb39e6041"
-     *                ),
-     *                @OA\Property(
-     *                    property="investment_amount",
-     *                    type="decimal",
-     *                    description="amount to investment",
-     *                    example="1500.00"
-     *                ),
-     *                @OA\Property(
-     *                    property="deposit_percentage",
-     *                    type="integer",
-     *                    description="deposit percentage",
-     *                    example="20000-9000000-90000"
-     *                ),
-     *                @OA\Property(
-     *                    property="deposit_amount",
-     *                    type="decimal",
-     *                    description="deposit_amount",
-     *                    example="1"
-     *                ),
-     *               @OA\Property(
-     *                    property="amount_token",
-     *                    type="string",
-     *                    description="amount token",
-     *                    example="5590"
-     *                ),
-     *                @OA\Property(
-     *                    property="amount_usd",
-     *                    type="string",
-     *                    description="amount usd",
-     *                    example="5590"
-     *                ),
-     *                @OA\Property(
-     *                    property="user_id",
-     *                    type="string",
-     *                    description="user id",
-     *                    example="550000-9000000-9000000"
-     *                )
-     *           )
-     *       ),
+     *     @OA\RequestBody(
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(
+     *                 property="product_id",
+     *                 type="string",
+     *                 description="product id",
+     *                 example="969ff58b-5d48-4de4-8e9e-cb6bb39e6041"
+     *             ),
+     *             @OA\Property(
+     *                 property="investment_amount",
+     *                 type="decimal",
+     *                 description="amount to investment",
+     *                 example="1500.00"
+     *             ),
+     *             @OA\Property(
+     *                 property="deposit_percentage",
+     *                 type="integer",
+     *                 description="deposit percentage",
+     *                 example="20000-9000000-90000"
+     *             ),
+     *             @OA\Property(
+     *                 property="deposit_amount",
+     *                 type="decimal",
+     *                 description="deposit_amount",
+     *                 example="1"
+     *             ),
+     *             @OA\Property(
+     *                 property="amount_token",
+     *                 type="string",
+     *                 description="amount token",
+     *                 example="5590"
+     *             ),
+     *             @OA\Property(
+     *                 property="amount_usd",
+     *                 type="string",
+     *                 description="amount usd",
+     *                 example="5590"
+     *             ),
+     *             @OA\Property(
+     *                 property="user_id",
+     *                 type="string",
+     *                 description="user id",
+     *                 example="550000-9000000-9000000"
+     *             )
+     *         )
+     *     ),
      *
-     *      @OA\Response(
+     *     @OA\Response(
      *         response="200",
      *         description="Data fetched",
      *         @OA\JsonContent(ref="#/components/schemas/OkResponse")
@@ -409,12 +401,12 @@ class OrderController extends Controller
      *     @OA\Response(
      *         response="400",
      *         description="Error",
-     *         @OA\JsonContent(ref="#/components/schemas/WarningResponse")
+     *         @OA\JsonContent(ref="#/components/schemas/DangerResponse")
      *     ),
      *     @OA\Response(
      *         response="404",
      *         description="Not Found",
-     *         @OA\JsonContent(ref="#/components/schemas/DangerResponse")
+     *         @OA\JsonContent(ref="#/components/schemas/WarningResponse")
      *     ),
      *     @OA\Response(
      *         response="500",
@@ -475,16 +467,13 @@ class OrderController extends Controller
      * Approve single Order
      *
      * @OA\get(
-     *      path="/admin/orders/approve/{id}",
+     *     path="/admin/orders/{id}/approve",
      *     description="Update one order",
-     *      tags={"Admin / Orders"},
+     *     tags={"Admin | Orders"},
      *
      *     security={{
-     *         "default": {
-     *             "ManagerRead",
-     *             "User",
-     *             "ManagerWrite"
-     *         }
+     *         "bearerAuth": {},
+     *         "apiKey": {}
      *     }},
      *
      *     @OA\Parameter(
@@ -493,9 +482,9 @@ class OrderController extends Controller
      *         description="Order id",
      *         required=true,
      *         example="96c890e5-7246-4714-a4db-70b63b16c8ef"
-     *      ),
+     *     ),
      *
-     *      @OA\Response(
+     *     @OA\Response(
      *         response="200",
      *         description="Data fetched",
      *         @OA\JsonContent(ref="#/components/schemas/OkResponse")
@@ -503,12 +492,12 @@ class OrderController extends Controller
      *     @OA\Response(
      *         response="400",
      *         description="Error",
-     *         @OA\JsonContent(ref="#/components/schemas/WarningResponse")
+     *         @OA\JsonContent(ref="#/components/schemas/DangerResponse")
      *     ),
      *     @OA\Response(
      *         response="404",
      *         description="Not Found",
-     *         @OA\JsonContent(ref="#/components/schemas/DangerResponse")
+     *         @OA\JsonContent(ref="#/components/schemas/WarningResponse")
      *     ),
      *     @OA\Response(
      *         response="500",
@@ -525,13 +514,15 @@ class OrderController extends Controller
     {
         try {
             $order = Order::findOrFail($id);
-            $approveOrder = $order->where('id', $id)->update(['status' => Order::STATUS_COMPLETED]);
+            $order->update([
+                'status' => Order::STATUS_COMPLETED
+            ]);
 
             // Return response
             return response()->jsonApi([
                 'title' => "Approve Order",
                 'message' => "Order was approved",
-                'data' => $approveOrder
+                'data' => $order
             ]);
         } catch (Exception $e) {
             return response()->jsonApi([
@@ -545,16 +536,13 @@ class OrderController extends Controller
      * Approve single Order
      *
      * @OA\get(
-     *      path="/admin/orders/reject/{id}",
+     *     path="/admin/orders/{id}/reject",
      *     description="Update one order",
-     *      tags={"Admin / Orders"},
+     *     tags={"Admin | Orders"},
      *
      *     security={{
-     *         "default": {
-     *             "ManagerRead",
-     *             "User",
-     *             "ManagerWrite"
-     *         }
+     *         "bearerAuth": {},
+     *         "apiKey": {}
      *     }},
      *
      *     @OA\Parameter(
@@ -563,9 +551,9 @@ class OrderController extends Controller
      *         description="Order id",
      *         required=true,
      *         example="96c890e5-7246-4714-a4db-70b63b16c8ef"
-     *      ),
+     *     ),
      *
-     *      @OA\Response(
+     *     @OA\Response(
      *         response="200",
      *         description="Data fetched",
      *         @OA\JsonContent(ref="#/components/schemas/OkResponse")
@@ -573,12 +561,12 @@ class OrderController extends Controller
      *     @OA\Response(
      *         response="400",
      *         description="Error",
-     *         @OA\JsonContent(ref="#/components/schemas/WarningResponse")
+     *         @OA\JsonContent(ref="#/components/schemas/DangerResponse")
      *     ),
      *     @OA\Response(
      *         response="404",
      *         description="Not Found",
-     *         @OA\JsonContent(ref="#/components/schemas/DangerResponse")
+     *         @OA\JsonContent(ref="#/components/schemas/WarningResponse")
      *     ),
      *     @OA\Response(
      *         response="500",
@@ -595,14 +583,15 @@ class OrderController extends Controller
     {
         try {
             $order = Order::findOrFail($id);
-            $approveOrder = $order->where('id', $id)
-                ->update(['status' => Order::STATUS_CANCELED]);
+            $order->update([
+                'status' => Order::STATUS_CANCELED
+            ]);
 
             // Return response
             return response()->jsonApi([
                 'title' => "Reject Order",
                 'message' => "Order was rejected",
-                'data' => $approveOrder
+                'data' => $order
             ]);
         } catch (Exception $e) {
             return response()->jsonApi([

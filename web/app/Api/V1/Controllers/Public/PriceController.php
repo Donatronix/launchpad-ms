@@ -29,9 +29,10 @@ class PriceController extends Controller
      *     ),
      *
      *     @OA\Response(
-     *          response="200",
-     *          description="Getting a listing of product prices"
-     *     )
+     *         response="200",
+     *         description="Getting product list for start presale",
+     *         @OA\JsonContent(ref="#/components/schemas/OkResponse")
+     *     ),
      * )
      *
      * @param Request $request
@@ -74,9 +75,10 @@ class PriceController extends Controller
      *     ),
      *
      *     @OA\Response(
-     *          response="200",
-     *          description="Getting a listing of product prices"
-     *     )
+     *         response="200",
+     *         description="Getting product list for start presale",
+     *         @OA\JsonContent(ref="#/components/schemas/OkResponse")
+     *     ),
      * )
      *
      * @param Request $request
@@ -88,12 +90,12 @@ class PriceController extends Controller
     {
         try {
             // Get prices
-            if($request->has("product_id")){
+            if ($request->has("product_id")) {
                 $prices = Price::where(['stage' => $stage, 'product_id' => $request->get("product_id")])
                     ->first();
-            }else{
-            $prices = Price::where('stage', $stage)
-                ->paginate($request->get('limit', config('settings.pagination_limit')));
+            } else {
+                $prices = Price::where('stage', $stage)
+                    ->paginate($request->get('limit', config('settings.pagination_limit')));
             }
 
             return response()->jsonApi([

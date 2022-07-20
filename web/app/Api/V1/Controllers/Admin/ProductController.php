@@ -32,14 +32,11 @@ class ProductController extends Controller
      *     path="/admin/products",
      *     summary="Getting product detail by platform",
      *     description="Getting product detail by platform",
-     *     tags={"Admin / Products"},
+     *     tags={"Admin | Products"},
      *
      *     security={{
-     *         "default": {
-     *             "ManagerRead",
-     *             "User",
-     *             "ManagerWrite"
-     *         }
+     *         "bearerAuth": {},
+     *         "apiKey": {}
      *     }},
      *
      *     @OA\Parameter(
@@ -85,7 +82,8 @@ class ProductController extends Controller
      *
      *     @OA\Response(
      *         response="200",
-     *         description="Success send data"
+     *         description="Data fetched",
+     *         @OA\JsonContent(ref="#/components/schemas/OkResponse")
      *     ),
      *     @OA\Response(
      *         response="401",
@@ -93,7 +91,8 @@ class ProductController extends Controller
      *     ),
      *     @OA\Response(
      *         response="400",
-     *         description="Invalid request"
+     *         description="Error",
+     *         @OA\JsonContent(ref="#/components/schemas/DangerResponse")
      *     ),
      *     @OA\Response(
      *         response="403",
@@ -101,7 +100,8 @@ class ProductController extends Controller
      *     ),
      *     @OA\Response(
      *         response="404",
-     *         description="Not found"
+     *         description="Not Found",
+     *         @OA\JsonContent(ref="#/components/schemas/WarningResponse")
      *     ),
      *     @OA\Response(
      *         response="500",
@@ -142,30 +142,31 @@ class ProductController extends Controller
      *     path="/admin/products",
      *     summary="Save a new product",
      *     description="Save a new product",
-     *     tags={"Admin / Products"},
+     *     tags={"Admin | Products"},
      *
      *     security={{
-     *         "default": {
-     *             "ManagerRead",
-     *             "User",
-     *             "ManagerWrite"
-     *         }
+     *         "bearerAuth": {},
+     *         "apiKey": {}
      *     }},
+     *
      *     @OA\RequestBody(
      *         required=true,
      *         @OA\JsonContent(ref="#/components/schemas/Product")
      *     ),
      *     @OA\Response(
      *         response="200",
-     *         description="Successfully save"
+     *         description="Data fetched",
+     *         @OA\JsonContent(ref="#/components/schemas/OkResponse")
      *     ),
      *     @OA\Response(
      *         response="201",
-     *         description="Successfully created"
+     *         description="New record addedd successfully",
+     *         @OA\JsonContent(ref="#/components/schemas/OkResponse")
      *     ),
      *     @OA\Response(
      *         response="400",
-     *         description="Invalid request"
+     *         description="Error",
+     *         @OA\JsonContent(ref="#/components/schemas/DangerResponse")
      *     ),
      *     @OA\Response(
      *         response="401",
@@ -177,11 +178,13 @@ class ProductController extends Controller
      *     ),
      *     @OA\Response(
      *         response="404",
-     *         description="Not found"
+     *         description="Not Found",
+     *         @OA\JsonContent(ref="#/components/schemas/WarningResponse")
      *     ),
      *     @OA\Response(
      *         response="422",
-     *         description="Validation failed"
+     *         description="Validation Failed",
+     *         @OA\JsonContent(ref="#/components/schemas/WarningResponse")
      *     ),
      *     @OA\Response(
      *         response="500",
@@ -238,14 +241,11 @@ class ProductController extends Controller
      *     path="/admin/products/{id}",
      *     summary="Getting product detail by ID",
      *     description="Getting product detail by ID",
-     *     tags={"Admin / Products"},
+     *     tags={"Admin | Products"},
      *
      *     security={{
-     *         "default": {
-     *             "ManagerRead",
-     *             "User",
-     *             "ManagerWrite"
-     *         }
+     *         "bearerAuth": {},
+     *         "apiKey": {}
      *     }},
      *
      *     @OA\Parameter(
@@ -258,9 +258,11 @@ class ProductController extends Controller
      *             type="string"
      *         )
      *     ),
+     *
      *     @OA\Response(
-     *          response="200",
-     *          description="Getting product detail by platform"
+     *         response="200",
+     *         description="Data fetched",
+     *         @OA\JsonContent(ref="#/components/schemas/OkResponse")
      *     )
      * )
      *
@@ -314,15 +316,13 @@ class ProductController extends Controller
      *     path="/admin/products/{id}",
      *     summary="Update product data",
      *     description="Update product data",
-     *     tags={"Admin / Products"},
+     *     tags={"Admin | Products"},
      *
      *     security={{
-     *         "default": {
-     *             "ManagerRead",
-     *             "User",
-     *             "ManagerWrite"
-     *         }
+     *         "bearerAuth": {},
+     *         "apiKey": {}
      *     }},
+     *
      *     @OA\Parameter(
      *         name="id",
      *         in="path",
@@ -339,11 +339,13 @@ class ProductController extends Controller
      *     ),
      *     @OA\Response(
      *         response="200",
-     *         description="Successfully save"
+     *         description="Data fetched",
+     *         @OA\JsonContent(ref="#/components/schemas/OkResponse")
      *     ),
      *     @OA\Response(
      *         response="400",
-     *         description="Invalid request"
+     *         description="Error",
+     *         @OA\JsonContent(ref="#/components/schemas/DangerResponse")
      *     ),
      *     @OA\Response(
      *         response="401",
@@ -355,11 +357,13 @@ class ProductController extends Controller
      *     ),
      *     @OA\Response(
      *         response="404",
-     *         description="Not found"
+     *         description="Not Found",
+     *         @OA\JsonContent(ref="#/components/schemas/WarningResponse")
      *     ),
      *     @OA\Response(
      *         response="422",
-     *         description="Validation failed"
+     *         description="Validation Failed",
+     *         @OA\JsonContent(ref="#/components/schemas/WarningResponse")
      *     ),
      *     @OA\Response(
      *         response="500",
@@ -424,15 +428,13 @@ class ProductController extends Controller
      *     path="/admin/products/{id}",
      *     summary="Delete product",
      *     description="Delete product",
-     *     tags={"Admin / Products"},
+     *     tags={"Admin | Products"},
      *
      *     security={{
-     *         "default": {
-     *             "ManagerRead",
-     *             "User",
-     *             "ManagerWrite"
-     *         }
+     *         "bearerAuth": {},
+     *         "apiKey": {}
      *     }},
+     *
      *     @OA\Parameter(
      *         name="id",
      *         in="path",
@@ -445,11 +447,13 @@ class ProductController extends Controller
      *     ),
      *     @OA\Response(
      *         response="200",
-     *         description="Successfully delete"
+     *         description="Data fetched",
+     *         @OA\JsonContent(ref="#/components/schemas/OkResponse")
      *     ),
      *     @OA\Response(
      *         response="400",
-     *         description="Invalid request"
+     *         description="Error",
+     *         @OA\JsonContent(ref="#/components/schemas/DangerResponse")
      *     ),
      *     @OA\Response(
      *         response="401",
@@ -461,7 +465,8 @@ class ProductController extends Controller
      *     ),
      *     @OA\Response(
      *         response="404",
-     *         description="Not found"
+     *         description="Not Found",
+     *         @OA\JsonContent(ref="#/components/schemas/WarningResponse")
      *     ),
      *     @OA\Response(
      *         response="500",

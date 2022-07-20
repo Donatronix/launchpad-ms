@@ -19,19 +19,16 @@ class DashboardController extends Controller
      *     tags={"Admin | Dashboard"},
      *
      *     security={{
-     *         "default": {
-     *             "ManagerRead",
-     *             "User",
-     *             "ManagerWrite"
-     *         }
+     *         "bearerAuth": {},
+     *         "apiKey": {}
      *     }},
      *
      *     @OA\Response(
      *         response="200",
-     *         description="Success",
+     *         description="Data fetched",
+     *         @OA\JsonContent(ref="#/components/schemas/OkResponse")
      *     )
      * )
-     *
      *
      * @param Request $request
      *

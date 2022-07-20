@@ -17,14 +17,11 @@ class TokenRewardController extends Controller
      * @OA\Get(
      *     path="/admin/token-rewards",
      *     description="Get list of un-approved user's tokenReward",
-     *     tags={"Admin / TokenRewards"},
+     *     tags={"Admin | TokenRewards"},
      *
      *     security={{
-     *         "default": {
-     *             "ManagerRead",
-     *             "User",
-     *             "ManagerWrite"
-     *         }
+     *         "bearerAuth": {},
+     *         "apiKey": {}
      *     }},
      *
      *     @OA\Parameter(
@@ -39,15 +36,18 @@ class TokenRewardController extends Controller
      *     ),
      *     @OA\Response(
      *         response="200",
-     *         description="Successfully save"
+     *         description="Data fetched",
+     *         @OA\JsonContent(ref="#/components/schemas/OkResponse")
      *     ),
      *     @OA\Response(
      *         response="201",
-     *         description="Purchase created"
+     *         description="New record addedd successfully",
+     *         @OA\JsonContent(ref="#/components/schemas/OkResponse")
      *     ),
      *     @OA\Response(
      *         response="400",
-     *         description="Invalid request"
+     *         description="Error",
+     *         @OA\JsonContent(ref="#/components/schemas/DangerResponse")
      *     ),
      *     @OA\Response(
      *         response="401",
@@ -55,11 +55,13 @@ class TokenRewardController extends Controller
      *     ),
      *     @OA\Response(
      *         response="404",
-     *         description="not found"
+     *         description="Not Found",
+     *         @OA\JsonContent(ref="#/components/schemas/WarningResponse")
      *     ),
      *     @OA\Response(
      *         response="422",
-     *         description="Validation failed"
+     *         description="Validation Failed",
+     *         @OA\JsonContent(ref="#/components/schemas/WarningResponse")
      *     ),
      *     @OA\Response(
      *         response="500",
@@ -98,19 +100,17 @@ class TokenRewardController extends Controller
      * Method for show user's token reward
      *
      * @OA\Get(
-     *     path="/admin/token-rewards/{token_reward_id}",
-     *     description="Get tokenReward of user by token_reward_id",
-     *     tags={"Admin / TokenRewards"},
+     *     path="/admin/token-rewards/{id}",
+     *     description="Get tokenReward of user by id",
+     *     tags={"Admin | TokenRewards"},
      *
      *     security={{
-     *         "default": {
-     *             "ManagerRead",
-     *             "User",
-     *             "ManagerWrite"
-     *         }
+     *         "bearerAuth": {},
+     *         "apiKey": {}
      *     }},
+     *
      *     @OA\Parameter(
-     *         name="token_reward_id",
+     *         name="id",
      *         description="TokenReward ID",
      *         in="path",
      *         required=true,
@@ -120,15 +120,18 @@ class TokenRewardController extends Controller
      *     ),
      *     @OA\Response(
      *         response="200",
-     *         description="Successfully save"
+     *         description="Data fetched",
+     *         @OA\JsonContent(ref="#/components/schemas/OkResponse")
      *     ),
      *     @OA\Response(
      *         response="201",
-     *         description="Purchase created"
+     *         description="New record addedd successfully",
+     *         @OA\JsonContent(ref="#/components/schemas/OkResponse")
      *     ),
      *     @OA\Response(
      *         response="400",
-     *         description="Invalid request"
+     *         description="Error",
+     *         @OA\JsonContent(ref="#/components/schemas/DangerResponse")
      *     ),
      *     @OA\Response(
      *         response="401",
@@ -136,11 +139,13 @@ class TokenRewardController extends Controller
      *     ),
      *     @OA\Response(
      *         response="404",
-     *         description="not found"
+     *         description="Not Found",
+     *         @OA\JsonContent(ref="#/components/schemas/WarningResponse")
      *     ),
      *     @OA\Response(
      *         response="422",
-     *         description="Validation failed"
+     *         description="Validation Failed",
+     *         @OA\JsonContent(ref="#/components/schemas/WarningResponse")
      *     ),
      *     @OA\Response(
      *         response="500",
@@ -148,19 +153,19 @@ class TokenRewardController extends Controller
      *     )
      * )
      *
-     * @param         $token_reward_id
+     * @param         $id
      *
      * @return JsonResponse
      */
-    public function show($token_reward_id): JsonResponse
+    public function show($id): JsonResponse
     {
         try {
-            $tokenReward = TokenReward::find($token_reward_id);
+            $tokenReward = TokenReward::find($id);
 
             if (!$tokenReward) {
                 return response()->jsonApi([
                     'title' => 'Get a token',
-                    'message' => 'No tokenReward of user with id=' . $token_reward_id,
+                    'message' => 'No tokenReward of user with id=' . $id,
                 ], 400);
             }
 
@@ -183,14 +188,11 @@ class TokenRewardController extends Controller
      * @OA\Post(
      *     path="/admin/token-rewards",
      *     description="Store user's tokenReward",
-     *     tags={"Admin / TokenRewards"},
+     *     tags={"Admin | TokenRewards"},
      *
      *     security={{
-     *         "default": {
-     *             "ManagerRead",
-     *             "User",
-     *             "ManagerWrite"
-     *         }
+     *         "bearerAuth": {},
+     *         "apiKey": {}
      *     }},
      *
      *       @OA\RequestBody(
@@ -221,15 +223,18 @@ class TokenRewardController extends Controller
      *
      *     @OA\Response(
      *         response="200",
-     *         description="Successfully save"
+     *         description="Data fetched",
+     *         @OA\JsonContent(ref="#/components/schemas/OkResponse")
      *     ),
      *     @OA\Response(
      *         response="201",
-     *         description="Purchase created"
+     *         description="New record addedd successfully",
+     *         @OA\JsonContent(ref="#/components/schemas/OkResponse")
      *     ),
      *     @OA\Response(
      *         response="400",
-     *         description="Invalid request"
+     *         description="Error",
+     *         @OA\JsonContent(ref="#/components/schemas/DangerResponse")
      *     ),
      *     @OA\Response(
      *         response="401",
@@ -237,11 +242,13 @@ class TokenRewardController extends Controller
      *     ),
      *     @OA\Response(
      *         response="404",
-     *         description="not found"
+     *         description="Not Found",
+     *         @OA\JsonContent(ref="#/components/schemas/WarningResponse")
      *     ),
      *     @OA\Response(
      *         response="422",
-     *         description="Validation failed"
+     *         description="Validation Failed",
+     *         @OA\JsonContent(ref="#/components/schemas/WarningResponse")
      *     ),
      *     @OA\Response(
      *         response="500",
@@ -283,18 +290,15 @@ class TokenRewardController extends Controller
      * @OA\Put(
      *     path="/admin/token-rewards",
      *     description="update user's tokenReward",
-     *     tags={"Admin / TokenRewards"},
+     *     tags={"Admin | TokenRewards"},
      *
      *     security={{
-     *         "default": {
-     *             "ManagerRead",
-     *             "User",
-     *             "ManagerWrite"
-     *         }
+     *         "bearerAuth": {},
+     *         "apiKey": {}
      *     }},
      *
      *     @OA\Parameter(
-     *         name="token_reward_id",
+     *         name="id",
      *         description="TokenReward ID",
      *         in="path",
      *         required=true,
@@ -330,15 +334,18 @@ class TokenRewardController extends Controller
      *     ),
      *     @OA\Response(
      *         response="200",
-     *         description="Successfully save"
+     *         description="Data fetched",
+     *         @OA\JsonContent(ref="#/components/schemas/OkResponse")
      *     ),
      *     @OA\Response(
      *         response="201",
-     *         description="Purchase created"
+     *         description="New record addedd successfully",
+     *         @OA\JsonContent(ref="#/components/schemas/OkResponse")
      *     ),
      *     @OA\Response(
      *         response="400",
-     *         description="Invalid request"
+     *         description="Error",
+     *         @OA\JsonContent(ref="#/components/schemas/DangerResponse")
      *     ),
      *     @OA\Response(
      *         response="401",
@@ -346,11 +353,13 @@ class TokenRewardController extends Controller
      *     ),
      *     @OA\Response(
      *         response="404",
-     *         description="not found"
+     *         description="Not Found",
+     *         @OA\JsonContent(ref="#/components/schemas/WarningResponse")
      *     ),
      *     @OA\Response(
      *         response="422",
-     *         description="Validation failed"
+     *         description="Validation Failed",
+     *         @OA\JsonContent(ref="#/components/schemas/WarningResponse")
      *     ),
      *     @OA\Response(
      *         response="500",
@@ -386,23 +395,20 @@ class TokenRewardController extends Controller
     }
 
     /**
-     * Method for delete tokenReward by token_reward_id
+     * Method for delete tokenReward by id
      *
      * @OA\Delete(
-     *     path="/admin/token-rewards/{token_reward_id}",
-     *     description="destroy user's token rewards by token_reward_id",
-     *     tags={"Admin / TokenRewards"},
+     *     path="/admin/token-rewards/{id}",
+     *     description="destroy user's token rewards by id",
+     *     tags={"Admin | TokenRewards"},
      *
      *     security={{
-     *         "default": {
-     *             "ManagerRead",
-     *             "User",
-     *             "ManagerWrite"
-     *         }
+     *         "bearerAuth": {},
+     *         "apiKey": {}
      *     }},
      *
      *     @OA\Parameter(
-     *         name="token_reward_id",
+     *         name="id",
      *         description="TokenReward ID",
      *         in="path",
      *         required=true,
@@ -412,15 +418,18 @@ class TokenRewardController extends Controller
      *     ),
      *     @OA\Response(
      *         response="200",
-     *         description="Successfully save"
+     *         description="Data fetched",
+     *         @OA\JsonContent(ref="#/components/schemas/OkResponse")
      *     ),
      *     @OA\Response(
      *         response="201",
-     *         description="Purchase created"
+     *         description="New record addedd successfully",
+     *         @OA\JsonContent(ref="#/components/schemas/OkResponse")
      *     ),
      *     @OA\Response(
      *         response="400",
-     *         description="Invalid request"
+     *         description="Error",
+     *         @OA\JsonContent(ref="#/components/schemas/DangerResponse")
      *     ),
      *     @OA\Response(
      *         response="401",
@@ -428,11 +437,13 @@ class TokenRewardController extends Controller
      *     ),
      *     @OA\Response(
      *         response="404",
-     *         description="not found"
+     *         description="Not Found",
+     *         @OA\JsonContent(ref="#/components/schemas/WarningResponse")
      *     ),
      *     @OA\Response(
      *         response="422",
-     *         description="Validation failed"
+     *         description="Validation Failed",
+     *         @OA\JsonContent(ref="#/components/schemas/WarningResponse")
      *     ),
      *     @OA\Response(
      *         response="500",
@@ -440,19 +451,19 @@ class TokenRewardController extends Controller
      *     )
      * )
      *
-     * @param $token_reward_id
+     * @param $id
      *
      * @return JsonResponse
      */
-    public function destroy($token_reward_id): JsonResponse
+    public function destroy($id): JsonResponse
     {
         try {
-            $tokenReward = TokenReward::find($token_reward_id);
+            $tokenReward = TokenReward::find($id);
 
             if (!$tokenReward)
                 return response()->jsonApi([
                     'title' => 'Reward token',
-                    'message' => 'No token reward  with id=' . $token_reward_id,
+                    'message' => 'No token reward  with id=' . $id,
                 ], 400);
 
             $tokenReward->delete();
@@ -464,7 +475,7 @@ class TokenRewardController extends Controller
         } catch (Exception $e) {
             return response()->jsonApi([
                 'title' => 'Reward token',
-                'message' => 'No token reward  with id=' . $token_reward_id,
+                'message' => 'No token reward  with id=' . $id,
             ], 400);
         }
     }

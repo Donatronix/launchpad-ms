@@ -19,11 +19,11 @@ class InvestorController extends Controller
      * @OA\Get(
      *     path="/admin/investors",
      *     description="Get list of Investor users",
-     *     tags={"Admin / Investors"},
+     *     tags={"Admin | Investors"},
      *
      *     security={{
-     *          "bearerAuth": {},
-     *          "apiKey": {}
+     *         "bearerAuth": {},
+     *         "apiKey": {}
      *     }},
      *
      *     @OA\Parameter(
@@ -56,6 +56,7 @@ class InvestorController extends Controller
      *              default=1,
      *         )
      *     ),
+     *
      *     @OA\Response(
      *         response="200",
      *         description="Data fetched",
@@ -64,7 +65,7 @@ class InvestorController extends Controller
      *     @OA\Response(
      *         response="400",
      *         description="Error",
-     *         @OA\JsonContent(ref="#/components/schemas/WarningResponse")
+     *         @OA\JsonContent(ref="#/components/schemas/DangerResponse")
      *     ),
      *     @OA\Response(
      *         response="500",
@@ -80,7 +81,6 @@ class InvestorController extends Controller
     public function index(Request $request)
     {
         try {
-
             /**
              * Prep IDS endpoint
              *
@@ -108,6 +108,7 @@ class InvestorController extends Controller
             if (!$response->successful()) {
                 $status = $response->status() ?? 400;
                 $message = $response->getReasonPhrase() ?? 'Error Processing Request';
+
                 throw new Exception($message, $status);
             }
 
@@ -115,7 +116,6 @@ class InvestorController extends Controller
             $data = $response->object()->data ?? null;
 
             if ($data) {
-
                 /**
                  * Get Tokens
                  *
@@ -146,50 +146,5 @@ class InvestorController extends Controller
                 'message' => $e->getMessage()
             ], 400);
         }
-    }
-
-    /**
-     * Create new Resource
-     *
-     * @param Request $request
-     * @return Response
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param int $id
-     * @return Response
-     */
-    public function show($id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param Request $request
-     * @param int $id
-     * @return Response
-     */
-    public function update(Request $request, $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param int $id
-     * @return Response
-     */
-    public function destroy($id)
-    {
-        //
     }
 }

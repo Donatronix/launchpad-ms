@@ -27,11 +27,8 @@ class TransactionController extends Controller
      *     tags={"Admin | Transactions"},
      *
      *     security={{
-     *         "default": {
-     *             "ManagerRead",
-     *             "User",
-     *             "ManagerWrite"
-     *         }
+     *         "bearerAuth": {},
+     *         "apiKey": {}
      *     }},
      *
      *     @OA\Parameter(
@@ -65,8 +62,9 @@ class TransactionController extends Controller
      *
      *     @OA\Response(
      *         response="200",
-     *         description="Success"
-     *     )
+     *         description="Data fetched",
+     *         @OA\JsonContent(ref="#/components/schemas/OkResponse")
+     *     ),
      * )
      *
      * Method for list of un-approved  transaction of users.
@@ -119,11 +117,8 @@ class TransactionController extends Controller
      *     tags={"Admin | Transactions"},
      *
      *     security={{
-     *         "default": {
-     *             "ManagerRead",
-     *             "User",
-     *             "ManagerWrite"
-     *         }
+     *         "bearerAuth": {},
+     *         "apiKey": {}
      *     }},
      *
      *     @OA\Parameter(
@@ -138,8 +133,9 @@ class TransactionController extends Controller
      *
      *     @OA\Response(
      *         response="200",
-     *         description="Success",
-     *     )
+     *         description="Data fetched",
+     *         @OA\JsonContent(ref="#/components/schemas/OkResponse")
+     *     ),
      * )
      *
      * @param $transaction_id
@@ -179,11 +175,8 @@ class TransactionController extends Controller
      *     tags={"Admin | Transactions"},
      *
      *     security={{
-     *         "default": {
-     *             "ManagerRead",
-     *             "User",
-     *             "ManagerWrite"
-     *         }
+     *         "bearerAuth": {},
+     *         "apiKey": {}
      *     }},
      *
      *     @OA\Parameter(
@@ -198,8 +191,9 @@ class TransactionController extends Controller
      *
      *     @OA\Response(
      *         response="200",
-     *         description="Success"
-     *     )
+     *         description="Data fetched",
+     *         @OA\JsonContent(ref="#/components/schemas/OkResponse")
+     *     ),
      * )
      *
      * @param $transaction_id
@@ -242,11 +236,8 @@ class TransactionController extends Controller
      *     tags={"Admin | Transactions"},
      *
      *     security={{
-     *         "default" :{
-     *             "ManagerRead",
-     *             "Admin",
-     *             "ManagerWrite"
-     *         }
+     *         "bearerAuth": {},
+     *         "apiKey": {}
      *     }},
      *
      *     @OA\Parameter(
@@ -346,7 +337,8 @@ class TransactionController extends Controller
      *
      *     @OA\Response(
      *         response="200",
-     *         description="Success send data"
+     *         description="Data fetched",
+     *         @OA\JsonContent(ref="#/components/schemas/OkResponse")
      *     ),
      *     @OA\Response(
      *         response="401",
@@ -354,7 +346,8 @@ class TransactionController extends Controller
      *     ),
      *     @OA\Response(
      *         response="400",
-     *         description="Invalid request"
+     *         description="Error",
+     *         @OA\JsonContent(ref="#/components/schemas/DangerResponse")
      *     ),
      *     @OA\Response(
      *         response="403",
@@ -362,7 +355,8 @@ class TransactionController extends Controller
      *     ),
      *     @OA\Response(
      *         response="404",
-     *         description="Not found"
+     *         description="Not Found",
+     *         @OA\JsonContent(ref="#/components/schemas/WarningResponse")
      *     ),
      *     @OA\Response(
      *         response="500",
@@ -415,11 +409,8 @@ class TransactionController extends Controller
      *     tags={"Admin | Transactions"},
      *
      *     security={{
-     *         "default": {
-     *             "ManagerRead",
-     *             "User",
-     *             "ManagerWrite"
-     *         }
+     *         "bearerAuth": {},
+     *         "apiKey": {}
      *     }},
      *
      *     @OA\Parameter(
@@ -433,8 +424,9 @@ class TransactionController extends Controller
      *     ),
      *     @OA\Response(
      *         response="200",
-     *         description="Success",
-     *     )
+     *         description="Data fetched",
+     *         @OA\JsonContent(ref="#/components/schemas/OkResponse")
+     *     ),
      * )
      *
      * @param $transaction_id
