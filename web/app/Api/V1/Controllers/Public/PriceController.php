@@ -104,8 +104,7 @@ class PriceController extends Controller
         } catch (Exception $e) {
             return response()->jsonApi([
                 'title' => 'Prices list',
-                'message' => $e->getMessage(),
-                'data'=> null
+                'message' => $e->getMessage()
             ], 400);
         }
     }

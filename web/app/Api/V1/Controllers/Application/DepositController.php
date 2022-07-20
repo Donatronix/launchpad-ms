@@ -43,7 +43,7 @@ class DepositController extends Controller
      * Getting created deposit by user if exist
      *
      * @OA\Get(
-     *     path="/application/deposits",
+     *     path="/deposits",
      *     summary="Getting created deposit by user if exist",
      *     description="Getting created deposit by user if exist",
      *     tags={"Application | Deposits"},
@@ -80,7 +80,7 @@ class DepositController extends Controller
      * Create a new investment deposit
      *
      * @OA\Post(
-     *     path="/application/deposits",
+     *     path="/deposits",
      *     summary="Create a new investment deposit",
      *     description="Create a new investment deposit",
      *     tags={"Application | Deposits"},
@@ -147,8 +147,7 @@ class DepositController extends Controller
         if (!$product) {
             return response()->jsonApi([
                 'title' => 'New Deposit details data',
-                'message' => "This product does not exist",
-                'data' => null
+                'message' => "This product does not exist"
             ], 400);
         }
 
@@ -188,7 +187,7 @@ class DepositController extends Controller
      * Getting data about deposit by deposit ID
      *
      * @OA\Get(
-     *     path="/application/deposits/{id}",
+     *     path="/deposits/{id}",
      *     summary="Getting data about deposit by deposit ID",
      *     description="Getting data about deposit by deposit ID",
      *     tags={"Application | Deposits"},
@@ -255,7 +254,6 @@ class DepositController extends Controller
             return response()->jsonApi([
                 'title' => "Get deposit",
                 'message' => "Deposit with id #{$id} not found: {$e->getMessage()}",
-                'data' => null
             ], 404);
         }
     }
@@ -286,7 +284,6 @@ class DepositController extends Controller
             return response()->jsonApi([
                 'title' => "Get deposit",
                 'message' => "Transaction with id #{$transaction_id} not found: {$e->getMessage()}",
-                'data' => null
             ], 404);
         }
     }
