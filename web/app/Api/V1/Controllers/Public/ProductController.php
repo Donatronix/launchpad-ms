@@ -70,7 +70,7 @@ class ProductController extends Controller
         } catch (Exception $e) {
             return response()->jsonApi([
                 'title' => 'Products list',
-                'message' => $e->getMessage(),
+                'message' => $e->getMessage()
             ], 400);
         }
     }

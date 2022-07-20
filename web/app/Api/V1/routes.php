@@ -98,7 +98,7 @@ $router->group([
          * Token Purchase - shopping List
          */
         $router->group([
-            'prefix' => 'application/purchase-token',
+            'prefix' => 'purchase-token',
         ], function ($router) {
             $router->get('/', 'PurchaseController@index');
             $router->post('/', 'PurchaseController@store');

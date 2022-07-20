@@ -20,7 +20,7 @@ class InvestmentController extends Controller
      *     path="/investment",
      *     summary="Create a first investment after registration",
      *     description="Create a first investment after registration",
-     *     tags={"Investment"},
+     *     tags={"Application | Investment"},
      *
      *     security={{
      *         "default": {
