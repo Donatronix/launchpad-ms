@@ -48,7 +48,7 @@ $router->group([
      */
     $router->group([
         'namespace' => 'Application',
-        // 'middleware' => 'checkUser',
+        'middleware' => 'checkUser',
     ], function ($router) {
         /**
          * Token Rewards
