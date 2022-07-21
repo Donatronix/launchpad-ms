@@ -26,23 +26,19 @@ use Sumra\SDK\Traits\UuidTrait;
  *         example="10000"
  *     ),
  *     @OA\Property(
- *         property="currency_id",
+ *         property="currency",
  *         type="string",
- *         description="Currency Id",
- *         example="967a6aac-b6dc-4aa7-a6cd-6a612e39d4ee"
+ *         description="Currency of deposit (Currency code (USD) or Currency ID (0006faf6-7a61-426c-9034-579f2cfcfa83))",
+ *
+ *         @OA\Examples(example="string", value="USD", summary="Currency code"),
+ *         @OA\Examples(example="uuid", value="0006faf6-7a61-426c-9034-579f2cfcfa83", summary="Currency ID"),
  *     ),
  *     @OA\Property(
- *         property="currency_code",
- *         type="string",
- *         description="Currency code",
- *         example="USD"
- *     ),
- *     @OA\Property(
- *         property="object_id",
+ *         property="related_id",
  *         type="string",
  *         description="Based on object id",
  *         example="967a6aac-aaaa-aaaa-0000-6a612e39d4ee"
- *     )
+ *     ),
  * )
  */
 /**
@@ -61,19 +57,15 @@ use Sumra\SDK\Traits\UuidTrait;
  *         example="10000"
  *     ),
  *     @OA\Property(
- *         property="currency_id",
+ *         property="currency",
  *         type="string",
- *         description="Currency Id",
- *         example="967a6aac-b6dc-4aa7-a6cd-6a612e39d4ee"
+ *         description="Currency of deposit (Currency code (USD) or Currency ID (0006faf6-7a61-426c-9034-579f2cfcfa83))",
+ *
+ *         @OA\Examples(example="string", value="USD", summary="Currency code"),
+ *         @OA\Examples(example="uuid", value="0006faf6-7a61-426c-9034-579f2cfcfa83", summary="Currency ID"),
  *     ),
  *     @OA\Property(
- *         property="currency_code",
- *         type="string",
- *         description="Currency code",
- *         example="USD"
- *     ),
- *     @OA\Property(
- *         property="object_id",
+ *         property="related_id",
  *         type="string",
  *         description="Based on object id",
  *         example="967a6aac-aaaa-aaaa-0000-6a612e39d4ee"
