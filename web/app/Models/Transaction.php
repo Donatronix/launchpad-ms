@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use Carbon\Carbon;
+use App\Traits\NumeratorTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -11,6 +11,7 @@ use Sumra\SDK\Traits\UuidTrait;
 class Transaction extends Model
 {
     use HasFactory;
+    use NumeratorTrait;
     use UuidTrait;
 
     /**
@@ -46,6 +47,16 @@ class Transaction extends Model
         self::TYPE_CONTRACT,
         self::TYPE_PAYMENT_RECHARGE
     ];
+
+    /**
+     * Get the numerator prefix for the model.
+     *
+     * @return string
+     */
+    protected function getNumeratorPrefix(): string
+    {
+        return 'TR';
+    }
 
     /**
      * The attributes that are mass assignable.

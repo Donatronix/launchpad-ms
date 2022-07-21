@@ -2,11 +2,11 @@
 
 namespace App\Models;
 
-use App\Traits\RandomCharGeneratorTrait;
+use App\Traits\NumeratorTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Sumra\SDK\Traits\OwnerTrait;
 use Sumra\SDK\Traits\UuidTrait;
 
@@ -77,10 +77,10 @@ use Sumra\SDK\Traits\UuidTrait;
 class Order extends Model
 {
     use HasFactory;
-    use UuidTrait;
-    use RandomCharGeneratorTrait;
+    use NumeratorTrait;
     use OwnerTrait;
     use SoftDeletes;
+    use UuidTrait;
 
     /**
      * Order status
@@ -110,6 +110,16 @@ class Order extends Model
     ];
 
     /**
+     * Get the numerator prefix for the model.
+     *
+     * @return string
+     */
+    protected function getNumeratorPrefix(): string
+    {
+        return 'OR';
+    }
+
+    /**
      * @var string[]
      */
     protected $fillable = [
@@ -120,7 +130,7 @@ class Order extends Model
         'user_id',
         'status',
         'payload',
-        'order_no',
+        'number',
         'amount_token',
         'amount_usd'
     ];
@@ -154,23 +164,6 @@ class Order extends Model
             'wallet_address' => 'required|string',
             'currency_id' => 'required|string',
         ];
-    }
-
-    protected static function boot()
-    {
-        parent::boot();
-
-        // generate the order numebr when creating a new order model
-        self::creating(function ($model) {
-            $order_no = $model->getRandomChar(12);
-
-            // generate new order number while the generated one exists
-            while (Order::where('order_no', $order_no)->get()->count() > 0) {
-                $order_no = $model->getRandomChar(12);
-            }
-
-            $model->order_no = $order_no;
-        });
     }
 
     /**

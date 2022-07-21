@@ -19,11 +19,11 @@ use Illuminate\Validation\Rule;
 class TransactionController extends Controller
 {
     /**
-     * Method for list of un-approved user's transaction.
+     * Method for list of user's transaction.
      *
      * @OA\Get(
      *     path="/admin/transactions",
-     *     description="Get list of un-approved user's transaction",
+     *     description="Get list of user's transaction",
      *     tags={"Admin | Transactions"},
      *
      *     security={{
@@ -65,13 +65,14 @@ class TransactionController extends Controller
      *         description="Data fetched",
      *         @OA\JsonContent(ref="#/components/schemas/OkResponse")
      *     ),
+     *     @OA\Response(
+     *         response="400",
+     *         description="Error",
+     *         @OA\JsonContent(ref="#/components/schemas/DangerResponse")
+     *     )
      * )
      *
-     * Method for list of un-approved  transaction of users.
-     *
      * @param Request $request
-     *
-     * @return
      *
      * @throws Exception
      */
@@ -86,7 +87,7 @@ class TransactionController extends Controller
                 ]
             ]);
 
-            $result = Transaction::query()
+            $result = Transaction::byOwner()
                 ->when($request->has('status'), function ($q) use ($request) {
                     $status = "STATUS_" . mb_strtoupper($request->get('status'));
 

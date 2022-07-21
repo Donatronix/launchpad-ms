@@ -20,10 +20,11 @@ use Illuminate\Validation\ValidationException;
 class DepositController extends Controller
 {
     /**
-     * Display list of all deposits
+     * Getting all data about deposits for all users
      *
      * @OA\Get(
      *     path="/admin/deposits",
+     *     summary="Getting all data about deposits for all users",
      *     description="Getting all data about deposits for all users",
      *     tags={"Admin | Deposits"},
      *
@@ -32,6 +33,14 @@ class DepositController extends Controller
      *         "apiKey": {}
      *     }},
      *
+     *     @OA\Parameter(
+     *         name="status",
+     *         in="query",
+     *         description="Deposits status (created, paid, failed, canceled)",
+     *         @OA\Schema(
+     *             type="string"
+     *         )
+     *     ),
      *     @OA\Parameter(
      *         name="limit",
      *         description="Count of deposits in response",
@@ -49,13 +58,13 @@ class DepositController extends Controller
      *         required=false,
      *         @OA\Schema(
      *             type="integer",
-     *             default=1,
+     *             default=1
      *         )
      *     ),
      *
      *     @OA\Response(
      *         response="200",
-     *         description="Data fetched",
+     *         description="Getting deposits list",
      *         @OA\JsonContent(ref="#/components/schemas/OkResponse")
      *     ),
      *     @OA\Response(
@@ -64,20 +73,31 @@ class DepositController extends Controller
      *         @OA\JsonContent(ref="#/components/schemas/DangerResponse")
      *     ),
      *     @OA\Response(
-     *         response="404",
-     *         description="Not Found",
-     *         @OA\JsonContent(ref="#/components/schemas/WarningResponse")
+     *         response="401",
+     *         description="Unauthorized"
      *     ),
      * )
      *
      * @param Request $request
-     *
-     * @return JsonResponse
      */
-    public function index(Request $request): JsonResponse
+    public function index(Request $request)
     {
         try {
-            $allDeposits = Deposit::with('order')
+            // Validate status if need
+            $this->validate($request, [
+                'status' => [
+                    'sometimes',
+                    Rule::in(['created', 'paid', 'failed', 'canceled']),
+                ]
+            ]);
+
+            $result = Deposit::query()
+                ->with('order')
+                ->when($request->has('status'), function ($q) use ($request) {
+                    $status = "STATUS_" . mb_strtoupper($request->get('status'));
+
+                    return $q->where('status', intval(constant("App\Models\Deposit::{$status}")));
+                })
                 ->orderBy('created_at', 'desc')
                 ->paginate($request->get('limit', config('settings.pagination_limit')));
 
@@ -85,18 +105,18 @@ class DepositController extends Controller
             return response()->jsonApi([
                 'title' => "List all deposits",
                 'message' => "List all deposits retrieved successfully.",
-                'data' => $allDeposits->toArray()
+                'data' => $result
             ]);
         } catch (Exception $e) {
             return response()->jsonApi([
                 'title' => 'List all deposits',
                 'message' => 'Error in getting list of all deposits: ' . $e->getMessage()
-            ], 400);
+            ], $e->getCode());
         }
     }
 
     /**
-     * Create new deposit
+     * Create a new investment deposit
      *
      * @OA\Post(
      *     path="/admin/deposits",
@@ -109,27 +129,8 @@ class DepositController extends Controller
      *     }},
      *
      *     @OA\RequestBody(
-     *         @OA\JsonContent(
-     *             type="object",
-     *             @OA\Property(
-     *                 property="amount",
-     *                 type="decimal",
-     *                 description="amount to deposit",
-     *                 example="1500.00"
-     *             ),
-     *             @OA\Property(
-     *                 property="currency_code",
-     *                 type="string",
-     *                 description="Deposit currency code",
-     *                 example="USD"
-     *             ),
-     *             @OA\Property(
-     *                 property="order_id",
-     *                 type="string",
-     *                 description="order id",
-     *                 example="5590000-9800000-38380000"
-     *             )
-     *         )
+     *         required=true,
+     *         @OA\JsonContent(ref="#/components/schemas/DepositAdminAccess")
      *     ),
      *
      *     @OA\Response(
@@ -141,6 +142,10 @@ class DepositController extends Controller
      *         response="400",
      *         description="Error",
      *         @OA\JsonContent(ref="#/components/schemas/DangerResponse")
+     *     ),
+     *     @OA\Response(
+     *         response="401",
+     *         description="Unauthorized"
      *     ),
      *     @OA\Response(
      *         response="422",
@@ -291,27 +296,8 @@ class DepositController extends Controller
      *     ),
      *
      *     @OA\RequestBody(
-     *         @OA\JsonContent(
-     *             type="object",
-     *             @OA\Property(
-     *                 property="currency_code",
-     *                 type="string",
-     *                 description="currency code",
-     *                 example="USD"
-     *             ),
-     *             @OA\Property(
-     *                 property="amount",
-     *                 type="decimal",
-     *                 description="amount to deposit",
-     *                 example="100.00"
-     *             ),
-     *             @OA\Property(
-     *                 property="order_id",
-     *                 type="string",
-     *                 description="order id",
-     *                 example="490000-9800000-38380000"
-     *             )
-     *         )
+     *         required=true,
+     *         @OA\JsonContent(ref="#/components/schemas/DepositAdminAccess")
      *     ),
      *
      *     @OA\Response(

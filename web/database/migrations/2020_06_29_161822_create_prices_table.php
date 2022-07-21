@@ -27,6 +27,7 @@ class CreatePricesTable extends Migration
                 ->onDelete('cascade');
 
             $table->boolean('status')->default(true);
+
             $table->timestamps();
         });
     }

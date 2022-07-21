@@ -61,16 +61,13 @@ use Sumra\SDK\Traits\UuidTrait;
  *     )
  * )
  *
- * 
- * Class PossibleLoanAmount
- *
  * @package App\Models
  */
 class Product extends Model
 {
     use HasFactory;
-    use UuidTrait;
     use SoftDeletes;
+    use UuidTrait;
 
     //s$SLAPA - Synthetic SLAPA Token
     //$SLAPA - SLAPA Token

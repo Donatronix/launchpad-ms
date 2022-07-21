@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\NumeratorTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -15,8 +16,15 @@ use Sumra\SDK\Traits\UuidTrait;
  * @package App\Models
  *
  * @OA\Schema(
- *     schema="Deposit",
+ *     schema="DepositUserAccess",
  *
+ *     @OA\Property(
+ *         property="amount",
+ *         type="integer",
+ *         format="int32",
+ *         description="Deposit amount",
+ *         example="10000"
+ *     ),
  *     @OA\Property(
  *         property="currency_id",
  *         type="string",
@@ -24,10 +32,51 @@ use Sumra\SDK\Traits\UuidTrait;
  *         example="967a6aac-b6dc-4aa7-a6cd-6a612e39d4ee"
  *     ),
  *     @OA\Property(
- *         property="deposit_amount",
- *         type="number",
- *         description="deposit amount",
- *         example="100000"
+ *         property="currency_code",
+ *         type="string",
+ *         description="Currency code",
+ *         example="USD"
+ *     ),
+ *     @OA\Property(
+ *         property="object_id",
+ *         type="string",
+ *         description="Based on object id",
+ *         example="967a6aac-aaaa-aaaa-0000-6a612e39d4ee"
+ *     )
+ * )
+ */
+/**
+ * Deposit Scheme
+ *
+ * @package App\Models
+ *
+ * @OA\Schema(
+ *     schema="DepositAdminAccess",
+ *
+ *     @OA\Property(
+ *         property="amount",
+ *         type="integer",
+ *         format="int32",
+ *         description="Deposit amount",
+ *         example="10000"
+ *     ),
+ *     @OA\Property(
+ *         property="currency_id",
+ *         type="string",
+ *         description="Currency Id",
+ *         example="967a6aac-b6dc-4aa7-a6cd-6a612e39d4ee"
+ *     ),
+ *     @OA\Property(
+ *         property="currency_code",
+ *         type="string",
+ *         description="Currency code",
+ *         example="USD"
+ *     ),
+ *     @OA\Property(
+ *         property="object_id",
+ *         type="string",
+ *         description="Based on object id",
+ *         example="967a6aac-aaaa-aaaa-0000-6a612e39d4ee"
  *     ),
  *     @OA\Property(
  *         property="user_id",
@@ -40,9 +89,10 @@ use Sumra\SDK\Traits\UuidTrait;
 class Deposit extends Model
 {
     use HasFactory;
-    use UuidTrait;
+    use NumeratorTrait;
     use OwnerTrait;
     use SoftDeletes;
+    use UuidTrait;
 
     /**
      * Deposit status
@@ -63,6 +113,16 @@ class Deposit extends Model
         self::STATUS_FAILED,
         self::STATUS_CANCELED
     ];
+
+    /**
+     * Get the numerator prefix for the model.
+     *
+     * @return string
+     */
+    protected function getNumeratorPrefix(): string
+    {
+        return 'DE';
+    }
 
     /**
      * @var string[]
@@ -95,7 +155,7 @@ class Deposit extends Model
     {
         return [
             'amount' => 'required|integer|min:250',
-            'currency_id' => 'required|string',
+            'currency' => 'required|string|min:3',
         ];
     }
 

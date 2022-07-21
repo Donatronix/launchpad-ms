@@ -2,11 +2,12 @@
 
 namespace App\Models;
 
+use App\Traits\NumeratorTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Sumra\SDK\Traits\UuidTrait;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Sumra\SDK\Traits\UuidTrait;
 
 /**
  * Purchase Scheme
@@ -47,14 +48,23 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  *         example="true"
  *     )
  * )
- * 
- * 
  */
 class Purchase extends Model
 {
     use HasFactory;
-    use UuidTrait;
+    use NumeratorTrait;
     use SoftDeletes;
+    use UuidTrait;
+
+    /**
+     * Get the numerator prefix for the model.
+     *
+     * @return string
+     */
+    protected function getNumeratorPrefix(): string
+    {
+        return 'PR';
+    }
 
     /**
      * @var string[]
@@ -79,11 +89,12 @@ class Purchase extends Model
         'deleted_at'
     ];
 
-    public static function validationRules(){
+    public static function validationRules()
+    {
         return [
             'amount_usd' => 'required',
             'token_amount' => 'required',
-            'product_id'=> 'required',
+            'product_id' => 'required',
             'payment_method' => 'required',
             'payment_status' => 'required',
         ];

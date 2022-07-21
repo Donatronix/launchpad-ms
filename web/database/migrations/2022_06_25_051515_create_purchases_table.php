@@ -16,6 +16,7 @@ class CreatePurchasesTable extends Migration
         Schema::create('purchases', function (Blueprint $table) {
             $table->uuid('id')->primary();
 
+            $table->string('number', 15);
             $table->decimal('amount_usd', 12, 2);
             $table->decimal('token_amount', 12, 5);
             $table->string('payment_method')->nullable();
