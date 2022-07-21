@@ -60,29 +60,29 @@ class OrderController extends Controller
         try {
             // Get order
             $order = Order::byOwner()
-            ->where('status', Order::STATUS_NEW)
-            ->with(['transaction' => function ($query) {
-                $query->select('id', 'order_id', 'wallet_address', 'card_number', 'payment_type_id');
-            }, 'transaction.payment_type'])
-            ->get();
+                ->where('status', Order::STATUS_NEW)
+                ->with(['transaction' => function ($query) {
+                    $query->select('id', 'order_id', 'wallet_address', 'card_number', 'payment_type_id');
+                }, 'transaction.payment_type'])
+                ->get();
 
-            if(!empty($order) && $order!=null){
+            if (!empty($order) && $order != null) {
                 return response()->jsonApi([
-                    'title' => 'Order details data',
-                    'message' => "Order detail data has been received",
+                    'title' => 'Orders details data',
+                    'message' => "Orders list has been received",
                     'data' => $order
                 ]);
             }
 
             return response()->jsonApi([
                 'title' => 'Order details data',
-                'message' => "Order detail data was NOT received"
-            ], 404);
+                'message' => "Orders is missing"
+            ]);
         } catch (Exception $e) {
             return response()->jsonApi([
                 'title' => 'Order details data',
                 'message' => "Unable to retrieve order details" . $e->getMessage()
-            ], 400);
+            ], $e->getCode());
         }
     }
 
@@ -230,24 +230,26 @@ class OrderController extends Controller
      */
     public function show($id)
     {
-        try{
-            // Get object
-            $order = $this->getObject($id);
-
-            if ($order instanceof JsonApiResponse) {
-                return $order;
-            }
+        try {
+            // Get order object
+            $order = $this->model::findOrFail($id);
 
             // Load linked relations data
             $order->load([
-                'product'
+                'product',
+                'deposits'
             ]);
 
             return response()->jsonApi([
                 'title' => 'Order details data',
                 'message' => "Order detail data has been received",
                 'data' => $order
-            ], 200);
+            ]);
+        } catch (ModelNotFoundException $e) {
+            return response()->jsonApi([
+                'title' => "Get order",
+                'message' => "Order with id #{$id} not found: {$e->getMessage()}"
+            ], 404);
         } catch (Exception $e) {
             return response()->jsonApi([
                 'title' => 'Order details data',

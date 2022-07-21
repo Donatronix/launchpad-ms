@@ -266,7 +266,6 @@ class DepositController extends Controller
             ], 400);
         } catch (ModelNotFoundException $ex) {
             return response()->jsonApi([
-                'type' => 'warning',
                 'title' => 'Single Admin Deposit',
                 'message' => 'Single admin deposit not found',
                 'data' => $ex->getMessage()

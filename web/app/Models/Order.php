@@ -6,6 +6,7 @@ use App\Traits\NumeratorTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Sumra\SDK\Traits\OwnerTrait;
 use Sumra\SDK\Traits\UuidTrait;
@@ -110,16 +111,6 @@ class Order extends Model
     ];
 
     /**
-     * Get the numerator prefix for the model.
-     *
-     * @return string
-     */
-    protected function getNumeratorPrefix(): string
-    {
-        return 'OR';
-    }
-
-    /**
      * @var string[]
      */
     protected $fillable = [
@@ -134,7 +125,6 @@ class Order extends Model
         'amount_token',
         'amount_usd'
     ];
-
     /**
      * The attributes excluded from the model's JSON form.
      *
@@ -145,8 +135,6 @@ class Order extends Model
         'updated_at',
         'deleted_at'
     ];
-
-    // run on model boot
 
     /**
      * Order create rules
@@ -166,6 +154,8 @@ class Order extends Model
         ];
     }
 
+    // run on model boot
+
     /**
      * One Order have One Product relation
      *
@@ -179,9 +169,9 @@ class Order extends Model
     /**
      * One Order have One Product relation
      *
-     * @return BelongsTo
+     * @return HasMany
      */
-    public function deposit()
+    public function deposit(): HasMany
     {
         return $this->hasMany(Deposit::class);
     }
@@ -191,9 +181,18 @@ class Order extends Model
      *
      * @return BelongsTo
      */
-    public function transaction()
+    public function transaction(): BelongsTo
     {
         return $this->belongsTo(Transaction::class, 'order_id', 'id');
     }
 
+    /**
+     * Get the numerator prefix for the model.
+     *
+     * @return string
+     */
+    protected function getNumeratorPrefix(): string
+    {
+        return 'OR';
+    }
 }
