@@ -16,11 +16,11 @@ class AdminController extends Controller
      * @OA\Get(
      *     path="/admin",
      *     description="Get list of Admin users",
-     *     tags={"Admin / Admins"},
+     *     tags={"Admin | Admins"},
      *
      *     security={{
-     *          "bearerAuth": {},
-     *          "apiKey": {}
+     *         "bearerAuth": {},
+     *         "apiKey": {}
      *     }},
      *
      *     @OA\Parameter(
@@ -43,7 +43,7 @@ class AdminController extends Controller
      *              default=1,
      *         )
      *     ),
-     *      @OA\Response(
+     *     @OA\Response(
      *         response="200",
      *         description="Data fetched",
      *         @OA\JsonContent(ref="#/components/schemas/OkResponse")
@@ -51,7 +51,7 @@ class AdminController extends Controller
      *     @OA\Response(
      *         response="400",
      *         description="Error",
-     *         @OA\JsonContent(ref="#/components/schemas/WarningResponse")
+     *         @OA\JsonContent(ref="#/components/schemas/DangerResponse")
      *     ),
      *     @OA\Response(
      *         response="500",
@@ -67,7 +67,6 @@ class AdminController extends Controller
     public function index(Request $request)
     {
         try {
-
             /**
              * Prep IDS endpoint
              *
@@ -122,18 +121,14 @@ class AdminController extends Controller
             }
 
             return response()->jsonApi([
-                'type' => 'success',
                 'title' => 'Get Admins',
                 'message' => 'Avaialable Admins',
                 'data' => $data
-            ], 200);
-        }
-        catch (\Exception $e) {
+            ]);
+        } catch (Exception $e) {
             return response()->jsonApi([
-                'type' => 'danger',
                 'title' => 'Get Admin',
-                'message' => $e->getMessage(),
-                'data' => null
+                'message' => $e->getMessage()
             ], 400);
         }
     }

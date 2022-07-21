@@ -26,17 +26,14 @@ class DashboardController extends Controller
      * Token Sales Progress
      *
      * @OA\Get(
-     *     path="/token-sales-progress",
+     *     path="/app/token-sales-progress",
      *     summary="Token Sales Progress",
      *     description="Get the progress for the sales of tokens",
-     *     tags={"Token"},
+     *     tags={"Application | Dashboard"},
      *
      *     security={{
-     *         "default": {
-     *             "ManagerRead",
-     *             "User",
-     *             "ManagerWrite"
-     *         }
+     *         "bearerAuth": {},
+     *         "apiKey": {}
      *     }},
      *
      *     @OA\Parameter(
@@ -55,11 +52,13 @@ class DashboardController extends Controller
      *     ),
      *     @OA\Response(
      *         response="201",
-     *         description="Purchase created"
+     *         description="New record addedd successfully",
+     *         @OA\JsonContent(ref="#/components/schemas/OkResponse")
      *     ),
      *     @OA\Response(
      *         response="400",
-     *         description="Invalid request"
+     *         description="Error",
+     *         @OA\JsonContent(ref="#/components/schemas/DangerResponse")
      *     ),
      *     @OA\Response(
      *         response="401",
@@ -78,7 +77,7 @@ class DashboardController extends Controller
      *         description="Unknown error"
      *     )
      * )
-     * 
+     *
      * @param Request $request
      * @return mixed
      */

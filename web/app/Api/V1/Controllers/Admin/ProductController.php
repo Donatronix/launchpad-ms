@@ -35,11 +35,8 @@ class ProductController extends Controller
      *     tags={"Admin / Products"},
      *
      *     security={{
-     *         "default": {
-     *             "ManagerRead",
-     *             "User",
-     *             "ManagerWrite"
-     *         }
+     *         "bearerAuth": {},
+     *         "apiKey": {}
      *     }},
      *
      *     @OA\Parameter(
@@ -110,7 +107,7 @@ class ProductController extends Controller
      * )
      *
      * @param Request $request
-     * 
+     *
      * @return mixed
      */
     public function index(Request $request)
@@ -148,12 +145,10 @@ class ProductController extends Controller
      *     tags={"Admin / Products"},
      *
      *     security={{
-     *         "default": {
-     *             "ManagerRead",
-     *             "User",
-     *             "ManagerWrite"
-     *         }
+     *         "bearerAuth": {},
+     *         "apiKey": {}
      *     }},
+     *
      *     @OA\RequestBody(
      *         required=true,
      *         @OA\JsonContent(ref="#/components/schemas/Product")
@@ -247,11 +242,8 @@ class ProductController extends Controller
      *     tags={"Admin / Products"},
      *
      *     security={{
-     *         "default": {
-     *             "ManagerRead",
-     *             "User",
-     *             "ManagerWrite"
-     *         }
+     *         "bearerAuth": {},
+     *         "apiKey": {}
      *     }},
      *
      *     @OA\Parameter(
@@ -269,7 +261,7 @@ class ProductController extends Controller
      *          description="Getting product detail by platform"
      *     )
      * )
-     * 
+     *
      * @param $id
      */
     public function show($id)
@@ -482,8 +474,8 @@ class ProductController extends Controller
      *         description="Internal server error"
      *     )
      * )
-     * 
-     * 
+     *
+     *
      * @return mixed
      */
     public function destroy($id)

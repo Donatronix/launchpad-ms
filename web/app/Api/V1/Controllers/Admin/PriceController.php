@@ -19,11 +19,8 @@ class PriceController extends Controller
      *     tags={"Admin / Prices"},
      *
      *     security={{
-     *         "default": {
-     *             "ManagerRead",
-     *             "User",
-     *             "ManagerWrite"
-     *         }
+     *         "bearerAuth": {},
+     *         "apiKey": {}
      *     }},
      *
      *      @OA\Response(
@@ -85,11 +82,8 @@ class PriceController extends Controller
      *     tags={"Admin / Prices"},
      *
      *     security={{
-     *         "default": {
-     *             "ManagerRead",
-     *             "User",
-     *             "ManagerWrite"
-     *         }
+     *         "bearerAuth": {},
+     *         "apiKey": {}
      *     }},
      *
      *     @OA\RequestBody(
@@ -162,11 +156,8 @@ class PriceController extends Controller
      *     tags={"Admin / Prices"},
      *
      *     security={{
-     *         "default": {
-     *             "ManagerRead",
-     *             "User",
-     *             "ManagerWrite"
-     *         }
+     *         "bearerAuth": {},
+     *         "apiKey": {}
      *     }},
      *
      *     @OA\Parameter(
@@ -208,7 +199,7 @@ class PriceController extends Controller
      *
      * @param Request $request
      * @return mixed
-     * 
+     *
      */
     public function show($id)
     {
@@ -239,11 +230,8 @@ class PriceController extends Controller
      *     tags={"Admin / Prices"},
      *
      *     security={{
-     *         "default": {
-     *             "ManagerRead",
-     *             "User",
-     *             "ManagerWrite"
-     *         }
+     *         "bearerAuth": {},
+     *         "apiKey": {}
      *     }},
      *
      *     @OA\Parameter(
@@ -290,7 +278,7 @@ class PriceController extends Controller
      *
      * @param Request $request
      * @param $id
-     * 
+     *
      * @return mixed
      */
     public function update(Request $request, $id)
@@ -325,11 +313,8 @@ class PriceController extends Controller
      *     tags={"Admin / Prices"},
      *
      *     security={{
-     *         "default": {
-     *             "ManagerRead",
-     *             "User",
-     *             "ManagerWrite"
-     *         }
+     *         "bearerAuth": {},
+     *         "apiKey": {}
      *     }},
      *
      *     @OA\Parameter(
