@@ -160,7 +160,7 @@ class PurchaseController extends Controller
                     'type' => 'warning',
                     'title' => 'Creating new token purchase order',
                     'message' => "Validation error occured!",
-                    'data' => null
+                    'data' => $validator->errors()
                 ], 400);
             }
 

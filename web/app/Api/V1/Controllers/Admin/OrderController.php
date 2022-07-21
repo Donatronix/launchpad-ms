@@ -338,7 +338,7 @@ class OrderController extends Controller
     public function show($id):JsonResponse
     {
         try {
-            $order = Order::findOrFail($id);
+            $order = Order::with(['product', 'transaction'])->findOrFail($id);
 
             // Return response
             return response()->json([
@@ -347,14 +347,7 @@ class OrderController extends Controller
                 'message' => "Get order",
                 'data' => $order
             ], 200);
-        } catch (\Exception $e) {
-            return response()->jsonApi([
-                'type' => 'danger',
-                'title' => 'Get order',
-                'message' => 'Error in getting order: '.$e->getMessage(),
-                'data' => null
-            ], 400);
-        }catch (\Exception $e) {
+        }catch (Exception $e) {
             return response()->jsonApi([
                 'type' => 'danger',
                 'title' => 'Get order',
@@ -367,7 +360,7 @@ class OrderController extends Controller
                 'title' => 'Get order',
                 'message' => 'Error in getting order: '.$e->getMessage(),
                 'data' => null
-            ], 400);
+            ], 404);
         }
     }
 

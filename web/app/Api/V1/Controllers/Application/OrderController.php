@@ -45,11 +45,8 @@ class OrderController extends Controller
      *     tags={"Orders"},
      *
      *     security={{
-     *         "default": {
-     *             "ManagerRead",
-     *             "User",
-     *             "ManagerWrite"
-     *         }
+     *         "bearerAuth": {},
+     *         "apiKey": {}
      *     }},
      *
      *     @OA\Response(
@@ -62,15 +59,15 @@ class OrderController extends Controller
     {
         try {
             // Get order
-            $order = Order::where('status', Order::STATUS_NEW)
-                ->with(['transaction' => function ($query) {
-                    $query->select('id', 'order_id', 'wallet_address', 'payment_type_id');
-                }, 'transaction.payment_type'])
-                ->get();
+            $order = Order::byOwner()
+            ->where('status', Order::STATUS_NEW)
+            ->with(['transaction' => function ($query) {
+                $query->select('id', 'order_id', 'wallet_address', 'card_number', 'payment_type_id');
+            }, 'transaction.payment_type'])
+            ->get();
 
             if(!empty($order) && $order!=null){
                 return response()->jsonApi([
-                    'type' => 'success',
                     'title' => 'Order details data',
                     'message' => "Order detail data has been received",
                     'data' => $order
@@ -78,7 +75,6 @@ class OrderController extends Controller
             }
 
             return response()->jsonApi([
-                'type' => 'success',
                 'title' => 'Order details data',
                 'message' => "Order detail data was NOT received",
                 'data' => null
@@ -87,7 +83,6 @@ class OrderController extends Controller
         } catch (Exception $e) {
             //throw $th;
             return response()->jsonApi([
-                'type' => 'success',
                 'title' => 'Order details data',
                 'message' => "Unable to retrieve order details",
                 'data' => $e->getMessage()
@@ -105,11 +100,8 @@ class OrderController extends Controller
      *     tags={"Orders"},
      *
      *     security={{
-     *         "default": {
-     *             "ManagerRead",
-     *             "User",
-     *             "ManagerWrite"
-     *         }
+     *         "bearerAuth": {},
+     *         "apiKey": {}
      *     }},
      *
      *     @OA\RequestBody(
@@ -219,11 +211,8 @@ class OrderController extends Controller
      *     tags={"Orders"},
      *
      *     security={{
-     *         "default": {
-     *             "ManagerRead",
-     *             "User",
-     *             "ManagerWrite"
-     *         }
+     *         "bearerAuth": {},
+     *         "apiKey": {}
      *     }},
      *
      *     @OA\Parameter(
@@ -247,24 +236,34 @@ class OrderController extends Controller
      */
     public function show($id)
     {
-        // Get object
-        $order = $this->getObject($id);
+        try{
+            // Get object
+            $order = $this->getObject($id);
 
-        if ($order instanceof JsonApiResponse) {
-            return $order;
+            if ($order instanceof JsonApiResponse) {
+                return $order;
+            }
+
+            // Load linked relations data
+            $order->load([
+                'product'
+            ]);
+
+            return response()->jsonApi([
+                'type' => 'success',
+                'title' => 'Order details data',
+                'message' => "Order detail data has been received",
+                'data' => $order->toArray()
+            ], 200);
+
+        } catch (Exception $e) {
+            //throw $th;
+            return response()->jsonApi([
+                'title' => 'Order details data',
+                'message' => "Unable to retrieve order details",
+                'data' => $e->getMessage()
+            ], 400);
         }
-
-        // Load linked relations data
-        $order->load([
-            'product'
-        ]);
-
-        return response()->jsonApi([
-            'type' => 'success',
-            'title' => 'Order details data',
-            'message' => "Order detail data has been received",
-            'data' => $order->toArray()
-        ], 200);
     }
 
     /**
