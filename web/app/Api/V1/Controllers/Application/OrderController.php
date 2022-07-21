@@ -57,19 +57,33 @@ class OrderController extends Controller
      */
     public function index()
     {
-        // Get order
-        $order = Order::byOwner()
+        try {
+            // Get order
+            $order = Order::byOwner()
             ->where('status', Order::STATUS_NEW)
             ->with(['transaction' => function ($query) {
-                $query->select('id', 'order_id', 'wallet_address', 'payment_type_id');
+                $query->select('id', 'order_id', 'wallet_address', 'card_number', 'payment_type_id');
             }, 'transaction.payment_type'])
             ->get();
 
-        return response()->jsonApi([
-            'title' => 'Order details data',
-            'message' => "Order detail data has been received",
-            'data' => $order->toArray()
-        ]);
+            if(!empty($order) && $order!=null){
+                return response()->jsonApi([
+                    'title' => 'Order details data',
+                    'message' => "Order detail data has been received",
+                    'data' => $order
+                ]);
+            }
+
+            return response()->jsonApi([
+                'title' => 'Order details data',
+                'message' => "Order detail data was NOT received"
+            ], 404);
+        } catch (Exception $e) {
+            return response()->jsonApi([
+                'title' => 'Order details data',
+                'message' => "Unable to retrieve order details" . $e->getMessage()
+            ], 400);
+        }
     }
 
     /**
@@ -216,23 +230,30 @@ class OrderController extends Controller
      */
     public function show($id)
     {
-        // Get object
-        $order = $this->getObject($id);
+        try{
+            // Get object
+            $order = $this->getObject($id);
 
-        if ($order instanceof JsonApiResponse) {
-            return $order;
+            if ($order instanceof JsonApiResponse) {
+                return $order;
+            }
+
+            // Load linked relations data
+            $order->load([
+                'product'
+            ]);
+
+            return response()->jsonApi([
+                'title' => 'Order details data',
+                'message' => "Order detail data has been received",
+                'data' => $order
+            ], 200);
+        } catch (Exception $e) {
+            return response()->jsonApi([
+                'title' => 'Order details data',
+                'message' => "Unable to retrieve order details" . $e->getMessage()
+            ], $e->getCode());
         }
-
-        // Load linked relations data
-        $order->load([
-            'product'
-        ]);
-
-        return response()->jsonApi([
-            'title' => 'Order details data',
-            'message' => "Order detail data has been received",
-            'data' => $order->toArray()
-        ]);
     }
 
     /**

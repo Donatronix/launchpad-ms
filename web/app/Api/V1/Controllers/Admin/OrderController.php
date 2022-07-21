@@ -152,6 +152,11 @@ class OrderController extends Controller
      *     description="Adding new orders",
      *     tags={"Admin | Orders"},
      *
+     *     security={{
+     *         "bearerAuth": {},
+     *         "apiKey": {}
+     *     }},
+     *
      *     @OA\RequestBody(
      *         @OA\JsonContent(
      *             type="object",
@@ -271,6 +276,11 @@ class OrderController extends Controller
      *     description="Get a single order",
      *     tags={"Admin | Orders"},
      *
+     *     security={{
+     *         "bearerAuth": {},
+     *         "apiKey": {}
+     *     }},
+     *
      *     @OA\Parameter(
      *         name="id",
      *         in="path",
@@ -321,6 +331,11 @@ class OrderController extends Controller
                 'title' => 'Get order',
                 'message' => 'Error in getting order: ' . $e->getMessage()
             ], 400);
+        } catch (ModelNotFoundException $e) {
+            return response()->jsonApi([
+                'title' => 'Get order',
+                'message' => 'Error in getting order: ' . $e->getMessage(),
+            ], 404);
         }
     }
 

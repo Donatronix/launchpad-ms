@@ -193,7 +193,7 @@ class Order extends Model
      */
     public function transaction()
     {
-        return $this->belongsTo(Transaction::class, 'id', 'order_id');
+        return $this->belongsTo(Transaction::class, 'order_id', 'id');
     }
 
 }
