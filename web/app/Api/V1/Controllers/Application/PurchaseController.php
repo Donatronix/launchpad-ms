@@ -8,10 +8,8 @@ use App\Models\Purchase;
 use Auth;
 use Exception;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Validator;
 use PubSub;
-use Sumra\SDK\Services\JsonApiResponse;
 
 class PurchaseController extends Controller
 {
@@ -92,9 +90,8 @@ class PurchaseController extends Controller
         } catch (Exception $e) {
             return response()->jsonApi([
                 'title' => 'List all purchase',
-                'message' => 'Error in getting list of all purchase',
-                'data' => $e->getMessage()
-            ], 400);
+                'message' => 'Error in getting list of all purchase: ' . $e->getMessage(),
+            ], $e->getCode());
         }
     }
 
@@ -155,8 +152,13 @@ class PurchaseController extends Controller
         try {
             // Validate input
             $validator = Validator::make($request->all(), $this->purchase::validationRules());
+
             if ($validator->fails()) {
-                throw new Exception($validator->errors()->first());
+                return response()->jsonApi([
+                    'title' => 'Creating new token purchase order',
+                    'message' => "Validation error occurred!",
+                    'data' => $validator->errors()
+                ], 422);
             }
 
             // Create new token purchase order
@@ -173,8 +175,7 @@ class PurchaseController extends Controller
             $product = $this->product::find($request->get('product_id'));
 
             // send token purchased to wallet
-            PubSub::transaction(function () {
-            })->publish(self::RECEIVER_LISTENER, [
+            PubSub::publish(self::RECEIVER_LISTENER, [
                 'amount' => $purchase->token_amount,
                 'token' => $product->ticker,
                 'user_id' => $this->user_id,
@@ -184,7 +185,7 @@ class PurchaseController extends Controller
             return response()->jsonApi([
                 'title' => 'Creating new token purchase order',
                 'message' => "New token purchase order has been created successfully",
-                'data' => $purchase->toArray()
+                'data' => $purchase
             ]);
         } catch (Exception $e) {
             return response()->jsonApi([
