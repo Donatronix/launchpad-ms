@@ -29,6 +29,16 @@ class ProductController extends Controller
      *         )
      *     ),
      *
+     *     @OA\Parameter(
+     *         name="stage",
+     *         in="query",
+     *         required=false,
+     *         description="Stage for which to deduct the price of the product",
+     *         @OA\Schema(
+     *             type="integer"
+     *         )
+     *     ),
+     *
      *     @OA\Response(
      *         response="200",
      *         description="Getting product list for start presale",
@@ -38,18 +48,16 @@ class ProductController extends Controller
      * @param Request $request
      * @return mixed
      */
-    public function index(Request $request)
+    public function index(Request $request): mixed
     {
         try {
             // Get products
-            $query = Product::select(['id', 'title', 'ticker', 'start_date', 'end_date', 'icon'])
-                ->with('price');
-
-            if ($request->has('status')) {
-                $query = $query->where('status', $request->get('status'));
-            }
-
-            $products = $query->get();
+            $products = Product::query()
+                ->select(['id', 'title', 'ticker', 'start_date', 'end_date', 'icon'])
+                ->byStage($request->get('stage', 1))
+                ->when($request->has('status'), function ($q) use ($request) {
+                    return $q->where('status', $request->get('status', true));
+                })->get();
 
             // Transform collection objects
             $products->map(function ($object) {
@@ -65,8 +73,8 @@ class ProductController extends Controller
             // Return response
             return response()->jsonApi([
                 'title' => 'Products list',
-                'message' => "Products list been received",
-                'data' => $products->toArray(),
+                'message' => 'Products list been received',
+                'data' => $products,
             ]);
         } catch (Exception $e) {
             return response()->jsonApi([
@@ -113,12 +121,12 @@ class ProductController extends Controller
                 ->where('ticker', $id)
                 ->orWhere('id', $id)
                 ->where('status', true)
-                ->get();
+                ->first();
 
             return response()->jsonApi([
                 'title' => 'Product detail',
-                'message' => "Product detail been received",
-                'data' => $product,
+                'message' => 'Product detail been received',
+                'data' => $product->toArray(),
             ]);
         } catch (Exception $e) {
             return response()->jsonApi([

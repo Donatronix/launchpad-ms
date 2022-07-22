@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Auth;
 use Sumra\SDK\Traits\UuidTrait;
 
 /**
@@ -129,9 +130,9 @@ class Product extends Model
      * @param int $stage
      * @return HasOne
      */
-    public function price(int $stage = 1): HasOne
+    public function price(): HasOne
     {
-        return $this->hasOne(Price::class)->where('stage', $stage);
+        return $this->hasOne(Price::class);
     }
 
     /**
@@ -140,5 +141,17 @@ class Product extends Model
     public function orders(): HasMany
     {
         return $this->hasMany(Order::class);
+    }
+
+    /**
+     * @param $query
+     * @param int $stage
+     * @return mixed
+     */
+    public function scopeByStage($query, int $stage = 1): mixed
+    {
+        return $query->with('price', function ($q) use ($stage){
+             return $q->where('stage', $stage);
+        });
     }
 }
