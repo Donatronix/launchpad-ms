@@ -5,6 +5,7 @@ namespace App\Api\V1\Controllers\Application;
 use App\Api\V1\Controllers\Controller;
 use App\Models\Product;
 use App\Models\Purchase;
+use App\Traits\CryptoConversionTrait;
 use Auth;
 use Exception;
 use Illuminate\Http\Request;
@@ -13,6 +14,8 @@ use PubSub;
 
 class PurchaseController extends Controller
 {
+    use CryptoConversionTrait;
+
     private const RECEIVER_LISTENER = 'PurchaseToken';
 
     /**
@@ -160,6 +163,8 @@ class PurchaseController extends Controller
                     'data' => $validator->errors()
                 ], 422);
             }
+
+           return $this->getTokenWorth("btc", 5, "utta");
 
             // Create new token purchase order
             $purchase = $this->purchase::create([
