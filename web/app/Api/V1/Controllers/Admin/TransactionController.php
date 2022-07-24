@@ -87,7 +87,7 @@ class TransactionController extends Controller
                 ]
             ]);
 
-            $result = Transaction::byOwner()
+            $result = Transaction::query()
                 ->when($request->has('status'), function ($q) use ($request) {
                     $status = "STATUS_" . mb_strtoupper($request->get('status'));
 
@@ -106,125 +106,6 @@ class TransactionController extends Controller
                 'title' => 'Transactions list',
                 'message' => $e->getMessage()
             ], $e->getCode());
-        }
-    }
-
-    /**
-     * Method for show user's transaction
-     *
-     * @OA\Get(
-     *     path="/admin/transactions/{transaction_id}",
-     *     description="Get transaction of user by transaction_id",
-     *     tags={"Admin | Transactions"},
-     *
-     *     security={{
-     *         "bearerAuth": {},
-     *         "apiKey": {}
-     *     }},
-     *
-     *     @OA\Parameter(
-     *         name="transaction_id",
-     *         description="Transaction ID",
-     *         in="path",
-     *         required=true,
-     *         @OA\Schema(
-     *             type="integer"
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response="200",
-     *         description="Data fetched",
-     *         @OA\JsonContent(ref="#/components/schemas/OkResponse")
-     *     ),
-     * )
-     *
-     * @param $transaction_id
-     *
-     */
-    public function show($transaction_id)
-    {
-        try {
-            $transaction = Transaction::find($transaction_id);
-
-            if (!$transaction) {
-                return response()->jsonApi([
-                    'title' => 'Transaction data',
-                    'message' => 'No transaction data with id ' . $transaction_id,
-                ], 400);
-            }
-
-            return response()->jsonApi([
-                'title' => 'Transaction data',
-                'message' => 'Transaction data received',
-                'data' => $transaction
-            ]);
-        } catch (Exception $e) {
-            return response()->jsonApi([
-                'title' => 'Transaction data',
-                'message' => 'Get transaction data error: ' . $e->getMessage(),
-            ], 400);
-        }
-    }
-
-    /**
-     * Method for approve user's transaction
-     *
-     * @OA\Patch(
-     *     path="/admin/transactions/{transaction_id}",
-     *     description="Approve user's transaction",
-     *     tags={"Admin | Transactions"},
-     *
-     *     security={{
-     *         "bearerAuth": {},
-     *         "apiKey": {}
-     *     }},
-     *
-     *     @OA\Parameter(
-     *         name="transaction_id",
-     *         description="Transaction ID",
-     *         in="path",
-     *         required=true,
-     *         @OA\Schema(
-     *             type="string"
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response="200",
-     *         description="Data fetched",
-     *         @OA\JsonContent(ref="#/components/schemas/OkResponse")
-     *     ),
-     * )
-     *
-     * @param $transaction_id
-     *
-     * @return JsonResponse
-     */
-    public function update($transaction_id)
-    {
-        try {
-            $transaction = Transaction::find($transaction_id);
-
-            if (!$transaction)
-                return response()->jsonApi([
-                    'title' => 'Transaction data',
-                    'message' => 'No transaction data with id ' . $transaction_id,
-                ], 400);
-
-            $transaction->status = Transaction::STATUS_APPROVED;
-            $transaction->save();
-
-            return response()->jsonApi([
-                'title' => 'Transaction approved',
-                'message' => "Transaction updated successfully",
-                'data' => $transaction
-            ]);
-        } catch (Exception $e) {
-            return response()->jsonApi([
-                'title' => 'Transaction data',
-                'message' => 'Update transaction data error: ' . $e->getMessage(),
-            ], 400);
         }
     }
 
@@ -382,6 +263,7 @@ class TransactionController extends Controller
                 'message' => 'Validation error: ' . $validator->errors()->toArray(),
             ], 400);
         }
+
         // create new transaction
         try {
             $paramsTransactions = $request->all();
@@ -397,6 +279,125 @@ class TransactionController extends Controller
             return response()->jsonApi([
                 'title' => 'Transaction data',
                 'message' => 'Create new transaction data error: ' . $e->getMessage(),
+            ], 400);
+        }
+    }
+
+    /**
+     * Method for show user's transaction
+     *
+     * @OA\Get(
+     *     path="/admin/transactions/{transaction_id}",
+     *     description="Get transaction of user by transaction_id",
+     *     tags={"Admin | Transactions"},
+     *
+     *     security={{
+     *         "bearerAuth": {},
+     *         "apiKey": {}
+     *     }},
+     *
+     *     @OA\Parameter(
+     *         name="transaction_id",
+     *         description="Transaction ID",
+     *         in="path",
+     *         required=true,
+     *         @OA\Schema(
+     *             type="integer"
+     *         )
+     *     ),
+     *
+     *     @OA\Response(
+     *         response="200",
+     *         description="Data fetched",
+     *         @OA\JsonContent(ref="#/components/schemas/OkResponse")
+     *     ),
+     * )
+     *
+     * @param $transaction_id
+     *
+     */
+    public function show($transaction_id)
+    {
+        try {
+            $transaction = Transaction::find($transaction_id);
+
+            if (!$transaction) {
+                return response()->jsonApi([
+                    'title' => 'Transaction data',
+                    'message' => 'No transaction data with id ' . $transaction_id,
+                ], 400);
+            }
+
+            return response()->jsonApi([
+                'title' => 'Transaction data',
+                'message' => 'Transaction data received',
+                'data' => $transaction
+            ]);
+        } catch (Exception $e) {
+            return response()->jsonApi([
+                'title' => 'Transaction data',
+                'message' => 'Get transaction data error: ' . $e->getMessage(),
+            ], 400);
+        }
+    }
+
+    /**
+     * Method for approve user's transaction
+     *
+     * @OA\Patch(
+     *     path="/admin/transactions/{transaction_id}",
+     *     description="Approve user's transaction",
+     *     tags={"Admin | Transactions"},
+     *
+     *     security={{
+     *         "bearerAuth": {},
+     *         "apiKey": {}
+     *     }},
+     *
+     *     @OA\Parameter(
+     *         name="transaction_id",
+     *         description="Transaction ID",
+     *         in="path",
+     *         required=true,
+     *         @OA\Schema(
+     *             type="string"
+     *         )
+     *     ),
+     *
+     *     @OA\Response(
+     *         response="200",
+     *         description="Data fetched",
+     *         @OA\JsonContent(ref="#/components/schemas/OkResponse")
+     *     ),
+     * )
+     *
+     * @param $transaction_id
+     *
+     * @return JsonResponse
+     */
+    public function update($transaction_id)
+    {
+        try {
+            $transaction = Transaction::find($transaction_id);
+
+            if (!$transaction)
+                return response()->jsonApi([
+                    'title' => 'Transaction data',
+                    'message' => 'No transaction data with id ' . $transaction_id,
+                ], 400);
+
+            $transaction->status = Transaction::STATUS_APPROVED;
+            $transaction->save();
+
+            return response()->jsonApi([
+                'title' => 'Transaction approved',
+                'message' => "Transaction updated successfully",
+                'data' => $transaction
+            ]);
+        } catch (Exception $e) {
+            return response()->jsonApi([
+                'title' => 'Transaction data',
+                'message' => 'Update transaction data error: ' . $e->getMessage(),
             ], 400);
         }
     }
