@@ -97,7 +97,7 @@ class TransactionController extends Controller
 
             // Return response
             return response()->jsonApi([
-                'title' => "Transactions list",
+                'title' => 'Transactions list',
                 'message' => 'Transaction list received',
                 'data' => $result
             ]);

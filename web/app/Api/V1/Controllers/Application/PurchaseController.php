@@ -179,7 +179,7 @@ class PurchaseController extends Controller
                 'amount' => $purchase->token_amount,
                 'token' => $product->ticker,
                 'user_id' => $this->user_id,
-            ], "UltainfinityWalletsMS");
+            ], config('pubsub.queue.crypto_wallets'));
 
             // Return response to client
             return response()->jsonApi([

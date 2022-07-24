@@ -214,11 +214,10 @@ class ProductController extends Controller
             $product = $this->model->create($request->all());
 
             // send product to the reference-books-ms
-            PubSub::transaction(function () {
-            })->publish(self::RECEIVER_LISTENER, [
+            PubSub::publish(self::RECEIVER_LISTENER, [
                 'currency_code' => $product->ticker,
                 'title' => $product->title,
-            ], "ReferenceBooksMS");
+            ], config('pubsub.queue.reference_books'));
 
             // Return response to client
             return response()->jsonApi([

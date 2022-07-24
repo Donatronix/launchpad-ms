@@ -6,6 +6,7 @@ use App\Traits\NumeratorTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Sumra\SDK\Traits\OwnerTrait;
 use Sumra\SDK\Traits\UuidTrait;
 
 class Transaction extends Model
@@ -13,6 +14,7 @@ class Transaction extends Model
     use HasFactory;
     use NumeratorTrait;
     use UuidTrait;
+    use OwnerTrait;
 
     /**
      * Transaction type

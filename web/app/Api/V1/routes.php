@@ -52,18 +52,6 @@ $router->group([
         'middleware' => 'checkUser',
     ], function ($router) {
         /**
-         * Token Rewards
-         */
-        // $router->group([
-        //     'prefix' => 'token-rewards',
-        // ], function ($router) {
-        //     $router->get('/', 'TokenRewardController@index');
-        //     $router->post('/', 'TokenRewardController@store');
-        //     $router->put('/', 'TokenRewardController@update');
-        //     $router->delete('/', 'TokenRewardController@destroy');
-        // });
-
-        /**
          * Init first Investment (registration)
          */
         $router->group([
@@ -108,7 +96,7 @@ $router->group([
         /**
          * Token Investors
          */
-        $router->get('/token-investors', 'PurchaseController@tokenInvestors');
+        $router->get('/token-investors', 'DashboardController@tokenInvestors');
 
         /**
          * Token Sales Progress
