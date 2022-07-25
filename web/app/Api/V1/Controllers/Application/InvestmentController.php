@@ -142,7 +142,7 @@ class InvestmentController extends Controller
                     'document' => [
                         'id' => $deposit->id,
                         'object' => 'Deposit',
-                        'service' => 'CryptoLaunchpadMS',
+                        'service' => env('RABBITMQ_EXCHANGE_NAME'),
                     ]
                 ]
             ], 201);
