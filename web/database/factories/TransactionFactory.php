@@ -33,8 +33,8 @@ class TransactionFactory extends Factory
             'bonus' => $this->faker->numberBetween(5, 1000001),
             'sol_received' => $this->faker->numberBetween(5, 1000001),
             'status' => 1,
-            'admin_id' => $this->faker->uuid,
-            'user_id' => $this->faker->uuid,
+            'admin_id' => $this->faker->randomElement(config('settings.default_users_ids')),
+            'user_id' => $this->faker->randomElement(config('settings.default_users_ids')),
         ];
     }
 }
