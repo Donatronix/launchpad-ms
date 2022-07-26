@@ -202,14 +202,10 @@ class DashboardController extends Controller
                 ->select("user_id")->distinct()->latest()->paginate(20);
 
             if ($paginator->items()) {
-
                 /**
                  * Prep IDS endpoint
-                 *
                  */
-                $endpoint = '/user-profile/details';
-                $IDS = config('settings.api.identity');
-                $url = $IDS['host'] . '/' . $IDS['version'] . $endpoint;
+                $url = config('settings.api.identity') . '/user-profile/details';
 
                 /**
                  * Get Details from IDS

@@ -90,8 +90,7 @@ class InvestorController extends Controller
             if ($params) {
                 $endpoint = $endpoint . '&' . $params;
             }
-            $IDS = config('settings.api.identity');
-            $url = $IDS['host'] . '/' . $IDS['version'] . $endpoint;
+            $url = config('settings.api.identity') . '/' . $endpoint;
 
             /**
              * Get Details from IDS
