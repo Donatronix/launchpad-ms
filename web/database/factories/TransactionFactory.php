@@ -20,13 +20,13 @@ class TransactionFactory extends Factory
         return [
             'id' => $this->faker->uuid,
             'number' => $this->faker->randomNumber(),
-            'payment_type_id' => $this->faker->numberBetween(5, 1000001),
+            'payment_type_id' => $this->faker->numberBetween(1, 3),
             'wallet_address' => uniqid('WKSHA273FSHS'),
             'card_number' => $this->faker->creditCardNumber(),
             'payment_gateway' => $this->faker->creditCardNumber(),
             'currency_code' => $this->faker->creditCardNumber(),
             'payment_token' => $this->faker->creditCardNumber(),
-            'token_stage' => $this->faker->creditCardNumber(),
+            'token_stage' => $this->faker->numberBetween(4, 5),
             'payment_date' => Carbon::now(),
             'amount_received' => $this->faker->numberBetween(5, 1000001),
             'total_amount' => $this->faker->numberBetween(5, 1000001),
@@ -35,7 +35,6 @@ class TransactionFactory extends Factory
             'status' => 1,
             'admin_id' => $this->faker->uuid,
             'user_id' => $this->faker->uuid,
-
         ];
     }
 }

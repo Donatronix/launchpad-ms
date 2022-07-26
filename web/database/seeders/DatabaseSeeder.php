@@ -22,8 +22,8 @@ class DatabaseSeeder extends Seeder
             TokenRewardsTableSeeder::class,
             PaymentTypesTableSeeder::class,
             CreditCardTypeSeeder::class,
-            PurchaseSeeder::class,
-            TransactionTableSeeder::class
+            PurchasesTableSeeder::class,
+            TransactionsTableSeeder::class
         ]);
 
         // Seeds for local and staging
