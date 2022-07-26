@@ -15,7 +15,6 @@ class CreateTransactionsTable extends Migration
     {
         Schema::create('transactions', function (Blueprint $table) {
             $table->uuid('id')->primary();
-
             $table->string('number', 15);
             $table->unsignedTinyInteger('payment_type_id');  // fiat/crypto ID
             $table->string('wallet_address', 256)->nullable();

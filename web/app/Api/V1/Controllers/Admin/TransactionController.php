@@ -264,7 +264,7 @@ class TransactionController extends Controller
             ], 400);
         }
 
-        // create new transaction
+        // create a new transaction
         try {
             $paramsTransactions = $request->all();
             $transaction = (new TransactionService())->store($paramsTransactions);
