@@ -53,7 +53,7 @@ class AdminController extends Controller
      *              default=1,
      *         )
      *     ),
-     *      @OA\Response(
+     *     @OA\Response(
      *         response="200",
      *         description="Data fetched",
      *         @OA\JsonContent(ref="#/components/schemas/OkResponse")
