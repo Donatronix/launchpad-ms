@@ -164,7 +164,7 @@ class PurchaseController extends Controller
                 ], 422);
             }
 
-           return $this->getTokenWorth("btc", 5, "utta");
+        //    return $this->getTokenWorth("btc", 5, "utta");
 
             // Create new token purchase order
             $purchase = $this->purchase::create([
