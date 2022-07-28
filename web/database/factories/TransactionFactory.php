@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Order;
 use App\Models\Transaction;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -33,8 +34,9 @@ class TransactionFactory extends Factory
             'bonus' => $this->faker->numberBetween(5, 1000001),
             'sol_received' => $this->faker->numberBetween(5, 1000001),
             'status' => 1,
-            'admin_id' => $this->faker->uuid,
-            'user_id' => $this->faker->uuid,
+            'order_id' => $this->faker->randomElement(Order::all()),
+            'admin_id' => $this->faker->randomElement(config('settings.default_users_ids')),
+            'user_id' => $this->faker->randomElement(config('settings.default_users_ids')),
         ];
     }
 }
