@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services;
+namespace App\Api\V1\Services;
 
 abstract class BaseService
 {

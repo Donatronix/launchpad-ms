@@ -52,7 +52,7 @@ use Laravel\Lumen\Routing\Controller as BaseController;
  *      bearerFormat="JWT",
  *      description="Auth Token",
  *      securityScheme="bearerAuth",
- * ),
+ * )
  */
 
 /**
@@ -62,7 +62,7 @@ use Laravel\Lumen\Routing\Controller as BaseController;
  *      name="User-Id",
  *      description="Auth User ID",
  *      securityScheme="apiKey",
- * ),
+ * )
  */
 
 /**
@@ -100,6 +100,7 @@ use Laravel\Lumen\Routing\Controller as BaseController;
  *      @OA\Property(
  *          property="type",
  *          type="string",
+ *          description="Type of response - success",
  *          example="success"
  *      ),
  *      @OA\Property(
@@ -113,11 +114,9 @@ use Laravel\Lumen\Routing\Controller as BaseController;
  *      @OA\Property(
  *          property="data",
  *          type="object"
- *      ),
+ *      )
  * )
- *
  */
-
 
 /**
  * Warning Response
@@ -130,6 +129,7 @@ use Laravel\Lumen\Routing\Controller as BaseController;
  *      @OA\Property(
  *          property="type",
  *          type="string",
+ *          description="Type of response",
  *          example="info"
  *      ),
  *      @OA\Property(
@@ -143,9 +143,8 @@ use Laravel\Lumen\Routing\Controller as BaseController;
  *      @OA\Property(
  *          property="data",
  *          type="object"
- *      ),
+ *      )
  * )
- *
  */
 
 /**
@@ -172,11 +171,9 @@ use Laravel\Lumen\Routing\Controller as BaseController;
  *      @OA\Property(
  *          property="data",
  *          type="object"
- *      ),
+ *      )
  * )
- *
  */
-
 
 /**
  * Danger Response
@@ -202,9 +199,8 @@ use Laravel\Lumen\Routing\Controller as BaseController;
  *      @OA\Property(
  *          property="data",
  *          type="object"
- *      ),
+ *      )
  * )
- *
  */
 
 /**

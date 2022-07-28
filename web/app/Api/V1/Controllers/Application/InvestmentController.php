@@ -6,6 +6,7 @@ use App\Api\V1\Controllers\Controller;
 use App\Models\Deposit;
 use App\Models\Order;
 use App\Models\Product;
+use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -17,17 +18,14 @@ class InvestmentController extends Controller
      * Create a first investment after registration
      *
      * @OA\Post(
-     *     path="/investment",
+     *     path="/app/investment",
      *     summary="Create a first investment after registration",
      *     description="Create a first investment after registration",
-     *     tags={"Investment"},
+     *     tags={"Application | Investment"},
      *
      *     security={{
-     *         "default": {
-     *             "ManagerRead",
-     *             "User",
-     *             "ManagerWrite"
-     *         }
+     *         "bearerAuth": {},
+     *         "apiKey": {}
      *     }},
      *
      *     @OA\RequestBody(
@@ -68,11 +66,13 @@ class InvestmentController extends Controller
      *
      *     @OA\Response(
      *         response="201",
-     *         description="Successfully save"
+     *         description="New record addedd successfully",
+     *         @OA\JsonContent(ref="#/components/schemas/OkResponse")
      *     ),
      *     @OA\Response(
      *         response="400",
-     *         description="Invalid request"
+     *         description="Error",
+     *         @OA\JsonContent(ref="#/components/schemas/DangerResponse")
      *     ),
      *     @OA\Response(
      *         response="401",
@@ -80,17 +80,20 @@ class InvestmentController extends Controller
      *     ),
      *     @OA\Response(
      *         response="404",
-     *         description="Product not found"
+     *         description="Not Found",
+     *         @OA\JsonContent(ref="#/components/schemas/WarningResponse")
      *     ),
      *     @OA\Response(
      *         response="422",
-     *         description="Validation failed"
+     *         description="Validation Failed",
+     *         @OA\JsonContent(ref="#/components/schemas/WarningResponse")
      *     ),
      *     @OA\Response(
      *         response="500",
      *         description="Unknown error"
      *     )
      * )
+     *
      * @param Request $request
      * @return mixed
      */
@@ -131,7 +134,6 @@ class InvestmentController extends Controller
 
             // Return response to client
             return response()->jsonApi([
-                'type' => 'success',
                 'title' => 'Application for participation in the presale',
                 'message' => "Application for participation in the presale has been successfully created",
                 'data' => [
@@ -140,30 +142,24 @@ class InvestmentController extends Controller
                     'document' => [
                         'id' => $deposit->id,
                         'object' => 'Deposit',
-                        'service' => 'CryptoLaunchpadMS',
+                        'service' => env('RABBITMQ_EXCHANGE_NAME'),
                     ]
                 ]
             ], 201);
         } catch (ValidationException $e) {
             return response()->jsonApi([
-                'type' => 'warning',
                 'title' => 'Application for participation in the presale',
-                'message' => "Validation error: " . $e->getMessage(),
-                'data' => null
+                'message' => "Validation error: " . $e->getMessage()
             ], 422);
         } catch (ModelNotFoundException $e) {
             return response()->jsonApi([
-                'type' => 'warning',
                 'title' => 'Application for participation in the presale',
                 'message' => "This product does not exist",
-                'data' => null
             ], 404);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return response()->jsonApi([
-                'type' => 'danger',
                 'title' => 'Application for participation in the presale',
                 'message' => $e->getMessage(),
-                'data' => null
             ], $e->getCode());
         }
     }

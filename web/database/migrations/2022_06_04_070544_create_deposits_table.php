@@ -16,6 +16,7 @@ class CreateDepositsTable extends Migration
         Schema::create('deposits', function (Blueprint $table) {
             $table->uuid('id')->primary();
 
+            $table->string('number', 15);
             $table->decimal('amount', 12, 0);
             $table->string('currency_code', 10)->index();
             $table->string('order_id')->nullable()->index();

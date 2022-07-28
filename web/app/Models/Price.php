@@ -76,11 +76,12 @@ class Price extends Model
         'deleted_at'
     ];
 
-    public static function validationRules(){
+    public static function validationRules()
+    {
         return [
             'price' => 'required',
             'amount' => 'required',
-            'product_id'=> 'required',
+            'product_id' => 'required',
             'stage' => 'required',
             'period_in_days' => 'required',
             'percent_profit' => 'required',

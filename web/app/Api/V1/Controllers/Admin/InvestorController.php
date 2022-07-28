@@ -3,10 +3,13 @@
 namespace App\Api\V1\Controllers\Admin;
 
 use App\Api\V1\Controllers\Controller;
-use Illuminate\Http\Request;
 use App\Models\Purchase;
-use Illuminate\Support\Facades\Http;
 use Auth;
+use Exception;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Http;
 
 class InvestorController extends Controller
 {
@@ -16,11 +19,11 @@ class InvestorController extends Controller
      * @OA\Get(
      *     path="/admin/investors",
      *     description="Get list of Investor users",
-     *     tags={"Admin / Investors"},
+     *     tags={"Admin | Investors"},
      *
      *     security={{
-     *          "bearerAuth": {},
-     *          "apiKey": {}
+     *         "bearerAuth": {},
+     *         "apiKey": {}
      *     }},
      *
      *     @OA\Parameter(
@@ -53,6 +56,7 @@ class InvestorController extends Controller
      *              default=1,
      *         )
      *     ),
+     *
      *     @OA\Response(
      *         response="200",
      *         description="Data fetched",
@@ -61,7 +65,7 @@ class InvestorController extends Controller
      *     @OA\Response(
      *         response="400",
      *         description="Error",
-     *         @OA\JsonContent(ref="#/components/schemas/WarningResponse")
+     *         @OA\JsonContent(ref="#/components/schemas/DangerResponse")
      *     ),
      *     @OA\Response(
      *         response="500",
@@ -70,14 +74,13 @@ class InvestorController extends Controller
      *     )
      * )
      *
-     * @param \Illuminate\Http\Request $request
+     * @param Request $request
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function index(Request $request)
     {
         try {
-
             /**
              * Prep IDS endpoint
              *
@@ -87,8 +90,7 @@ class InvestorController extends Controller
             if ($params) {
                 $endpoint = $endpoint . '&' . $params;
             }
-            $IDS = config('settings.api.identity');
-            $url = $IDS['host'] . '/' . $IDS['version'] . $endpoint;
+            $url = config('settings.api.identity') . '/' . $endpoint;
 
             /**
              * Get Details from IDS
@@ -105,14 +107,14 @@ class InvestorController extends Controller
             if (!$response->successful()) {
                 $status = $response->status() ?? 400;
                 $message = $response->getReasonPhrase() ?? 'Error Processing Request';
-                throw new \Exception($message, $status);
+
+                throw new Exception($message, $status);
             }
 
             $investors = [];
             $data = $response->object()->data ?? null;
 
             if ($data) {
-
                 /**
                  * Get Tokens
                  *
@@ -134,63 +136,14 @@ class InvestorController extends Controller
             }
 
             return response()->jsonApi([
-                'type' => 'success',
                 'title' => 'Get Investor',
                 'message' => 'Avaialable Investors',
-                'data' => $data,
-            ], 200);
-        }
-        catch (\Exception $e) {
+            ]);
+        } catch (Exception $e) {
             return response()->jsonApi([
-                'type' => 'danger',
                 'title' => 'Get Investor',
                 'message' => $e->getMessage()
             ], 400);
         }
-    }
-
-    /**
-     * Create new Resource
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        //
     }
 }
