@@ -6,14 +6,13 @@ use App\Api\V1\Controllers\Controller;
 use App\Api\V1\Services\TransactionService;
 use App\Models\Deposit;
 use App\Models\PaymentType;
-use App\Models\Product;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
-use Sumra\SDK\JsonApiResponse;
 
 /**
  * Class DepositController
@@ -23,169 +22,197 @@ use Sumra\SDK\JsonApiResponse;
 class DepositController extends Controller
 {
     /**
-     * The name of the factory's corresponding model.
-     *
-     * @var string
-     */
-    protected $model = Deposit::class;
-
-    /**
-     * DepositController constructor.
-     *
-     * @param Deposit $model
-     */
-    public function __construct(Deposit $model)
-    {
-        $this->model = $model;
-    }
-
-    /**
      * Getting created deposit by user if exist
      *
      * @OA\Get(
-     *     path="/deposits",
-     *     summary="Getting created deposit by user if exist",
-     *     description="Getting created deposit by user if exist",
-     *     tags={"Deposits"},
+     *     path="/app/deposits",
+     *     summary="Getting all created deposits by user if exist",
+     *     description="Getting all created deposits by user if exist",
+     *     tags={"Application | Deposits"},
      *
      *     security={{
-     *         "default": {
-     *             "ManagerRead",
-     *             "User",
-     *             "ManagerWrite"
-     *         }
+     *         "bearerAuth": {},
+     *         "apiKey": {}
      *     }},
      *
+     *     @OA\Parameter(
+     *         name="status",
+     *         in="query",
+     *         description="Deposits status (created, paid, failed, canceled)",
+     *         @OA\Schema(
+     *             type="string"
+     *         )
+     *     ),
+     *     @OA\Parameter(
+     *         name="limit",
+     *         description="Count of deposits in response",
+     *         in="query",
+     *         required=false,
+     *         @OA\Schema(
+     *             type="integer",
+     *             default=20
+     *         )
+     *     ),
+     *     @OA\Parameter(
+     *         name="page",
+     *         description="Page of list",
+     *         in="query",
+     *         required=false,
+     *         @OA\Schema(
+     *             type="integer",
+     *             default=1
+     *         )
+     *     ),
+     *
      *     @OA\Response(
-     *          response="200",
-     *          description="Detail data of deposit"
-     *     )
+     *         response="200",
+     *         description="Getting deposits list",
+     *         @OA\JsonContent(ref="#/components/schemas/OkResponse")
+     *     ),
+     *     @OA\Response(
+     *         response="400",
+     *         description="Error",
+     *         @OA\JsonContent(ref="#/components/schemas/DangerResponse")
+     *     ),
+     *     @OA\Response(
+     *         response="401",
+     *         description="Unauthorized"
+     *     ),
      * )
+     *
+     * @param Request $request
+     * @return mixed
      */
-    public function index()
+    public function index(Request $request): mixed
     {
-        // Get deposit
-        $deposit = Deposit::byOwner()
-            ->where('status', Deposit::STATUS_CREATED)
-            ->first();
+        try {
+            // Validate status if need
+            $this->validate($request, [
+                'status' => [
+                    'sometimes',
+                    Rule::in(['created', 'paid', 'failed', 'canceled']),
+                ]
+            ]);
 
-        return response()->jsonApi([
-            'type' => 'success',
-            'title' => 'Deposit details data',
-            'message' => "Deposit detail data has been received",
-            'data' => $deposit
-        ], 200);
+            $result = Deposit::byOwner()
+                ->when($request->has('status'), function ($q) use ($request) {
+                    $status = "STATUS_" . mb_strtoupper($request->get('status'));
+
+                    return $q->where('status', intval(constant("App\Models\Deposit::{$status}")));
+                })
+                ->orderBy('created_at', 'desc')
+                ->paginate($request->get('limit', config('settings.pagination_limit')));
+
+            // Return response
+            return response()->jsonApi([
+                'title' => "List all deposits",
+                'message' => "List all deposits retrieved successfully.",
+                'data' => $result
+            ]);
+        } catch (Exception $e) {
+            return response()->jsonApi([
+                'title' => 'List all deposits',
+                'message' => 'Error in getting list of all deposits: ' . $e->getMessage()
+            ], $e->getCode());
+        }
     }
 
     /**
      * Create a new investment deposit
      *
      * @OA\Post(
-     *     path="/deposits",
+     *     path="/app/deposits",
      *     summary="Create a new investment deposit",
      *     description="Create a new investment deposit",
-     *     tags={"Deposits"},
+     *     tags={"Application | Deposits"},
      *
      *     security={{
-     *         "default": {
-     *             "ManagerRead",
-     *             "User",
-     *             "ManagerWrite"
-     *         }
+     *         "bearerAuth": {},
+     *         "apiKey": {}
      *     }},
      *
      *     @OA\RequestBody(
      *         required=true,
-     *         @OA\JsonContent(ref="#/components/schemas/Deposit")
+     *         @OA\JsonContent(ref="#/components/schemas/DepositUserAccess")
      *     ),
-     *     @OA\Response(
-     *         response="200",
-     *         description="Successfully save"
-     *     ),
+     *
      *     @OA\Response(
      *         response="201",
-     *         description="Deposit created"
+     *         description="New record addedd successfully",
+     *         @OA\JsonContent(ref="#/components/schemas/OkResponse")
      *     ),
      *     @OA\Response(
      *         response="400",
-     *         description="Invalid request"
+     *         description="Error",
+     *         @OA\JsonContent(ref="#/components/schemas/DangerResponse")
      *     ),
      *     @OA\Response(
      *         response="401",
      *         description="Unauthorized"
      *     ),
      *     @OA\Response(
-     *         response="404",
-     *         description="Not Found"
-     *     ),
-     *     @OA\Response(
      *         response="422",
-     *         description="Validation failed"
+     *         description="Validation Failed",
+     *         @OA\JsonContent(ref="#/components/schemas/WarningResponse")
      *     ),
      *     @OA\Response(
      *         response="500",
      *         description="Unknown error"
      *     )
      * )
+     *
      * @param Request $request
+     *
      * @return mixed
      */
     public function store(Request $request): mixed
     {
         // Validate input
         try {
-            $this->validate($request, $this->model::validationRules());
+            $this->validate($request, Deposit::validationRules());
         } catch (ValidationException $e) {
             return response()->jsonApi([
-                'type' => 'warning',
-                'title' => 'New Deposit details data',
-                'message' => "Validation error",
-                'data' => $e->getMessage()
-            ], 400);
-        }
-
-        $product = Product::where('ticker', $request->get('product_id',))->first();
-        if (!$product) {
-            return response()->jsonApi([
-                'type' => 'warning',
-                'title' => 'New Deposit details data',
-                'message' => "This product does not exist",
-                'data' => []
-            ], 400);
+                'title' => 'Creating a new deposit',
+                'message' => "Validation error: " . $e->getMessage(),
+                'data' => $e->validator->errors()->first()
+            ], 422);
         }
 
         // Try to save received data
         try {
-            // Create new deposit
-            $deposit = $this->model::create([
-                'product_id' => $product->id,
-                'investment_amount' => $request->get('investment_amount'),
-                'deposit_percentage' => $request->get('deposit_percentage'),
+            // Create deposit
+            $deposit = Deposit::create([
                 'amount' => $request->get('deposit_amount'),
+                'currency_code' => $request->get('currency'),
+                'order_id' => config('settings.empty_uuid'),
+                'status' => Deposit::STATUS_CREATED,
                 'user_id' => Auth::user()->getAuthIdentifier(),
-                'status' => Deposit::STATUS_CREATED
             ]);
 
-            // create new transaction
-            $paramsTransactions = $request->all();
-            $paramsTransactions['order_id'] = $deposit->id;
-            $transaction = (new TransactionService())->store($paramsTransactions);
-            $deposit->transaction;
+//            // create new transaction
+//            $paramsTransactions = $request->all();
+//            $paramsTransactions['order_id'] = $deposit->id;
+//            $transaction = (new TransactionService())->store($paramsTransactions);
 
             // Return response to client
             return response()->jsonApi([
-                'type' => 'success',
-                'title' => 'New deposit registration',
-                'message' => "New deposit has been created successfully",
-                'data' => $deposit->toArray()
-            ], 200);
+                'title' => 'Creating a new deposit',
+                'message' => 'New deposit has been created successfully',
+                'data' => [
+                    'amount' => $deposit->amount,
+                    'currency' => $request->get('currency'),
+                    'document' => [
+                        'id' => $deposit->id,
+                        'object' => 'Deposit',
+                        'service' => 'CryptoLaunchpadMS',
+                    ]
+                ]
+            ], 201);
         } catch (Exception $e) {
             return response()->jsonApi([
-                'type' => 'danger',
-                'title' => 'New deposit registration',
+                'title' => 'Creating a new deposit',
                 'message' => $e->getMessage(),
-                'data' => null
-            ], 400);
+            ], $e->getCode());
         }
     }
 
@@ -193,17 +220,14 @@ class DepositController extends Controller
      * Getting data about deposit by deposit ID
      *
      * @OA\Get(
-     *     path="/deposits/{id}",
+     *     path="/app/deposits/{id}",
      *     summary="Getting data about deposit by deposit ID",
      *     description="Getting data about deposit by deposit ID",
-     *     tags={"Deposits"},
+     *     tags={"Application | Deposits"},
      *
      *     security={{
-     *         "default": {
-     *             "ManagerRead",
-     *             "User",
-     *             "ManagerWrite"
-     *         }
+     *         "bearerAuth": {},
+     *         "apiKey": {}
      *     }},
      *
      *     @OA\Parameter(
@@ -216,57 +240,51 @@ class DepositController extends Controller
      *         )
      *     ),
      *     @OA\Response(
-     *          response="200",
-     *          description="Detail data of deposit"
+     *         response="200",
+     *         description="Getting product list for start presale",
+     *         @OA\JsonContent(ref="#/components/schemas/OkResponse")
      *     ),
      *     @OA\Response(
-     *          response="404",
-     *          description="Deposit not found"
-     *     )
+     *         response="404",
+     *         description="Not Found",
+     *         @OA\JsonContent(ref="#/components/schemas/WarningResponse")
+     *     ),
      * )
-     */
-    public function show($id)
-    {
-        // Get object
-        $deposit = $this->getObject($id);
-
-        if ($deposit instanceof JsonApiResponse) {
-            return $deposit;
-        }
-
-        // Load linked relations data
-        $deposit->load([
-            'product'
-        ]);
-
-        return response()->jsonApi([
-            'type' => 'success',
-            'title' => 'Deposit details data',
-            'message' => "Deposit detail data has been received",
-            'data' => $deposit->toArray()
-        ], 200);
-    }
-
-    /**
-     * Get deposit object
-     *
      * @param $id
      * @return mixed
      */
-    private function getObject($id): mixed
+    public function show($id): mixed
     {
         try {
-            return $this->model::findOrFail($id);
+            $deposit = Deposit::findOrFail($id);
+
+            // Load linked relations data
+            $deposit->load([
+                'order'
+            ]);
+
+            return response()->jsonApi([
+                'title' => 'Deposit details data',
+                'message' => "Deposit detail data has been received",
+                'data' => $deposit
+            ]);
         } catch (ModelNotFoundException $e) {
             return response()->jsonApi([
-                'type' => 'danger',
-                'title' => "Get deposit",
-                'message' => "Deposit with id #{$id} not found: {$e->getMessage()}",
-                'data' => ''
+                'title' => 'Deposit details data',
+                'message' => "Deposit not found: {$e->getMessage()}",
             ], 404);
+        } catch (Exception $e) {
+            return response()->jsonApi([
+                'title' => 'Deposit details data',
+                'message' => $e->getMessage(),
+            ], $e->getCode());
         }
     }
 
+    /**
+     * @param $transaction_id
+     * @return \Illuminate\Http\Response
+     */
     public function generatePdfForTransaction($transaction_id)
     {
         try {
@@ -284,18 +302,15 @@ class DepositController extends Controller
             }
 
             return response()->jsonApi([
-                'type' => 'success',
                 'title' => 'Deposit details data',
                 'message' => "Deposit detail data has been received",
                 'data' => $transaction->toArray()
-            ], 200);
+            ]);
 
         } catch (ModelNotFoundException $e) {
             return response()->jsonApi([
-                'type' => 'danger',
                 'title' => "Get deposit",
                 'message' => "Transaction with id #{$transaction_id} not found: {$e->getMessage()}",
-                'data' => ''
             ], 404);
         }
     }

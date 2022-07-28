@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Auth;
 use Sumra\SDK\Traits\UuidTrait;
 
 /**
@@ -60,18 +61,14 @@ use Sumra\SDK\Traits\UuidTrait;
  *         example="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAC1JREFUWEft0EERAAAAAUH6lxbDZxU4s815PffjAAECBAgQIECAAAECBAgQIDAaPwAh6O5R/QAAAABJRU5ErkJggg=="
  *     )
  * )
- */
-
-/**
- * Class PossibleLoanAmount
  *
  * @package App\Models
  */
 class Product extends Model
 {
     use HasFactory;
-    use UuidTrait;
     use SoftDeletes;
+    use UuidTrait;
 
     //s$SLAPA - Synthetic SLAPA Token
     //$SLAPA - SLAPA Token
@@ -133,9 +130,9 @@ class Product extends Model
      * @param int $stage
      * @return HasOne
      */
-    public function price(int $stage = 1): HasOne
+    public function price(): HasOne
     {
-        return $this->hasOne(Price::class)->where('stage', $stage);
+        return $this->hasOne(Price::class);
     }
 
     /**
@@ -144,5 +141,17 @@ class Product extends Model
     public function orders(): HasMany
     {
         return $this->hasMany(Order::class);
+    }
+
+    /**
+     * @param $query
+     * @param int $stage
+     * @return mixed
+     */
+    public function scopeByStage($query, int $stage = 1): mixed
+    {
+        return $query->with('price', function ($q) use ($stage){
+             return $q->where('stage', $stage);
+        });
     }
 }

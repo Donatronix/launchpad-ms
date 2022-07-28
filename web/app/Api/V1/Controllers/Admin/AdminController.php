@@ -2,11 +2,13 @@
 
 namespace App\Api\V1\Controllers\Admin;
 
-use Illuminate\Http\Request;
 use App\Api\V1\Controllers\Controller;
-use Illuminate\Support\Facades\Http;
-use Auth;
 use App\Models\Purchase;
+use Auth;
+use Exception;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
 
 class AdminController extends Controller
 {
@@ -16,23 +18,13 @@ class AdminController extends Controller
      * @OA\Get(
      *     path="/admin",
      *     description="Get list of Admin users",
-     *     tags={"Admin / Admins"},
+     *     tags={"Admin | Admins"},
      *
      *     security={{
-     *          "bearerAuth": {},
-     *          "apiKey": {}
+     *         "bearerAuth": {},
+     *         "apiKey": {}
      *     }},
      *
-     *     @OA\Parameter(
-     *         name="search",
-     *         in="query",
-     *         description="Search string",
-     *         required=false,
-     *         @OA\Schema(
-     *              type="string",
-     *              default=20,
-     *         )
-     *     ),
      *     @OA\Parameter(
      *         name="limit",
      *         description="Number of expected data in response",
@@ -61,7 +53,7 @@ class AdminController extends Controller
      *     @OA\Response(
      *         response="400",
      *         description="Error",
-     *         @OA\JsonContent(ref="#/components/schemas/WarningResponse")
+     *         @OA\JsonContent(ref="#/components/schemas/DangerResponse")
      *     ),
      *     @OA\Response(
      *         response="500",
@@ -70,14 +62,13 @@ class AdminController extends Controller
      *     )
      * )
      *
-     * @param \Illuminate\Http\Request $request
+     * @param Request $request
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function index(Request $request)
     {
         try {
-
             /**
              * Prep IDS endpoint
              *
@@ -87,8 +78,7 @@ class AdminController extends Controller
             if ($params) {
                 $endpoint = $endpoint . '&' . $params;
             }
-            $IDS = config('settings.api.identity');
-            $url = $IDS['host'] . '/' . $IDS['version'] . $endpoint;
+            $url = config('settings.api.identity') . '/' . $endpoint;
 
             /**
              * Get Details from IDS
@@ -105,7 +95,7 @@ class AdminController extends Controller
             if (!$response->successful()) {
                 $status = $response->status() ?? 400;
                 $message = $response->getReasonPhrase() ?? 'Error Processing Request';
-                throw new \Exception($message, $status);
+                throw new Exception($message, $status);
             }
 
             $admins = [];
@@ -132,18 +122,14 @@ class AdminController extends Controller
             }
 
             return response()->jsonApi([
-                'type' => 'success',
                 'title' => 'Get Admins',
                 'message' => 'Avaialable Admins',
                 'data' => $data
-            ], 200);
-        }
-        catch (\Exception $e) {
+            ]);
+        } catch (Exception $e) {
             return response()->jsonApi([
-                'type' => 'danger',
                 'title' => 'Get Admin',
-                'message' => $e->getMessage(),
-                'data' => null
+                'message' => $e->getMessage()
             ], 400);
         }
     }

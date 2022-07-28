@@ -15,10 +15,12 @@ class CreateTokenRewardsTable extends Migration
     {
         Schema::create('token_rewards', function (Blueprint $table) {
             $table->uuid('id')->primary();
+
             $table->integer('purchase_band');
             $table->string('swap');
             $table->string('deposit_amount');
             $table->unsignedBigInteger('reward_bonus');
+
             $table->timestamps();
         });
     }

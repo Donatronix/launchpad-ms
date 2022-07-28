@@ -3,7 +3,6 @@
 namespace App\Api\V1\Controllers\Application;
 
 use App\Api\V1\Controllers\Controller;
-use App\Api\V1\Services\TransactionService;
 use App\Models\Order;
 use App\Models\Product;
 use Exception;
@@ -11,7 +10,7 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
-use Sumra\SDK\JsonApiResponse;
+use Sumra\SDK\Services\JsonApiResponse;
 
 /**
  * Class OrderController
@@ -38,60 +37,67 @@ class OrderController extends Controller
     }
 
     /**
-     *
      * @OA\Get(
-     *     path="/orders",
+     *     path="/app/orders",
      *     summary="Getting created order by user if exist",
      *     description="Getting created order by user if exist",
-     *     tags={"Orders"},
+     *     tags={"Application | Orders"},
      *
      *     security={{
-     *         "default": {
-     *             "ManagerRead",
-     *             "User",
-     *             "ManagerWrite"
-     *         }
+     *         "bearerAuth": {},
+     *         "apiKey": {}
      *     }},
      *
      *     @OA\Response(
-     *          response="200",
-     *          description="Detail data of order"
-     *     )
+     *         response="200",
+     *         description="Getting product list for start presale",
+     *         @OA\JsonContent(ref="#/components/schemas/OkResponse")
+     *     ),
      * )
      */
     public function index()
     {
-        // Get order
-        $order = Order::byOwner()
-            ->where('status', Order::STATUS_NEW)
-            ->with(['transaction' => function ($query) {
-                $query->select('id', 'order_id', 'wallet_address', 'payment_type_id');
-            }, 'transaction.payment_type'])
-            ->get();
+        try {
+            // Get order
+            $order = Order::byOwner()
+                ->where('status', Order::STATUS_NEW)
+                ->with(['transaction' => function ($query) {
+                    $query->select('id', 'order_id', 'wallet_address', 'card_number', 'payment_type_id');
+                }, 'transaction.payment_type'])
+                ->get();
 
-        return response()->jsonApi([
-            'type' => 'success',
-            'title' => 'Order details data',
-            'message' => "Order detail data has been received",
-            'data' => $order->toArray()
-        ], 200);
+            if (!empty($order) && $order != null) {
+                return response()->jsonApi([
+                    'title' => 'Orders details data',
+                    'message' => "Orders list has been received",
+                    'data' => $order
+                ]);
+            }
+
+            return response()->jsonApi([
+                'title' => 'Order details data',
+                'message' => "Orders is missing"
+            ]);
+        } catch (Exception $e) {
+            return response()->jsonApi([
+                'title' => 'Order details data',
+                'message' => "Unable to retrieve order details" . $e->getMessage()
+            ], $e->getCode());
+        }
     }
 
     /**
      * Create a new investment order
      *
      * @OA\Post(
-     *     path="/orders",
+     *     path="/app/orders",
      *     summary="Create a new investment order",
      *     description="Create a new investment order",
-     *     tags={"Orders"},
+     *     tags={"Application | Orders"},
      *
      *     security={{
-     *         "default": {
-     *             "ManagerRead",
-     *             "User",
-     *             "ManagerWrite"
-     *         }
+     *         "bearerAuth": {},
+     *         "apiKey": {}
      *     }},
      *
      *     @OA\RequestBody(
@@ -100,15 +106,18 @@ class OrderController extends Controller
      *     ),
      *     @OA\Response(
      *         response="200",
-     *         description="Successfully save"
+     *         description="Getting product list for start presale",
+     *         @OA\JsonContent(ref="#/components/schemas/OkResponse")
      *     ),
      *     @OA\Response(
      *         response="201",
-     *         description="Order created"
+     *         description="New record addedd successfully",
+     *         @OA\JsonContent(ref="#/components/schemas/OkResponse")
      *     ),
      *     @OA\Response(
      *         response="400",
-     *         description="Invalid request"
+     *         description="Error",
+     *         @OA\JsonContent(ref="#/components/schemas/DangerResponse")
      *     ),
      *     @OA\Response(
      *         response="401",
@@ -116,11 +125,13 @@ class OrderController extends Controller
      *     ),
      *     @OA\Response(
      *         response="404",
-     *         description="Not Found"
+     *         description="Not Found",
+     *         @OA\JsonContent(ref="#/components/schemas/WarningResponse")
      *     ),
      *     @OA\Response(
      *         response="422",
-     *         description="Validation failed"
+     *         description="Validation Failed",
+     *         @OA\JsonContent(ref="#/components/schemas/WarningResponse")
      *     ),
      *     @OA\Response(
      *         response="500",
@@ -155,38 +166,29 @@ class OrderController extends Controller
             // create new transaction
             $paramsTransactions = $request->all();
             $paramsTransactions['order_id'] = $order->id;
-            $transaction = (new TransactionService())->store($paramsTransactions);
+            // $transaction = (new TransactionService())->store($paramsTransactions);
             $order->transaction;
 
             // Return response to client
             return response()->jsonApi([
-                'type' => 'success',
                 'title' => 'Creating new order',
                 'message' => "New order has been created successfully",
-                'data' => [
-                    'order' => $order->toArray()
-                ]
-            ], 200);
+                'data' => $order
+            ]);
         } catch (ValidationException $e) {
             return response()->jsonApi([
-                'type' => 'warning',
                 'title' => 'Creating new order',
-                'message' => "Validation error: " . $e->getMessage(),
-                'data' => null
-            ], 400);
+                'message' => "Validation error: " . $e->getMessage()
+            ], 422);
         } catch (ModelNotFoundException $e) {
             return response()->jsonApi([
-                'type' => 'warning',
                 'title' => 'Creating new order',
                 'message' => "This product does not exist",
-                'data' => null
-            ], 400);
+            ], 404);
         } catch (Exception $e) {
             return response()->jsonApi([
-                'type' => 'danger',
                 'title' => 'Creating new order',
-                'message' => $e->getMessage(),
-                'data' => null
+                'message' => $e->getMessage()
             ], 400);
         }
     }
@@ -195,17 +197,14 @@ class OrderController extends Controller
      * Getting data about order
      *
      * @OA\Get(
-     *     path="/orders/{id}",
+     *     path="/app/orders/{id}",
      *     summary="Getting data about order",
      *     description="Getting data about order",
-     *     tags={"Orders"},
+     *     tags={"Application | Orders"},
      *
      *     security={{
-     *         "default": {
-     *             "ManagerRead",
-     *             "User",
-     *             "ManagerWrite"
-     *         }
+     *         "bearerAuth": {},
+     *         "apiKey": {}
      *     }},
      *
      *     @OA\Parameter(
@@ -218,35 +217,45 @@ class OrderController extends Controller
      *         )
      *     ),
      *     @OA\Response(
-     *          response="200",
-     *          description="Detail data of order"
+     *         response="200",
+     *         description="Getting product list for start presale",
+     *         @OA\JsonContent(ref="#/components/schemas/OkResponse")
      *     ),
      *     @OA\Response(
-     *          response="404",
-     *          description="Order not found"
-     *     )
+     *         response="404",
+     *         description="Not Found",
+     *         @OA\JsonContent(ref="#/components/schemas/WarningResponse")
+     *     ),
      * )
      */
     public function show($id)
     {
-        // Get object
-        $order = $this->getObject($id);
+        try {
+            // Get order object
+            $order = $this->model::findOrFail($id);
 
-        if ($order instanceof JsonApiResponse) {
-            return $order;
+            // Load linked relations data
+            $order->load([
+                'product',
+                'deposits'
+            ]);
+
+            return response()->jsonApi([
+                'title' => 'Order details data',
+                'message' => "Order detail data has been received",
+                'data' => $order
+            ]);
+        } catch (ModelNotFoundException $e) {
+            return response()->jsonApi([
+                'title' => "Get order",
+                'message' => "Order with id #{$id} not found: {$e->getMessage()}"
+            ], 404);
+        } catch (Exception $e) {
+            return response()->jsonApi([
+                'title' => 'Order details data',
+                'message' => "Unable to retrieve order details" . $e->getMessage()
+            ], $e->getCode());
         }
-
-        // Load linked relations data
-        $order->load([
-            'product'
-        ]);
-
-        return response()->jsonApi([
-            'type' => 'success',
-            'title' => 'Order details data',
-            'message' => "Order detail data has been received",
-            'data' => $order->toArray()
-        ], 200);
     }
 
     /**
@@ -261,10 +270,8 @@ class OrderController extends Controller
             return $this->model::findOrFail($id);
         } catch (ModelNotFoundException $e) {
             return response()->jsonApi([
-                'type' => 'danger',
                 'title' => "Get order",
-                'message' => "Order with id #{$id} not found: {$e->getMessage()}",
-                'data' => null
+                'message' => "Order with id #{$id} not found: {$e->getMessage()}"
             ], 404);
         }
     }

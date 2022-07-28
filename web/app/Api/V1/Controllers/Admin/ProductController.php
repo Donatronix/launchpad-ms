@@ -10,7 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Validator;
 use PubSub;
-use Sumra\SDK\JsonApiResponse;
+use Sumra\SDK\Services\JsonApiResponse;
 
 class ProductController extends Controller
 {
@@ -32,14 +32,11 @@ class ProductController extends Controller
      *     path="/admin/products",
      *     summary="Getting product detail by platform",
      *     description="Getting product detail by platform",
-     *     tags={"Admin / Products"},
+     *     tags={"Admin | Products"},
      *
      *     security={{
-     *         "default": {
-     *             "ManagerRead",
-     *             "User",
-     *             "ManagerWrite"
-     *         }
+     *         "bearerAuth": {},
+     *         "apiKey": {}
      *     }},
      *
      *     @OA\Parameter(
@@ -85,7 +82,8 @@ class ProductController extends Controller
      *
      *     @OA\Response(
      *         response="200",
-     *         description="Success send data"
+     *         description="Data fetched",
+     *         @OA\JsonContent(ref="#/components/schemas/OkResponse")
      *     ),
      *     @OA\Response(
      *         response="401",
@@ -93,7 +91,8 @@ class ProductController extends Controller
      *     ),
      *     @OA\Response(
      *         response="400",
-     *         description="Invalid request"
+     *         description="Error",
+     *         @OA\JsonContent(ref="#/components/schemas/DangerResponse")
      *     ),
      *     @OA\Response(
      *         response="403",
@@ -101,13 +100,16 @@ class ProductController extends Controller
      *     ),
      *     @OA\Response(
      *         response="404",
-     *         description="Not found"
+     *         description="Not Found",
+     *         @OA\JsonContent(ref="#/components/schemas/WarningResponse")
      *     ),
      *     @OA\Response(
      *         response="500",
      *         description="Internal server error"
      *     )
      * )
+     *
+     * @param Request $request
      *
      * @return mixed
      */
@@ -121,17 +123,14 @@ class ProductController extends Controller
 
             // Return response
             return response()->jsonApi([
-                'type' => 'success',
                 'title' => "Products list",
                 'message' => 'List of products successfully received',
                 'data' => $products->toArray()
-            ], 200);
+            ]);
         } catch (Exception $e) {
             return response()->jsonApi([
-                'type' => 'danger',
                 'title' => "Products list",
-                'message' => $e->getMessage(),
-                'data' => null
+                'message' => $e->getMessage()
             ], 400);
         }
     }
@@ -143,30 +142,31 @@ class ProductController extends Controller
      *     path="/admin/products",
      *     summary="Save a new product",
      *     description="Save a new product",
-     *     tags={"Admin / Products"},
+     *     tags={"Admin | Products"},
      *
      *     security={{
-     *         "default": {
-     *             "ManagerRead",
-     *             "User",
-     *             "ManagerWrite"
-     *         }
+     *         "bearerAuth": {},
+     *         "apiKey": {}
      *     }},
+     *
      *     @OA\RequestBody(
      *         required=true,
      *         @OA\JsonContent(ref="#/components/schemas/Product")
      *     ),
      *     @OA\Response(
      *         response="200",
-     *         description="Successfully save"
+     *         description="Data fetched",
+     *         @OA\JsonContent(ref="#/components/schemas/OkResponse")
      *     ),
      *     @OA\Response(
      *         response="201",
-     *         description="Successfully created"
+     *         description="New record addedd successfully",
+     *         @OA\JsonContent(ref="#/components/schemas/OkResponse")
      *     ),
      *     @OA\Response(
      *         response="400",
-     *         description="Invalid request"
+     *         description="Error",
+     *         @OA\JsonContent(ref="#/components/schemas/DangerResponse")
      *     ),
      *     @OA\Response(
      *         response="401",
@@ -178,11 +178,13 @@ class ProductController extends Controller
      *     ),
      *     @OA\Response(
      *         response="404",
-     *         description="Not found"
+     *         description="Not Found",
+     *         @OA\JsonContent(ref="#/components/schemas/WarningResponse")
      *     ),
      *     @OA\Response(
      *         response="422",
-     *         description="Validation failed"
+     *         description="Validation Failed",
+     *         @OA\JsonContent(ref="#/components/schemas/WarningResponse")
      *     ),
      *     @OA\Response(
      *         response="500",
@@ -212,25 +214,21 @@ class ProductController extends Controller
             $product = $this->model->create($request->all());
 
             // send product to the reference-books-ms
-            PubSub::transaction(function () {
-            })->publish(self::RECEIVER_LISTENER, [
+            PubSub::publish(self::RECEIVER_LISTENER, [
                 'currency_code' => $product->ticker,
                 'title' => $product->title,
-            ], "ReferenceBooksMS");
+            ], config('pubsub.queue.reference_books'));
 
             // Return response to client
             return response()->jsonApi([
-                'type' => 'success',
                 'title' => 'New product registration',
                 'message' => "Product successfully added",
                 'data' => $product->toArray()
-            ], 200);
+            ]);
         } catch (Exception $e) {
             return response()->jsonApi([
-                'type' => 'danger',
                 'title' => 'New product registration',
                 'message' => $e->getMessage(),
-                'data' => null
             ], 400);
         }
     }
@@ -242,14 +240,11 @@ class ProductController extends Controller
      *     path="/admin/products/{id}",
      *     summary="Getting product detail by ID",
      *     description="Getting product detail by ID",
-     *     tags={"Admin / Products"},
+     *     tags={"Admin | Products"},
      *
      *     security={{
-     *         "default": {
-     *             "ManagerRead",
-     *             "User",
-     *             "ManagerWrite"
-     *         }
+     *         "bearerAuth": {},
+     *         "apiKey": {}
      *     }},
      *
      *     @OA\Parameter(
@@ -262,11 +257,14 @@ class ProductController extends Controller
      *             type="string"
      *         )
      *     ),
+     *
      *     @OA\Response(
-     *          response="200",
-     *          description="Getting product detail by platform"
+     *         response="200",
+     *         description="Data fetched",
+     *         @OA\JsonContent(ref="#/components/schemas/OkResponse")
      *     )
      * )
+     *
      * @param $id
      */
     public function show($id)
@@ -280,17 +278,14 @@ class ProductController extends Controller
             }
 
             return response()->jsonApi([
-                'type' => 'success',
                 'title' => 'Product detail',
                 'message' => "Product detail been received",
                 'data' => $product->toArray()
-            ], 200);
+            ]);
         } catch (Exception $e) {
             return response()->jsonApi([
-                'type' => 'danger',
                 'title' => 'Product detail',
                 'message' => $e->getMessage(),
-                'data'=>null
             ], 400);
         }
     }
@@ -307,10 +302,8 @@ class ProductController extends Controller
             return $this->model::findOrFail($id);
         } catch (ModelNotFoundException $e) {
             return response()->jsonApi([
-                'type' => 'danger',
                 'title' => "Get product",
                 'message' => "Product with id #{$id} not found: {$e->getMessage()}",
-                'data' => null
             ], 404);
         }
     }
@@ -322,15 +315,13 @@ class ProductController extends Controller
      *     path="/admin/products/{id}",
      *     summary="Update product data",
      *     description="Update product data",
-     *     tags={"Admin / Products"},
+     *     tags={"Admin | Products"},
      *
      *     security={{
-     *         "default": {
-     *             "ManagerRead",
-     *             "User",
-     *             "ManagerWrite"
-     *         }
+     *         "bearerAuth": {},
+     *         "apiKey": {}
      *     }},
+     *
      *     @OA\Parameter(
      *         name="id",
      *         in="path",
@@ -347,11 +338,13 @@ class ProductController extends Controller
      *     ),
      *     @OA\Response(
      *         response="200",
-     *         description="Successfully save"
+     *         description="Data fetched",
+     *         @OA\JsonContent(ref="#/components/schemas/OkResponse")
      *     ),
      *     @OA\Response(
      *         response="400",
-     *         description="Invalid request"
+     *         description="Error",
+     *         @OA\JsonContent(ref="#/components/schemas/DangerResponse")
      *     ),
      *     @OA\Response(
      *         response="401",
@@ -363,11 +356,13 @@ class ProductController extends Controller
      *     ),
      *     @OA\Response(
      *         response="404",
-     *         description="Not found"
+     *         description="Not Found",
+     *         @OA\JsonContent(ref="#/components/schemas/WarningResponse")
      *     ),
      *     @OA\Response(
      *         response="422",
-     *         description="Validation failed"
+     *         description="Validation Failed",
+     *         @OA\JsonContent(ref="#/components/schemas/WarningResponse")
      *     ),
      *     @OA\Response(
      *         response="500",
@@ -413,17 +408,14 @@ class ProductController extends Controller
 
             // Return response to client
             return response()->jsonApi([
-                'type' => 'success',
                 'title' => 'Changing product',
                 'message' => "product successfully updated",
                 'data' => $product->toArray()
-            ], 200);
+            ]);
         } catch (Exception $e) {
             return response()->jsonApi([
-                'type' => 'danger',
                 'title' => 'Change a product',
                 'message' => $e->getMessage(),
-                'data' => null
             ], 400);
         }
     }
@@ -435,15 +427,13 @@ class ProductController extends Controller
      *     path="/admin/products/{id}",
      *     summary="Delete product",
      *     description="Delete product",
-     *     tags={"Admin / Products"},
+     *     tags={"Admin | Products"},
      *
      *     security={{
-     *         "default": {
-     *             "ManagerRead",
-     *             "User",
-     *             "ManagerWrite"
-     *         }
+     *         "bearerAuth": {},
+     *         "apiKey": {}
      *     }},
+     *
      *     @OA\Parameter(
      *         name="id",
      *         in="path",
@@ -456,11 +446,13 @@ class ProductController extends Controller
      *     ),
      *     @OA\Response(
      *         response="200",
-     *         description="Successfully delete"
+     *         description="Data fetched",
+     *         @OA\JsonContent(ref="#/components/schemas/OkResponse")
      *     ),
      *     @OA\Response(
      *         response="400",
-     *         description="Invalid request"
+     *         description="Error",
+     *         @OA\JsonContent(ref="#/components/schemas/DangerResponse")
      *     ),
      *     @OA\Response(
      *         response="401",
@@ -472,13 +464,16 @@ class ProductController extends Controller
      *     ),
      *     @OA\Response(
      *         response="404",
-     *         description="Not found"
+     *         description="Not Found",
+     *         @OA\JsonContent(ref="#/components/schemas/WarningResponse")
      *     ),
      *     @OA\Response(
      *         response="500",
      *         description="Internal server error"
      *     )
      * )
+     *
+     * @return mixed
      */
     public function destroy($id)
     {
@@ -493,17 +488,13 @@ class ProductController extends Controller
             $product->delete();
 
             return response()->jsonApi([
-                'type' => 'success',
                 'title' => "Delete product",
                 'message' => 'product is successfully deleted',
-                'data' => null
-            ], 200);
+            ]);
         } catch (Exception $e) {
             return response()->jsonApi([
-                'type' => 'danger',
                 'title' => "Delete of product",
-                'message' => $e->getMessage(),
-                'data' => []
+                'message' => $e->getMessage()
             ], 400);
         }
     }

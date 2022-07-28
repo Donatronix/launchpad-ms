@@ -47,21 +47,10 @@ $router->group([
      * Application level for users
      */
     $router->group([
+        'prefix' => 'app',
         'namespace' => 'Application',
         'middleware' => 'checkUser',
     ], function ($router) {
-        /**
-         * Token Rewards
-         */
-        // $router->group([
-        //     'prefix' => 'token-rewards',
-        // ], function ($router) {
-        //     $router->get('/', 'TokenRewardController@index');
-        //     $router->post('/', 'TokenRewardController@store');
-        //     $router->put('/', 'TokenRewardController@update');
-        //     $router->delete('/', 'TokenRewardController@destroy');
-        // });
-
         /**
          * Init first Investment (registration)
          */
@@ -98,7 +87,7 @@ $router->group([
          * Token Purchase - shopping List
          */
         $router->group([
-            'prefix' => 'purchase-token',
+            'prefix' => 'purchases',
         ], function ($router) {
             $router->get('/', 'PurchaseController@index');
             $router->post('/', 'PurchaseController@store');
@@ -107,7 +96,7 @@ $router->group([
         /**
          * Token Investors
          */
-        $router->get('/token-investors', 'PurchaseController@tokenInvestors');
+        $router->get('/token-investors', 'DashboardController@tokenInvestors');
 
         /**
          * Token Sales Progress
@@ -118,7 +107,7 @@ $router->group([
     /**
      * ADMIN PANEL ACCESS
      *
-     * Admin / super admin access level (E.g CEO company)
+     * Admin | super admin access level (E.g CEO company)
      */
     $router->group([
         'prefix' => 'admin',
@@ -158,9 +147,9 @@ $router->group([
         ], function ($router) {
             $router->get('/', 'TokenRewardController@index');
             $router->post('/', 'TokenRewardController@store');
-            $router->get('/{token_reward_id}', 'TokenRewardController@show');
-            $router->put('/{token_reward_id}', 'TokenRewardController@update');
-            $router->delete('/{token_reward_id}', 'TokenRewardController@destroy');
+            $router->get('/{id}', 'TokenRewardController@show');
+            $router->put('/{id}', 'TokenRewardController@update');
+            $router->delete('/{id}', 'TokenRewardController@destroy');
         });
 
         /**
@@ -209,8 +198,8 @@ $router->group([
             $router->get('/{id}',    'OrderController@show');
             $router->put('/{id}',    'OrderController@update');
             $router->delete('/{id}', 'OrderController@destroy');
-            $router->get('/approve/{id}', 'OrderController@approve');
-            $router->get('/reject/{id}', 'OrderController@reject');
+            $router->get('/{id}/approve', 'OrderController@approve');
+            $router->get('/{id}/reject', 'OrderController@reject');
         });
 
         /**

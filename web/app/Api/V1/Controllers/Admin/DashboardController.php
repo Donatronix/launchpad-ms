@@ -19,20 +19,16 @@ class DashboardController extends Controller
      *     tags={"Admin | Dashboard"},
      *
      *     security={{
-     *         "default": {
-     *             "ManagerRead",
-     *             "User",
-     *             "ManagerWrite"
-     *         }
+     *         "bearerAuth": {},
+     *         "apiKey": {}
      *     }},
      *
      *     @OA\Response(
      *         response="200",
-     *         description="Success",
+     *         description="Data fetched",
+     *         @OA\JsonContent(ref="#/components/schemas/OkResponse")
      *     )
      * )
-     *
-     * Method for transaction dashboard statistic
      *
      * @param Request $request
      *
@@ -60,17 +56,14 @@ class DashboardController extends Controller
             ];
 
             return response()->jsonApi([
-                'type' => 'success',
                 'title' => 'Operation was success',
                 'message' => 'The data was displayed successfully',
                 'Transactions' => $data,
-            ], 200);
+            ]);
         } catch (Exception $e) {
             return response()->jsonApi([
-                'type' => 'danger',
                 'title' => "Getting transaction dashboard data failed",
-                'message' => $e->getMessage(),
-                'data' => null,
+                'message' => $e->getMessage()
             ], 404);
         }
     }

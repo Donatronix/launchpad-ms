@@ -23,14 +23,11 @@ class OrderController extends Controller
      * @OA\Get(
      *     path="/admin/orders",
      *     description="Getting all data about order for all users",
-     *     tags={"Admin / Orders"},
+     *     tags={"Admin | Orders"},
      *
      *     security={{
-     *         "default": {
-     *             "ManagerRead",
-     *             "User",
-     *             "ManagerWrite"
-     *         }
+     *         "bearerAuth": {},
+     *         "apiKey": {}
      *     }},
      *
      *     @OA\Parameter(
@@ -61,7 +58,7 @@ class OrderController extends Controller
      *         required=false,
      *         @OA\Schema(
      *             type="string",
-     *             default=created_at,
+     *             default="created_at",
      *         )
      *     ),
      *
@@ -72,7 +69,7 @@ class OrderController extends Controller
      *         required=false,
      *         @OA\Schema(
      *             type="string",
-     *             default=desc,
+     *             default="desc",
      *         )
      *     ),
      *     @OA\Parameter(
@@ -101,23 +98,25 @@ class OrderController extends Controller
      *     ),
      *
      *     @OA\Response(
-     *          response="200",
-     *          description="Success",
-     *     ),
-     *
-     *     @OA\Response(
-     *         response="500",
-     *         description="Unknown error"
+     *         response="200",
+     *         description="Data fetched",
+     *         @OA\JsonContent(ref="#/components/schemas/OkResponse")
      *     ),
      *     @OA\Response(
      *         response="400",
-     *         description="Invalid request"
+     *         description="Error",
+     *         @OA\JsonContent(ref="#/components/schemas/DangerResponse")
      *     ),
-     *
+     *     @OA\Response(
+     *         response="500",
+     *         description="Server error",
+     *         @OA\JsonContent(ref="#/components/schemas/DangerResponse")
+     *     ),
      *     @OA\Response(
      *         response="404",
-     *         description="Not Found"
-     *     )
+     *         description="Not Found",
+     *         @OA\JsonContent(ref="#/components/schemas/WarningResponse")
+     *     ),
      * )
      *
      * @param Request $request
@@ -132,18 +131,15 @@ class OrderController extends Controller
                 ->orderBy($request->get('sort-by', 'created_at'), $request->get('sort-order', 'desc'))
                 ->paginate($request->get('limit', config('settings.pagination_limit')));
 
-            return response()->json([
-                'type' => 'success',
+            return response()->jsonApi([
                 'title' => "List all orders",
                 'message' => "List all orders",
                 'data' => $allOrders->toArray()
-            ], 200);
+            ]);
         } catch (Exception $e) {
             return response()->jsonApi([
-                'type' => 'danger',
                 'title' => 'List all orders',
-                'message' => 'Error in getting list of all orders: '.$e->getMessage(),
-                'data' => null
+                'message' => 'Error in getting list of all orders: ' . $e->getMessage()
             ], 400);
         }
     }
@@ -154,7 +150,12 @@ class OrderController extends Controller
      * @OA\Post(
      *     path="/admin/orders",
      *     description="Adding new orders",
-     *     tags={"Admin / Orders"},
+     *     tags={"Admin | Orders"},
+     *
+     *     security={{
+     *         "bearerAuth": {},
+     *         "apiKey": {}
+     *     }},
      *
      *     @OA\RequestBody(
      *         @OA\JsonContent(
@@ -163,7 +164,210 @@ class OrderController extends Controller
      *                 property="product_id",
      *                 type="string",
      *                 description="product id",
-     *                 example="2000-000-3000000-20000"
+     *                 example="969ff58b-5d48-4de4-8e9e-cb6bb39e6041"
+     *             ),
+     *             @OA\Property(
+     *                 property="investment_amount",
+     *                 type="decimal",
+     *                 description="amount to investment",
+     *                 example="1500.00"
+     *             ),
+     *             @OA\Property(
+     *                 property="deposit_percentage",
+     *                 type="integer",
+     *                 description="deposit percentage",
+     *                 example="26"
+     *             ),
+     *             @OA\Property(
+     *                 property="deposit_amount",
+     *                 type="decimal",
+     *                 description="deposit_amount",
+     *                 example="1"
+     *             ),
+     *             @OA\Property(
+     *                 property="amount_token",
+     *                 type="string",
+     *                 description="amount token",
+     *                 example="5590"
+     *             ),
+     *             @OA\Property(
+     *                 property="amount_usd",
+     *                 type="string",
+     *                 description="amount usd",
+     *                 example="5590"
+     *             ),
+     *             @OA\Property(
+     *                 property="user_id",
+     *                 type="string",
+     *                 description="user id",
+     *                 example="550000-9000000-9000000"
+     *             )
+     *         )
+     *     ),
+     *
+     *     @OA\Response(
+     *         response="200",
+     *         description="Data fetched",
+     *         @OA\JsonContent(ref="#/components/schemas/OkResponse")
+     *     ),
+     *     @OA\Response(
+     *         response="400",
+     *         description="Error",
+     *         @OA\JsonContent(ref="#/components/schemas/DangerResponse")
+     *     ),
+     *     @OA\Response(
+     *         response="500",
+     *         description="Server error",
+     *         @OA\JsonContent(ref="#/components/schemas/DangerResponse")
+     *     )
+     * )
+     *
+     * @param Request $request
+     *
+     * @return JsonResponse
+     */
+    public function store(Request $request): JsonResponse
+    {
+        try {
+            //validate input
+            $this->validate($request, [
+                'product_id' => 'required|string',
+                'investment_amount' => 'required|numeric',
+                'deposit_amount' => 'required|numeric',
+                'deposit_percentage' => 'required|numeric',
+                'amount_token' => 'required|numeric',
+                'amount_usd' => 'required|numeric',
+                'user_id' => 'required|string',
+            ]);
+
+            if (!Product::where('id', $request->product_id)->exists()) {
+                return response()->jsonApi([
+                    'title' => 'Create new order',
+                    'message' => 'Error occurred when creating new order',
+                    'data' => "Product id is invalid"
+                ], 400);
+            }
+
+            $orderSaved = Order::create($request->all());
+
+            return response()->jsonApi([
+                'title' => "Create new order",
+                'message' => "Order was created",
+                'data' => $orderSaved->toArray()
+            ]);
+        } catch (ValidationException $e) {
+            return response()->jsonApi([
+                'title' => 'Create new order',
+                'message' => 'Error occurred when creating new order: ' . $e->getMessage(),
+            ], 422);
+        } catch (Exception $e) {
+            return response()->jsonApi([
+                'title' => 'Create new order',
+                'message' => 'Error occurred when creating new order: ' . $e->getMessage()
+            ], 400);
+        }
+    }
+
+    /**
+     * Display a single order
+     *
+     * @OA\Get(
+     *     path="/admin/orders/{id}",
+     *     description="Get a single order",
+     *     tags={"Admin | Orders"},
+     *
+     *     security={{
+     *         "bearerAuth": {},
+     *         "apiKey": {}
+     *     }},
+     *
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         description="order ID",
+     *         required=true,
+     *         example="96c890e5-7246-4714-a4db-70b63b16c8ef"
+     *     ),
+     *
+     *     @OA\Response(
+     *         response="200",
+     *         description="Data fetched",
+     *         @OA\JsonContent(ref="#/components/schemas/OkResponse")
+     *     ),
+     *     @OA\Response(
+     *         response="400",
+     *         description="Error",
+     *         @OA\JsonContent(ref="#/components/schemas/DangerResponse")
+     *     ),
+     *     @OA\Response(
+     *         response="404",
+     *         description="Not Found",
+     *         @OA\JsonContent(ref="#/components/schemas/WarningResponse")
+     *     ),
+     *     @OA\Response(
+     *         response="500",
+     *         description="Server error",
+     *         @OA\JsonContent(ref="#/components/schemas/DangerResponse")
+     *     )
+     * )
+     *
+     * @param Request $request
+     *
+     * @return JsonResponse
+     */
+    public function show($id): JsonResponse
+    {
+        try {
+            $order = Order::with(['product', 'transaction'])->findOrFail($id);
+
+            // Return response
+            return response()->jsonApi([
+                'title' => "Get order",
+                'message' => "Get order",
+                'data' => $order
+            ]);
+        } catch (Exception $e) {
+            return response()->jsonApi([
+                'title' => 'Get order',
+                'message' => 'Error in getting order: ' . $e->getMessage()
+            ], 400);
+        } catch (ModelNotFoundException $e) {
+            return response()->jsonApi([
+                'title' => 'Get order',
+                'message' => 'Error in getting order: ' . $e->getMessage(),
+            ], 404);
+        }
+    }
+
+    /**
+     * Update single Order
+     *
+     * @OA\Put(
+     *     path="/admin/orders/{id}",
+     *     description="Update one order",
+     *     tags={"Admin | Orders"},
+     *
+     *     security={{
+     *         "bearerAuth": {},
+     *         "apiKey": {}
+     *     }},
+     *
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="query",
+     *         description="Order id",
+     *         required=true,
+     *         example="96c890e5-7246-4714-a4db-70b63b16c8ef"
+     *     ),
+     *
+     *     @OA\RequestBody(
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(
+     *                 property="product_id",
+     *                 type="string",
+     *                 description="product id",
+     *                 example="969ff58b-5d48-4de4-8e9e-cb6bb39e6041"
      *             ),
      *             @OA\Property(
      *                 property="investment_amount",
@@ -206,21 +410,23 @@ class OrderController extends Controller
      *
      *     @OA\Response(
      *         response="200",
-     *         description="Success",
-     *     ),
-     *
-     *     @OA\Response(
-     *         response="500",
-     *         description="Unknown error"
+     *         description="Data fetched",
+     *         @OA\JsonContent(ref="#/components/schemas/OkResponse")
      *     ),
      *     @OA\Response(
      *         response="400",
-     *         description="Invalid request"
+     *         description="Error",
+     *         @OA\JsonContent(ref="#/components/schemas/DangerResponse")
      *     ),
-     *
      *     @OA\Response(
      *         response="404",
-     *         description="Not Found"
+     *         description="Not Found",
+     *         @OA\JsonContent(ref="#/components/schemas/WarningResponse")
+     *     ),
+     *     @OA\Response(
+     *         response="500",
+     *         description="Server error",
+     *         @OA\JsonContent(ref="#/components/schemas/DangerResponse")
      *     )
      * )
      *
@@ -228,7 +434,7 @@ class OrderController extends Controller
      *
      * @return JsonResponse
      */
-    public function store(Request $request)
+    public function update(Request $request, $id): JsonResponse
     {
         try {
             //validate input
@@ -242,209 +448,8 @@ class OrderController extends Controller
                 'user_id' => 'required|string',
             ]);
 
-            if(!Product::where('id', $request->product_id)->exists()){
+            if (!Product::where('id', $request->product_id)->exists()) {
                 return response()->jsonApi([
-                    'type' => 'danger',
-                    'title' => 'Create new order',
-                    'message' => 'Error occurred when creating new order',
-                    'data' => "Product id is invalid"
-                ], 400);
-            }
-
-            $orderSaved = Order::create($request->all());
-
-
-            return response()->jsonApi([
-                'type' => 'success',
-                'title' => "Create new order",
-                'message' => "Order was created",
-                'data' => $orderSaved->toArray()
-            ], 200);
-        } catch (ValidationException $e) {
-            return response()->jsonApi([
-                'type' => 'danger',
-                'title' => 'Create new order',
-                'message' => 'Error occurred when creating new order: '.$e->getMessage(),
-                'data' => null
-            ], 400);
-        } catch (Exception $e) {
-            return response()->jsonApi([
-                'type' => 'danger',
-                'title' => 'Create new order',
-                'message' => 'Error occurred when creating new order: '.$e->getMessage(),
-                'data' => null
-            ], 400);
-        }
-    }
-
-    /**
-     * Display a single order
-     *
-     * @OA\Get(
-     *     path="/admin/order/{id}",
-     *     description="Get a single order",
-     *     tags={"Admin / Orders"},
-     *
-     *     @OA\Parameter(
-     *         name="id",
-     *         in="query",
-     *         description="order ID",
-     *         required=true,
-     *      ),
-     *
-     *      @OA\Response(
-     *          response="200",
-     *          description="Success",
-     *     ),
-     *
-     *     @OA\Response(
-     *         response="500",
-     *         description="Unknown error"
-     *     ),
-     *     @OA\Response(
-     *         response="400",
-     *         description="Invalid request"
-     *     ),
-     *
-     *     @OA\Response(
-     *         response="404",
-     *         description="Not Found"
-     *     )
-     * )
-     *
-     * @param Request $request
-     *
-     * @return JsonResponse
-     */
-    public function show($id)
-    {
-        try {
-            $order = Order::with(['product', 'transaction'])->findOrFail($id);
-
-            // Return response
-            return response()->json([
-                'type' => 'success',
-                'title' => "Get order",
-                'message' => "Get order",
-                'data' => $order
-            ], 200);
-        } catch (\Exception $e) {
-            return response()->jsonApi([
-                'type' => 'danger',
-                'title' => 'Get order',
-                'message' => 'Error in getting order: '.$e->getMessage(),
-                'data' => null
-            ], 400);
-        }
-    }
-
-    /**
-     * Update single Order
-     *
-     * @OA\Put(
-     *      path="/admin/order/{id}",
-     *     description="Update one order",
-     *      tags={"Admin / Orders"},
-     *
-     *     security={{
-     *         "default": {
-     *             "ManagerRead",
-     *             "User",
-     *             "ManagerWrite"
-     *         }
-     *     }},
-     *
-     *     @OA\Parameter(
-     *         name="id",
-     *         in="query",
-     *         description="Order id",
-     *         required=true,
-     *      ),
-     *
-     *    @OA\RequestBody(
-     *            @OA\JsonContent(
-     *                type="object",
-     *                @OA\Property(
-     *                    property="product_id",
-     *                    type="string",
-     *                    description="product id",
-     *                    example="2000-000-3000000-20000"
-     *                ),
-     *                @OA\Property(
-     *                    property="investment_amount",
-     *                    type="decimal",
-     *                    description="amount to investment",
-     *                    example="1500.00"
-     *                ),
-     *                @OA\Property(
-     *                    property="deposit_percentage",
-     *                    type="integer",
-     *                    description="deposit percentage",
-     *                    example="20000-9000000-90000"
-     *                ),
-     *                @OA\Property(
-     *                    property="deposit_amount",
-     *                    type="decimal",
-     *                    description="deposit_amount",
-     *                    example="1"
-     *                ),
-     *               @OA\Property(
-     *                    property="amount_token",
-     *                    type="string",
-     *                    description="amount token",
-     *                    example="5590"
-     *                ),
-     *                @OA\Property(
-     *                    property="amount_usd",
-     *                    type="string",
-     *                    description="amount usd",
-     *                    example="5590"
-     *                ),
-     *                @OA\Property(
-     *                    property="user_id",
-     *                    type="string",
-     *                    description="user id",
-     *                    example="550000-9000000-9000000"
-     *                ),
-     *           ),
-     *       ),
-     *
-     *     @OA\Response(
-     *         response="500",
-     *         description="Unknown error"
-     *     ),
-     *     @OA\Response(
-     *         response="400",
-     *         description="Invalid request"
-     *     ),
-     *
-     *     @OA\Response(
-     *         response="404",
-     *         description="Not Found"
-     *     ),
-     * )
-     *
-     * @param \Illuminate\Http\Request $request
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function update(Request $request, $id)
-    {
-        try {
-            //validate input
-            $this->validate($request, [
-                'product_id' => 'required|string',
-                'investment_amount' => 'required|numeric',
-                'deposit_amount' => 'required|numeric',
-                'deposit_percentage' => 'required|string',
-                'amount_token' => 'required|string',
-                'amount_usd' => 'required|string',
-                'user_id' => 'required|string',
-            ]);
-
-            if(!Product::where('id', $request->product_id)->exists()){
-                return response()->jsonApi([
-                    'type' => 'danger',
                     'title' => 'Create new order',
                     'message' => 'Error occurred when creating new order',
                     'data' => "Product id is invalid"
@@ -456,24 +461,19 @@ class OrderController extends Controller
 
             // Return response
             return response()->jsonApi([
-                'type' => 'success',
                 'title' => "Order was updated",
                 'message' => "Order was updated",
                 'data' => $orderUpdated
-            ], 200);
+            ]);
         } catch (ValidationException $e) {
             return response()->jsonApi([
-                'type' => 'warning',
                 'title' => 'update Order',
-                'message' => 'Error occurred when updating order: '.$e->getMessage(),
-                'data' => null
-            ], 400);
+                'message' => 'Error occurred when updating order: ' . $e->getMessage()
+            ], 422);
         } catch (Exception $e) {
             return response()->jsonApi([
-                'type' => 'danger',
                 'title' => 'Update Order',
-                'message' => 'Error occurred when updating order: '.$e->getMessage(),
-                'data' => null
+                'message' => 'Error occurred when updating order: ' . $e->getMessage(),
             ], 400);
         }
     }
@@ -482,16 +482,13 @@ class OrderController extends Controller
      * Approve single Order
      *
      * @OA\get(
-     *      path="/admin/orders/approve/{id}",
+     *     path="/admin/orders/{id}/approve",
      *     description="Update one order",
-     *      tags={"Admin / Orders"},
+     *     tags={"Admin | Orders"},
      *
      *     security={{
-     *         "default": {
-     *             "ManagerRead",
-     *             "User",
-     *             "ManagerWrite"
-     *         }
+     *         "bearerAuth": {},
+     *         "apiKey": {}
      *     }},
      *
      *     @OA\Parameter(
@@ -499,47 +496,53 @@ class OrderController extends Controller
      *         in="query",
      *         description="Order id",
      *         required=true,
-     *      ),
-     *
+     *         example="96c890e5-7246-4714-a4db-70b63b16c8ef"
+     *     ),
      *
      *     @OA\Response(
-     *         response="500",
-     *         description="Unknown error"
+     *         response="200",
+     *         description="Data fetched",
+     *         @OA\JsonContent(ref="#/components/schemas/OkResponse")
      *     ),
      *     @OA\Response(
      *         response="400",
-     *         description="Invalid request"
+     *         description="Error",
+     *         @OA\JsonContent(ref="#/components/schemas/DangerResponse")
      *     ),
-     *
      *     @OA\Response(
      *         response="404",
-     *         description="Not Found"
+     *         description="Not Found",
+     *         @OA\JsonContent(ref="#/components/schemas/WarningResponse")
      *     ),
+     *     @OA\Response(
+     *         response="500",
+     *         description="Server error",
+     *         @OA\JsonContent(ref="#/components/schemas/DangerResponse")
+     *     )
      * )
      *
-     * @param \Illuminate\Http\Request $request
+     * @param Request $request
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
-    public function approve($id)
+    public function approve($id): JsonResponse
     {
         try {
             $order = Order::findOrFail($id);
-            $approveOrder = $order->where('id', $id)->update(['status' => Order::STATUS_COMPLETED]);
+            $order->update([
+                'status' => Order::STATUS_COMPLETED
+            ]);
 
             // Return response
             return response()->jsonApi([
-                'type' => 'success',
                 'title' => "Approve Order",
                 'message' => "Order was approved",
-                'data' => $approveOrder
-            ], 200);
-        } catch (\Exception $e) {
+                'data' => $order
+            ]);
+        } catch (Exception $e) {
             return response()->jsonApi([
-                'type' => 'danger',
                 'title' => 'Approve Order',
-                'message' => 'Error occurred when approving order: '.$e->getMessage(),
-                'data' => null
+                'message' => 'Error occurred when approving order: ' . $e->getMessage(),
             ], 400);
         }
     }
@@ -548,16 +551,13 @@ class OrderController extends Controller
      * Approve single Order
      *
      * @OA\get(
-     *      path="/admin/orders/reject/{id}",
+     *     path="/admin/orders/{id}/reject",
      *     description="Update one order",
-     *      tags={"Admin / Orders"},
+     *     tags={"Admin | Orders"},
      *
      *     security={{
-     *         "default": {
-     *             "ManagerRead",
-     *             "User",
-     *             "ManagerWrite"
-     *         }
+     *         "bearerAuth": {},
+     *         "apiKey": {}
      *     }},
      *
      *     @OA\Parameter(
@@ -565,47 +565,53 @@ class OrderController extends Controller
      *         in="query",
      *         description="Order id",
      *         required=true,
-     *      ),
+     *         example="96c890e5-7246-4714-a4db-70b63b16c8ef"
+     *     ),
      *
      *     @OA\Response(
-     *         response="500",
-     *         description="Unknown error"
+     *         response="200",
+     *         description="Data fetched",
+     *         @OA\JsonContent(ref="#/components/schemas/OkResponse")
      *     ),
      *     @OA\Response(
      *         response="400",
-     *         description="Invalid request"
+     *         description="Error",
+     *         @OA\JsonContent(ref="#/components/schemas/DangerResponse")
      *     ),
-     *
      *     @OA\Response(
      *         response="404",
-     *         description="Not Found"
+     *         description="Not Found",
+     *         @OA\JsonContent(ref="#/components/schemas/WarningResponse")
      *     ),
+     *     @OA\Response(
+     *         response="500",
+     *         description="Server error",
+     *         @OA\JsonContent(ref="#/components/schemas/DangerResponse")
+     *     )
      * )
      *
-     * @param \Illuminate\Http\Request $request
+     * @param Request $request
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
-    public function reject($id)
+    public function reject($id): JsonResponse
     {
         try {
             $order = Order::findOrFail($id);
-            $approveOrder = $order->where('id', $id)
-                ->update(['status' => Order::STATUS_CANCELED]);
+            $order->update([
+                'status' => Order::STATUS_CANCELED
+            ]);
 
             // Return response
             return response()->jsonApi([
-                'type' => 'success',
                 'title' => "Reject Order",
                 'message' => "Order was rejected",
-                'data' => $approveOrder
-            ], 200);
-        } catch (\Exception $e) {
+                'data' => $order
+            ]);
+        } catch (Exception $e) {
             return response()->jsonApi([
-                'type' => 'danger',
                 'title' => 'Reject Order',
-                'message' => 'Error occurred when rejecting order: '.$e->getMessage(),
-                'data' => null
+                'message' => 'Error occurred when rejecting order: ' . $e->getMessage(),
             ], 400);
         }
     }

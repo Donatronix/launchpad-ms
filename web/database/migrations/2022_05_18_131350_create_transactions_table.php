@@ -15,13 +15,14 @@ class CreateTransactionsTable extends Migration
     {
         Schema::create('transactions', function (Blueprint $table) {
             $table->uuid('id')->primary();
+            $table->string('number', 15);
             $table->unsignedTinyInteger('payment_type_id');  // fiat/crypto ID
             $table->string('wallet_address', 256)->nullable();
             $table->string('card_number', 21)->nullable();
             $table->string('payment_gateway', 100)->nullable();
             $table->string('currency_code', 100)->nullable();
             $table->string('payment_token', 100)->nullable();
-            $table->tinyInteger('token_stage')->nullable();
+            $table->tinyInteger('token_stage');
             $table->date('payment_date')->nullable();
             $table->decimal('amount_received', 12, 2, true);
             $table->decimal('total_amount', 12, 2, true);
@@ -31,14 +32,16 @@ class CreateTransactionsTable extends Migration
             $table->string('admin_id', 100)->nullable();
             $table->string('user_id', 100)->nullable();
 
-            $table->uuid('order_id');
+            $table->uuid('order_id')->nullable();
 
             $table->unsignedTinyInteger('credit_card_type_id')->default(0);
 
             $table->foreign('payment_type_id')->references('id')->on('payment_types');
+
             $table->foreign('order_id')->references('id')->on('orders');
 
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

@@ -2,11 +2,12 @@
 
 namespace App\Models;
 
-use App\Traits\RandomCharGeneratorTrait;
+use App\Traits\NumeratorTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Sumra\SDK\Traits\OwnerTrait;
 use Sumra\SDK\Traits\UuidTrait;
 
@@ -77,10 +78,10 @@ use Sumra\SDK\Traits\UuidTrait;
 class Order extends Model
 {
     use HasFactory;
-    use UuidTrait;
-    use RandomCharGeneratorTrait;
+    use NumeratorTrait;
     use OwnerTrait;
     use SoftDeletes;
+    use UuidTrait;
 
     /**
      * Order status
@@ -120,11 +121,10 @@ class Order extends Model
         'user_id',
         'status',
         'payload',
-        'order_no',
+        'number',
         'amount_token',
         'amount_usd'
     ];
-
     /**
      * The attributes excluded from the model's JSON form.
      *
@@ -135,8 +135,6 @@ class Order extends Model
         'updated_at',
         'deleted_at'
     ];
-
-    // run on model boot
 
     /**
      * Order create rules
@@ -156,22 +154,7 @@ class Order extends Model
         ];
     }
 
-    protected static function boot()
-    {
-        parent::boot();
-
-        // generate the order numebr when creating a new order model
-        self::creating(function ($model) {
-            $order_no = $model->getRandomChar(12);
-
-            // generate new order number while the generated one exists
-            while (Order::where('order_no', $order_no)->get()->count() > 0) {
-                $order_no = $model->getRandomChar(12);
-            }
-
-            $model->order_no = $order_no;
-        });
-    }
+    // run on model boot
 
     /**
      * One Order have One Product relation
@@ -186,9 +169,9 @@ class Order extends Model
     /**
      * One Order have One Product relation
      *
-     * @return BelongsTo
+     * @return HasMany
      */
-    public function deposit()
+    public function deposit(): HasMany
     {
         return $this->hasMany(Deposit::class);
     }
@@ -198,9 +181,18 @@ class Order extends Model
      *
      * @return BelongsTo
      */
-    public function transaction()
+    public function transaction(): BelongsTo
     {
-        return $this->belongsTo(Transaction::class, 'id', 'order_id');
+        return $this->belongsTo(Transaction::class, 'order_id', 'id');
     }
 
+    /**
+     * Get the numerator prefix for the model.
+     *
+     * @return string
+     */
+    protected function getNumeratorPrefix(): string
+    {
+        return 'OR';
+    }
 }

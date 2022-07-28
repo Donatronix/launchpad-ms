@@ -30,11 +30,13 @@ class TokenRewardController extends Controller
      *     ),
      *     @OA\Response(
      *         response="200",
-     *         description="Successfully readed"
+     *         description="Data fetched",
+     *         @OA\JsonContent(ref="#/components/schemas/OkResponse")
      *     ),
      *     @OA\Response(
      *         response="400",
-     *         description="Invalid request"
+     *         description="Error",
+     *         @OA\JsonContent(ref="#/components/schemas/DangerResponse")
      *     ),
      *     @OA\Response(
      *         response="500",
