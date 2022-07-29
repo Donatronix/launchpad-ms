@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
+use Illuminate\Support\Facades\Validator;
 use Sumra\SDK\Services\JsonApiResponse;
 
 /**
@@ -145,15 +146,21 @@ class OrderController extends Controller
     {
         // Try to save received data
         try {
-            // Validate input
-            $this->validate($request, $this->model::validationRules());
 
-            // Get / checking current product
-            $product = Product::findOrFail($request->get('product_id', config('settings.empty_uuid')));
+            // Validate input
+            $validator = Validator::make($request->all(), $this->model::validationRules());
+
+            if ($validator->fails()) {
+                return response()->jsonApi([
+                    'title' => 'Creating new order',
+                    'message' => "Validation error occurred!",
+                    'data' => $validator->errors()
+                ], 422);
+            }
 
             // Create new order
             $order = $this->model::create([
-                'product_id' => $product->id,
+                'product_id' => $request->get('product_id'),
                 'investment_amount' => $request->get('investment_amount'),
                 'deposit_percentage' => $request->get('deposit_percentage'),
                 'deposit_amount' => $request->get('deposit_amount'),
