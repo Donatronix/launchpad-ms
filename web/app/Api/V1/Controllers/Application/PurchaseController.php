@@ -182,7 +182,7 @@ class PurchaseController extends Controller
                 ], 422);
             }
 
-            // get product details
+           // get product details
             $product = $this->product::find($request->product_id);
             if(!$product){
                 throw new Exception("Product not found", 400);
@@ -206,8 +206,6 @@ class PurchaseController extends Controller
                 'payment_status' => $request->get('payment_status'),
                 'currency_type' => $request->get('currency_type'),
             ]);
-
-            return $purchase;
 
             // send token purchased to wallet
             PubSub::publish(self::RECEIVER_LISTENER, [
