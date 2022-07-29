@@ -26,14 +26,26 @@ use Sumra\SDK\Traits\UuidTrait;
  *     @OA\Property(
  *         property="amount_usd",
  *         type="integer",
- *         description="Amount paid in dollars",
+ *         description="Amount paid in dollars.",
  *         example="5000"
  *     ),
  *     @OA\Property(
- *         property="token_amount",
- *         type="double",
- *         description="Amount of token purchased",
- *         example="25312.046"
+ *         property="crypto",
+ *         type="string",
+ *         description="Crypto to pay with",
+ *         example="btc"
+ *     ),
+ *     @OA\Property(
+ *         property="crypto_amount",
+ *         type="integer",
+ *         description="Amount of crypto",
+ *         example="5"
+ *     ),
+ *     @OA\Property(
+ *         property="currency_type",
+ *         type="string",
+ *         description="Type of currency. Either Fiat or Crypto",
+ *         example="fiat"
  *     ),
  *     @OA\Property(
  *         property="payment_method",
@@ -70,7 +82,10 @@ class Purchase extends Model
      * @var string[]
      */
     protected $fillable = [
+        'currency_type',
         'amount_usd',
+        'crypto',
+        'crypto_amount',
         'token_amount',
         'payment_method',
         'product_id',
