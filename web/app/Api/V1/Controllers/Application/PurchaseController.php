@@ -156,18 +156,16 @@ class PurchaseController extends Controller
             $rules = [
                 'currency_type' => "required|in:fiat,crypto",
                 'product_id' => 'required|string',
-                'payment_method' => 'required|string',
-                'payment_status' => 'required',
+                'currency_ticker' => 'required|string'
             ];
 
             if($request->currency_type == "fiat"){
                 $rules += [
-                    "amount_usd" => 'required|integer|max:9500',
+                    "payment_amount" => 'required|integer|max:9500',
                 ];
-            } else if($request->currency_type == "cryto"){
+            } else if($request->currency_type == "crypto"){
                 $rules += [
-                    "crypto" => 'required|string',
-                    "crypto_amount" => 'required|integer',
+                    "payment_amount" => 'required|integer',
                 ];
             }
 
@@ -187,44 +185,143 @@ class PurchaseController extends Controller
             if(!$product){
                 throw new Exception("Product not found", 400);
             }
-
-            if($request->currency_type == "fiat"){
-                $token_amount = $this->getFiatTokenWorth($request->amount_usd, $product->ticker);
-            } else if($request->currency_type == "crypto"){
-                $token_amount = $this->getCryptoTokenWorth($request->crypto, $request->crypto_amount, $product->ticker);
-            }
+            
+                $token_amount = $this->getTokenWorth($request->currency_ticker, $request->payment_amount, $product->ticker);
 
             // Create new token purchase order
             $purchase = $this->purchase::create([
                 'product_id' => $request->get('product_id'),
                 'user_id' => $this->user_id,
-                'amount_usd' => $request->get('amount_usd') ?? null,
-                'crypto' => $request->get('crypto') ?? null,
-                'crypto_amount' => $request->get('crypto_amount') ?? null,
-                'token_amount' => $token_amount,
-                'payment_method' => $request->get('payment_method'),
-                'payment_status' => $request->get('payment_status'),
+                'payment_amount' => $request->get('payment_amount'),
+                'currency_ticker' => $request->get('currency_ticker'),
                 'currency_type' => $request->get('currency_type'),
+                'token_amount' => $token_amount,
             ]);
 
-            return $purchase;
-
             // send token purchased to wallet
-            PubSub::publish(self::RECEIVER_LISTENER, [
-                'amount' => $purchase->token_amount,
-                'token' => $product->ticker,
-                'user_id' => $this->user_id,
-            ], config('pubsub.queue.crypto_wallets'));
+            // PubSub::publish(self::RECEIVER_LISTENER, [
+            //     'amount' => $purchase->token_amount,
+            //     'token' => $product->ticker,
+            //     'user_id' => $this->user_id,
+            // ], config('pubsub.queue.crypto_wallets'));
 
             // Return response to client
             return response()->jsonApi([
                 'title' => 'Creating new token purchase order',
                 'message' => "New token purchase order has been created successfully",
-                'data' => $purchase
+                'data' => [
+                    'amount' => $purchase->payment_amount,
+                    'currency' => $purchase->currency_ticker,
+                    'document' => [
+                        'id' => $purchase->id,
+                        'object' => 'Purchase',
+                        'service' => env('RABBITMQ_EXCHANGE_NAME'),
+                        'meta' => $purchase
+                    ]]
             ]);
         } catch (Exception $e) {
             return response()->jsonApi([
                 'title' => 'Creating new token purchase order',
+                'message' => $e->getMessage()
+            ], 400);
+        }
+    }
+
+    /**
+     * Get token worth
+     *
+     * @OA\Get(
+     *     path="/app/purchases/token-worth",
+     *     summary="Get token worth",
+     *     description="Get token worth",
+     *     tags={"Application | Purchases"},
+     *
+     *     @OA\Response(
+     *         response="200",
+     *         description="Getting product list for start presale",
+     *         @OA\JsonContent(ref="#/components/schemas/OkResponse")
+     *     ),
+     *     @OA\Response(
+     *         response="201",
+     *         description="New record addedd successfully",
+     *         @OA\JsonContent(ref="#/components/schemas/OkResponse")
+     *     ),
+     *     @OA\Response(
+     *         response="400",
+     *         description="Error",
+     *         @OA\JsonContent(ref="#/components/schemas/DangerResponse")
+     *     ),
+     *     @OA\Response(
+     *         response="401",
+     *         description="Unauthorized"
+     *     ),
+     *     @OA\Response(
+     *         response="404",
+     *         description="Not Found",
+     *         @OA\JsonContent(ref="#/components/schemas/WarningResponse")
+     *     ),
+     *     @OA\Response(
+     *         response="422",
+     *         description="Validation Failed",
+     *         @OA\JsonContent(ref="#/components/schemas/WarningResponse")
+     *     ),
+     *     @OA\Response(
+     *         response="500",
+     *         description="Unknown error"
+     *     )
+     * )
+     *
+     * @param Request $request
+     * @return mixed
+     */
+    public function tokenWorth(Request $request): mixed
+    {
+        // Try to save purchased token data
+        try {
+            $rules = [
+                'currency_type' => "required|in:fiat,crypto",
+                'product_id' => 'required|string',
+                'currency_ticker' => 'required|string',
+            ];
+
+            if($request->currency_type == "fiat"){
+                $rules += [
+                    "payment_amount" => 'required|integer|max:9500',
+                ];
+            } else if($request->currency_type == "crypto"){
+                $rules += [
+                    "payment_amount" => 'required|integer',
+                ];
+            }
+
+            // Validate input
+            $validator = Validator::make($request->all(), $rules);
+
+            if ($validator->fails()) {
+                return response()->jsonApi([
+                    'title' => 'Get token worth',
+                    'message' => "Validation error occurred!",
+                    'data' => $validator->errors()
+                ], 422);
+            }
+
+            // get product details
+            $product = $this->product::find($request->product_id);
+            if(!$product){
+                throw new Exception("Product not found", 400);
+            }
+            
+            $token_amount = $this->getTokenWorth($request->currency_ticker, $request->payment_amount, $product->ticker);
+
+            // Return response to client
+            return response()->jsonApi([
+                'title' => 'Get token worth',
+                'message' => "Get token worth",
+                'data' => $token_amount
+            ]);
+        } catch (Exception $e) {
+            return response()->jsonApi([
+                'title' => 'Get token worth',
                 'message' => $e->getMessage()
             ], 400);
         }

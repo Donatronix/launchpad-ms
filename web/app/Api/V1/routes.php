@@ -91,6 +91,7 @@ $router->group([
         ], function ($router) {
             $router->get('/', 'PurchaseController@index');
             $router->post('/', 'PurchaseController@store');
+            $router->get('/token-worth', 'PurchaseController@tokenWorth');
         });
 
         /**
