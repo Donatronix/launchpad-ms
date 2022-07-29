@@ -24,41 +24,23 @@ use Sumra\SDK\Traits\UuidTrait;
  *         example="9a778e5d-61aa-4a2b-b511-b445f6a67909"
  *     ),
  *     @OA\Property(
- *         property="amount_usd",
+ *         property="payment amount",
  *         type="integer",
- *         description="Amount paid in dollars.",
+ *         description="Amount to pay",
  *         example="5000"
  *     ),
  *     @OA\Property(
- *         property="crypto",
+ *         property="currency_ticker",
  *         type="string",
- *         description="Crypto to pay with",
- *         example="btc"
- *     ),
- *     @OA\Property(
- *         property="crypto_amount",
- *         type="integer",
- *         description="Amount of crypto",
- *         example="5"
+ *         description="currency to pay with",
+ *         example="btc/usd/eur"
  *     ),
  *     @OA\Property(
  *         property="currency_type",
  *         type="string",
  *         description="Type of currency. Either Fiat or Crypto",
- *         example="fiat"
+ *         example="fiat/crypto"
  *     ),
- *     @OA\Property(
- *         property="payment_method",
- *         type="string",
- *         description="Method of payment",
- *         example="Credit card"
- *     ),
- *     @OA\Property(
- *         property="payment_status",
- *         type="boolean",
- *         description="Status of payment",
- *         example="true"
- *     )
  * )
  */
 class Purchase extends Model
@@ -83,11 +65,9 @@ class Purchase extends Model
      */
     protected $fillable = [
         'currency_type',
-        'amount_usd',
-        'crypto',
-        'crypto_amount',
+        'currency_ticker',
         'token_amount',
-        'payment_method',
+        'payment_amount',
         'product_id',
         'payment_status',
         'user_id',
@@ -103,17 +83,6 @@ class Purchase extends Model
         'updated_at',
         'deleted_at'
     ];
-
-    public static function validationRules()
-    {
-        return [
-            'amount_usd' => 'required',
-            'token_amount' => 'required',
-            'product_id' => 'required',
-            'payment_method' => 'required',
-            'payment_status' => 'required',
-        ];
-    }
 
     /**
      * @return BelongsTo

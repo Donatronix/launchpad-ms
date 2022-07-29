@@ -14,12 +14,17 @@ trait CryptoConversionTrait
      *
      * @return string
      */
-    protected function getCryptoTokenWorth($crypto, $amount, $token): mixed
+    protected function getTokenWorth($currency_ticker, $amount, $token): mixed
     {
-        // get the sol equivalent for the crypto
-        // $crypto_sol_rate = $this->getTokenExchangeRate($crypto, "sol");
-        $crypto_sol_rate = 572;
-        $sol_equivalent = $crypto_sol_rate * $amount;
+        // get the sol equivalent for the currency
+        // sol_rate = $this->getTokenExchangeRate($crypto, "sol");
+        if(array_search($currency_ticker, ['eur', 'usd', 'gbp'])){
+            $sol_rate = 0.0286;
+        }else{
+            $sol_rate = 572;
+        }
+
+        $sol_equivalent = $sol_rate * $amount;
 
         // devalue sol by 66% 
         $devalue = (66 * $sol_equivalent) / 100;
@@ -28,40 +33,6 @@ trait CryptoConversionTrait
         // get dollar equivalent of SOL
         // $sol_dol_rate = $this->getTokenExchangeRate("sol", "dollar");
         $sol_dol_rate = 35;
-        $dol_equivalent = $sol_dol_rate * $new_sol_value;
-
-        // convert dollar value to required token
-        $product = Product::query()->where("ticker", $token)->byStage(4)->first();
-        $token_stage4_price = $product->price->price;
-
-        $token_equivalent = $dol_equivalent / $token_stage4_price;
-
-        // Calculate token 10% bonus
-        $bonus = 0.1 * $token_equivalent;
-
-        // get total token
-        $total_token = $token_equivalent + $bonus;
-
-        return $total_token;
-    }
-
-    /**
-     * Get the token worth for a fiat currency.
-     *
-     * @return string
-     */
-    protected function getFiatTokenWorth($amount, $token): mixed
-    {
-        // get sol equivalent of dollar
-        // $sol_dol_rate = $this->getTokenExchangeRate("sol", "dollar");
-        $sol_dol_rate = 35;
-        $sol_equivalent = $amount / $sol_dol_rate;
-
-        // devalue sol by 66% 
-        $devalue = (66 * $sol_equivalent) / 100;
-        $new_sol_value = $sol_equivalent - $devalue;
-
-        // get dollar equivalent of SOL
         $dol_equivalent = $sol_dol_rate * $new_sol_value;
 
         // convert dollar value to required token

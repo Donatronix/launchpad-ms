@@ -14,10 +14,11 @@ class PurchaseFactory extends Factory
     {
         return [
             'product_id' => $this->faker->randomElement(Product::all()),
-            "amount_usd" => 5000,
+            "payment_amount" => 5000,
             'user_id' => $this->faker->randomElement(config('settings.default_users_ids')),
+            "currency_type"  => "crypto",
             "token_amount"  => 25312.046,
-            "payment_method" => "Credit card",
+            "currency_ticker" => "btc",
             "payment_status"  => true
         ];
     }
