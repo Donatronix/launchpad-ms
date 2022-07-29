@@ -180,7 +180,7 @@ class PurchaseController extends Controller
                 ], 422);
             }
 
-            // get product details
+           // get product details
             $product = $this->product::find($request->product_id);
             if(!$product){
                 throw new Exception("Product not found", 400);
