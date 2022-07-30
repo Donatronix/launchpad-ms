@@ -18,30 +18,34 @@ class PurchasesTableSeeder extends Seeder
         $pricesList = [
             'utta' => [
                 [
-                    "amount_usd" => 5000,
+                    "payment_amount" => 5000,
+                    "currency_type"  => "crypto",
                     "token_amount"  => 25312.046,
-                    "payment_method" => "Credit card",
+                    "currency_ticker" => "btc",
                     "payment_status"  => true
                 ],
                 [
-                    "amount_usd" => 3000,
-                    "token_amount"  => 24312.046,
-                    "payment_method" => "Credit card",
+                    "payment_amount" => 5000,
+                    "currency_type"  => "crypto",
+                    "token_amount"  => 25312.046,
+                    "currency_ticker" => "btc",
                     "payment_status"  => true
                 ],
             ],
 
             'divit' => [
                 [
-                    "amount_usd" => 5000,
+                    "payment_amount" => 5000,
+                    "currency_type"  => "crypto",
                     "token_amount"  => 25312.046,
-                    "payment_method" => "Credit card",
+                    "currency_ticker" => "btc",
                     "payment_status"  => true
                 ],
                 [
-                    "amount_usd" => 3000,
-                    "token_amount"  => 24312.046,
-                    "payment_method" => "Credit card",
+                    "payment_amount" => 5000,
+                    "currency_type"  => "crypto",
+                    "token_amount"  => 25312.046,
+                    "currency_ticker" => "btc",
                     "payment_status"  => true
                 ],
             ]

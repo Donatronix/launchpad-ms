@@ -33,12 +33,6 @@ use Sumra\SDK\Traits\UuidTrait;
  *         @OA\Examples(example="string", value="USD", summary="Currency code"),
  *         @OA\Examples(example="uuid", value="0006faf6-7a61-426c-9034-579f2cfcfa83", summary="Currency ID"),
  *     ),
- *     @OA\Property(
- *         property="related_id",
- *         type="string",
- *         description="Based on object id",
- *         example="967a6aac-aaaa-aaaa-0000-6a612e39d4ee"
- *     ),
  * )
  */
 /**
