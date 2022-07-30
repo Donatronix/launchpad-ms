@@ -29,6 +29,7 @@ class CreateOrdersTable extends Migration
             $table->decimal('amount_usd', 12, 2)->nullable();
 
             $table->smallInteger('status')->nullable();
+            $table->unsignedTinyInteger('percentage_completed')->nullable();
 
             $table->text('payload')->nullable();
 

@@ -43,30 +43,6 @@ use Sumra\SDK\Traits\UuidTrait;
  *         description="Deposit amount",
  *         example="10000"
  *     ),
- *      @OA\Property(
- *         property="payment_type_id",
- *         type="number",
- *         description="Payment Type ID, 1 - Fiat, 2 - Crypto",
- *         example="1"
- *     ),
- *     @OA\Property(
- *         property="wallet_address",
- *         type="number",
- *         description="Wallet address of the transaction",
- *         example="576894-erjt-4059"
- *     ),
- *     @OA\Property(
- *         property="credit_card_type_id",
- *         type="number",
- *         description="Credit Card Type, Visa - 1, Master Card - 2",
- *         example="1"
- *     ),
- *     @OA\Property(
- *         property="currency_id",
- *         type="string",
- *         description="Deposit currency id",
- *         example="967a6aac-b6dc-4aa7-a6cd-6a612e39d4ee"
- *     )
  * )
  */
 
@@ -148,9 +124,6 @@ class Order extends Model
             'investment_amount' => 'required|integer|min:2500',
             'deposit_percentage' => 'required|integer|min:10|max:100',
             'deposit_amount' => 'required|integer|min:250',
-            'payment_type_id' => 'required|integer|exists:payment_types,id',
-            'wallet_address' => 'required|string',
-            'currency_id' => 'required|string',
         ];
     }
 

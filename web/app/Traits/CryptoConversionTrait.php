@@ -10,16 +10,21 @@ trait CryptoConversionTrait
 {
 
     /**
-     * Get the token worth for a particular token.
+     * Get the token worth for a particular crypt.
      *
      * @return string
      */
-    protected function getTokenWorth($crypto, $amount, $token): mixed
+    protected function getTokenWorth($currency_ticker, $amount, $token): mixed
     {
-        // get the sol equivalent for the crypto
-        // $crypto_sol_rate = $this->getTokenExchangeRate($crypto, "sol");
-        $crypto_sol_rate = 572;
-        $sol_equivalent = $crypto_sol_rate * $amount;
+        // get the sol equivalent for the currency
+        // sol_rate = $this->getTokenExchangeRate($crypto, "sol");
+        if(array_search($currency_ticker, ['eur', 'usd', 'gbp'])){
+            $sol_rate = 0.0286;
+        }else{
+            $sol_rate = 572;
+        }
+
+        $sol_equivalent = $sol_rate * $amount;
 
         // devalue sol by 66% 
         $devalue = (66 * $sol_equivalent) / 100;
