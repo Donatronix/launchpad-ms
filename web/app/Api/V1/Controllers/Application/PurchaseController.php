@@ -104,7 +104,7 @@ class PurchaseController extends Controller
      * @OA\Post(
      *     path="/app/purchases",
      *     summary="Purchase a token",
-     *     description="Create a token purchase order. Crypto and crypto amount is required only for Currency type of Crypto. Amount_usd is required only for currency type of Fiat. Fiat amount that is more than $9500 is not accepted. The user must pay with crypto. Only currency type of fiat and crypto is required",
+     *     description="Create a token purchase order. Currency ticker should be btc, eth, usd, gbp or eur. Only currency type of fiat and crypto is required",
      *     tags={"Application | Purchases"},
      *
      *     @OA\RequestBody(
@@ -161,7 +161,7 @@ class PurchaseController extends Controller
 
             if($request->currency_type == "fiat"){
                 $rules += [
-                    "payment_amount" => 'required|integer|max:9500',
+                    "payment_amount" => 'required|integer|min:250|max:1000',
                 ];
             } else if($request->currency_type == "crypto"){
                 $rules += [
@@ -286,7 +286,7 @@ class PurchaseController extends Controller
 
             if($request->currency_type == "fiat"){
                 $rules += [
-                    "payment_amount" => 'required|integer|max:9500',
+                    "payment_amount" => 'required|integer|min:250|max:1000',
                 ];
             } else if($request->currency_type == "crypto"){
                 $rules += [
