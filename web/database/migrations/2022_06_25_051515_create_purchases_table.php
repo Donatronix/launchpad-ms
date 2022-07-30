@@ -17,9 +17,10 @@ class CreatePurchasesTable extends Migration
             $table->uuid('id')->primary();
 
             $table->string('number', 15);
-            $table->decimal('amount_usd', 12, 2);
-            $table->decimal('token_amount', 12, 5);
-            $table->string('payment_method')->nullable();
+            $table->decimal('payment_amount', 12, 5);
+            $table->decimal('token_amount', 50, 12);
+            $table->string('currency_ticker');
+            $table->enum('currency_type', ['fiat', 'crypto', 'token', 'virtual']);
             $table->boolean('payment_status')->default(0);
 
             $table->foreignUuid('user_id');

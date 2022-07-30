@@ -182,7 +182,7 @@ class DepositController extends Controller
         try {
             // Create deposit
             $deposit = Deposit::create([
-                'amount' => $request->get('deposit_amount'),
+                'amount' => $request->get('amount'),
                 'currency_code' => $request->get('currency'),
                 'order_id' => config('settings.empty_uuid'),
                 'status' => Deposit::STATUS_CREATED,

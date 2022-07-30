@@ -24,29 +24,23 @@ use Sumra\SDK\Traits\UuidTrait;
  *         example="9a778e5d-61aa-4a2b-b511-b445f6a67909"
  *     ),
  *     @OA\Property(
- *         property="amount_usd",
+ *         property="payment amount",
  *         type="integer",
- *         description="Amount paid in dollars",
+ *         description="Amount to pay",
  *         example="5000"
  *     ),
  *     @OA\Property(
- *         property="token_amount",
- *         type="double",
- *         description="Amount of token purchased",
- *         example="25312.046"
- *     ),
- *     @OA\Property(
- *         property="payment_method",
+ *         property="currency_ticker",
  *         type="string",
- *         description="Method of payment",
- *         example="Credit card"
+ *         description="currency to pay with",
+ *         example="btc/usd/eur"
  *     ),
  *     @OA\Property(
- *         property="payment_status",
- *         type="boolean",
- *         description="Status of payment",
- *         example="true"
- *     )
+ *         property="currency_type",
+ *         type="string",
+ *         description="Type of currency. Either Fiat or Crypto",
+ *         example="fiat/crypto"
+ *     ),
  * )
  */
 class Purchase extends Model
@@ -70,9 +64,10 @@ class Purchase extends Model
      * @var string[]
      */
     protected $fillable = [
-        'amount_usd',
+        'currency_type',
+        'currency_ticker',
         'token_amount',
-        'payment_method',
+        'payment_amount',
         'product_id',
         'payment_status',
         'user_id',
@@ -88,17 +83,6 @@ class Purchase extends Model
         'updated_at',
         'deleted_at'
     ];
-
-    public static function validationRules()
-    {
-        return [
-            'amount_usd' => 'required',
-            'token_amount' => 'required',
-            'product_id' => 'required',
-            'payment_method' => 'required',
-            'payment_status' => 'required',
-        ];
-    }
 
     /**
      * @return BelongsTo
