@@ -180,13 +180,13 @@ class PurchaseController extends Controller
                 ], 422);
             }
 
-           // get product details
+           // Get product details
             $product = $this->product::find($request->product_id);
             if(!$product){
                 throw new Exception("Product not found", 400);
             }
-            
-                $token_amount = $this->getTokenWorth($request->currency_ticker, $request->payment_amount, $product->ticker);
+
+            $token_amount = $this->getTokenWorth($request->currency_ticker, $request->payment_amount, $product->ticker);
 
             // Create new token purchase order
             $purchase = $this->purchase::create([
@@ -198,7 +198,7 @@ class PurchaseController extends Controller
                 'token_amount' => $token_amount,
             ]);
 
-            // send token purchased to wallet
+            // Send token purchased to wallet
             // PubSub::publish(self::RECEIVER_LISTENER, [
             //     'amount' => $purchase->token_amount,
             //     'token' => $product->ticker,
@@ -310,7 +310,7 @@ class PurchaseController extends Controller
             if(!$product){
                 throw new Exception("Product not found", 400);
             }
-            
+
             $token_amount = $this->getTokenWorth($request->currency_ticker, $request->payment_amount, $product->ticker);
 
             // Return response to client
