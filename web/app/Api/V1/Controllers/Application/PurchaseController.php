@@ -107,6 +107,11 @@ class PurchaseController extends Controller
      *     description="Create a token purchase order. Currency ticker should be btc, eth, usd, gbp or eur. Only currency type of fiat and crypto is required",
      *     tags={"Application | Purchases"},
      *
+     *     security={{
+     *         "bearerAuth": {},
+     *         "apiKey": {}
+     *     }},
+     *
      *     @OA\RequestBody(
      *         required=true,
      *         @OA\JsonContent(ref="#/components/schemas/Purchase")
@@ -230,11 +235,22 @@ class PurchaseController extends Controller
     /**
      * Get token worth
      *
-     * @OA\Get(
+     * @OA\Post(
      *     path="/app/purchases/token-worth",
      *     summary="Get token worth",
      *     description="Get token worth",
+     *     description="Get token worth. Currency ticker should be btc, eth, usd, gbp or eur. Only currency type of fiat and crypto is required",
      *     tags={"Application | Purchases"},
+     *
+     *     security={{
+     *         "bearerAuth": {},
+     *         "apiKey": {}
+     *     }},
+     *
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(ref="#/components/schemas/Purchase")
+     *     ),
      *
      *     @OA\Response(
      *         response="200",
