@@ -161,11 +161,11 @@ class PurchaseController extends Controller
 
             if($request->currency_type == "fiat"){
                 $rules += [
-                    "payment_amount" => 'required|integer|min:250|max:1000',
+                    "payment_amount" => 'required|numeric|min:250|max:1000',
                 ];
             } else if($request->currency_type == "crypto"){
                 $rules += [
-                    "payment_amount" => 'required|integer',
+                    "payment_amount" => 'required|numeric',
                 ];
             }
 
@@ -286,11 +286,11 @@ class PurchaseController extends Controller
 
             if($request->currency_type == "fiat"){
                 $rules += [
-                    "payment_amount" => 'required|integer|min:250|max:1000',
+                    "payment_amount" => 'required|numeric|min:250|max:1000',
                 ];
             } else if($request->currency_type == "crypto"){
                 $rules += [
-                    "payment_amount" => 'required|integer',
+                    "payment_amount" => 'required|numeric',
                 ];
             }
 
