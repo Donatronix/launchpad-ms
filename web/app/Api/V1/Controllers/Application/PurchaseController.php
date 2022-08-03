@@ -118,12 +118,12 @@ class PurchaseController extends Controller
      *     ),
      *     @OA\Response(
      *         response="200",
-     *         description="Getting product list for start presale",
+     *         description="Ok",
      *         @OA\JsonContent(ref="#/components/schemas/OkResponse")
      *     ),
      *     @OA\Response(
      *         response="201",
-     *         description="New record addedd successfully",
+     *         description="Created",
      *         @OA\JsonContent(ref="#/components/schemas/OkResponse")
      *     ),
      *     @OA\Response(
@@ -254,12 +254,12 @@ class PurchaseController extends Controller
      *
      *     @OA\Response(
      *         response="200",
-     *         description="Getting product list for start presale",
+     *         description="ok",
      *         @OA\JsonContent(ref="#/components/schemas/OkResponse")
      *     ),
      *     @OA\Response(
      *         response="201",
-     *         description="New record addedd successfully",
+     *         description="Created",
      *         @OA\JsonContent(ref="#/components/schemas/OkResponse")
      *     ),
      *     @OA\Response(
