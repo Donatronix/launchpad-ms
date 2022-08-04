@@ -107,18 +107,23 @@ class PurchaseController extends Controller
      *     description="Create a token purchase order. Currency ticker should be btc, eth, usd, gbp or eur. Only currency type of fiat and crypto is required",
      *     tags={"Application | Purchases"},
      *
+     *     security={{
+     *         "bearerAuth": {},
+     *         "apiKey": {}
+     *     }},
+     *
      *     @OA\RequestBody(
      *         required=true,
      *         @OA\JsonContent(ref="#/components/schemas/Purchase")
      *     ),
      *     @OA\Response(
      *         response="200",
-     *         description="Getting product list for start presale",
+     *         description="Ok",
      *         @OA\JsonContent(ref="#/components/schemas/OkResponse")
      *     ),
      *     @OA\Response(
      *         response="201",
-     *         description="New record addedd successfully",
+     *         description="Created",
      *         @OA\JsonContent(ref="#/components/schemas/OkResponse")
      *     ),
      *     @OA\Response(
@@ -161,11 +166,11 @@ class PurchaseController extends Controller
 
             if($request->currency_type == "fiat"){
                 $rules += [
-                    "payment_amount" => 'required|integer|min:250|max:1000',
+                    "payment_amount" => 'required|numeric|min:250|max:1000',
                 ];
             } else if($request->currency_type == "crypto"){
                 $rules += [
-                    "payment_amount" => 'required|integer',
+                    "payment_amount" => 'required|numeric',
                 ];
             }
 
@@ -230,20 +235,31 @@ class PurchaseController extends Controller
     /**
      * Get token worth
      *
-     * @OA\Get(
+     * @OA\Post(
      *     path="/app/purchases/token-worth",
      *     summary="Get token worth",
      *     description="Get token worth",
+     *     description="Get token worth. Currency ticker should be btc, eth, usd, gbp or eur. Only currency type of fiat and crypto is required",
      *     tags={"Application | Purchases"},
+     *
+     *     security={{
+     *         "bearerAuth": {},
+     *         "apiKey": {}
+     *     }},
+     *
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(ref="#/components/schemas/Purchase")
+     *     ),
      *
      *     @OA\Response(
      *         response="200",
-     *         description="Getting product list for start presale",
+     *         description="ok",
      *         @OA\JsonContent(ref="#/components/schemas/OkResponse")
      *     ),
      *     @OA\Response(
      *         response="201",
-     *         description="New record addedd successfully",
+     *         description="Created",
      *         @OA\JsonContent(ref="#/components/schemas/OkResponse")
      *     ),
      *     @OA\Response(
@@ -286,11 +302,11 @@ class PurchaseController extends Controller
 
             if($request->currency_type == "fiat"){
                 $rules += [
-                    "payment_amount" => 'required|integer|min:250|max:1000',
+                    "payment_amount" => 'required|numeric|min:250|max:1000',
                 ];
             } else if($request->currency_type == "crypto"){
                 $rules += [
-                    "payment_amount" => 'required|integer',
+                    "payment_amount" => 'required|numeric',
                 ];
             }
 
