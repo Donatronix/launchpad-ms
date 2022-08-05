@@ -191,13 +191,20 @@ class PurchaseController extends Controller
                 throw new Exception("Product not found", 400);
             }
             
-                $token_amount = $this->getTokenWorth($request->currency_ticker, $request->payment_amount, $product->ticker);
+            // get rate of token
+            $rate = $this->getTokenExchangeRate("usd", $request->currency_ticker);
+
+            // get payment_amount
+            $payment_amount = $rate * $request->payment_amount;
+
+            // get token amount
+            $token_amount = $this->getTokenWorth($request->currency_ticker, $payment_amount, $product->ticker);
 
             // Create new token purchase order
             $purchase = $this->purchase::create([
                 'product_id' => $request->get('product_id'),
                 'user_id' => $this->user_id,
-                'payment_amount' => $request->get('payment_amount'),
+                'payment_amount' => $payment_amount,
                 'currency_ticker' => $request->get('currency_ticker'),
                 'currency_type' => $request->get('currency_type'),
                 'token_amount' => $token_amount,
@@ -327,13 +334,25 @@ class PurchaseController extends Controller
                 throw new Exception("Product not found", 400);
             }
             
-            $token_amount = $this->getTokenWorth($request->currency_ticker, $request->payment_amount, $product->ticker);
+            // get rate of token
+            $rate = $this->getTokenExchangeRate("usd", $request->currency_ticker);
+
+            // get payment_amount
+            $payment_amount = $rate * $request->payment_amount;
+
+            // get token amount
+            $token_amount = $this->getTokenWorth($request->currency_ticker, $payment_amount, $product->ticker);
 
             // Return response to client
             return response()->jsonApi([
                 'title' => 'Get token worth',
                 'message' => "Get token worth",
-                'data' => $token_amount
+                'data' => [
+                    "currency_ticker" => $request->currency_ticker,
+                    "rate" => $rate,
+                    "payment_amount" => $payment_amount,
+                    "token_amount" => $token_amount,
+                ]
             ]);
         } catch (Exception $e) {
             return response()->jsonApi([

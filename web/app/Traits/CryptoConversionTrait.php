@@ -5,9 +5,11 @@ namespace App\Traits;
 use Exception;
 use Illuminate\Support\Str;
 use App\Models\Product;
+use Illuminate\Support\Facades\Http;
 
 trait CryptoConversionTrait
 {
+    protected $currencies = [];
 
     /**
      * Get the token worth for a particular crypt.
@@ -17,12 +19,7 @@ trait CryptoConversionTrait
     protected function getTokenWorth($currency_ticker, $amount, $token): mixed
     {
         // get the sol equivalent for the currency
-        // sol_rate = $this->getTokenExchangeRate($crypto, "sol");
-        if(array_search($currency_ticker, ['eur', 'usd', 'gbp'])){
-            $sol_rate = 0.0286;
-        }else{
-            $sol_rate = 572;
-        }
+        $sol_rate = $this->getTokenExchangeRate($currency_ticker, "sol");
 
         $sol_equivalent = $sol_rate * $amount;
 
@@ -31,8 +28,7 @@ trait CryptoConversionTrait
         $new_sol_value = $sol_equivalent - $devalue;
 
         // get dollar equivalent of SOL
-        // $sol_dol_rate = $this->getTokenExchangeRate("sol", "dollar");
-        $sol_dol_rate = 35;
+        $sol_dol_rate = $this->getTokenExchangeRate("sol", "usd");
         $dol_equivalent = $sol_dol_rate * $new_sol_value;
 
         // convert dollar value to required token
@@ -55,62 +51,48 @@ trait CryptoConversionTrait
      */
     protected function getTokenExchangeRate($from, $to): mixed
     {
-        // try {
-        //     /**
-        //      * Prep reference books endpoint
-        //      *
-        //      */
-        //     $endpoint = '/admin/users?type=Investor';
-        //     $params = $request->getQueryString();
-        //     if ($params) {
-        //         $endpoint = $endpoint . '&' . $params;
-        //     }
-        //     $IDS = env("API_REFERENCE_BOOKS_HOST");
-        //     $url = $IDS['host'] . '/' . $IDS['version'] . $endpoint;
+        if (!sizeof($this->currencies)) {
+            /**
+             * Prep reference books endpoint
+             *
+             */
+            $endpoint = "/currencies/rates/";
 
-        //     /**
-        //      * Get Details from IDS
-        //      *
-        //      */
-        //     $response = Http::withToken($request->bearerToken())->withHeaders([
-        //         'User-Id' => Auth::user()->getAuthIdentifier()
-        //     ])->get($url);
+            $reference_books_url = env("API_REFERENCE_BOOKS_URL");
+            $url = $reference_books_url . $endpoint;
 
-        //     /**
-        //      * Handle Response
-        //      *
-        //      */
-        //     if (!$response->successful()) {
-        //         $status = $response->status() ?? 400;
-        //         $message = $response->getReasonPhrase() ?? 'Error Processing Request';
+            /**
+             * verify the code
+             *
+             */
+            $resp = Http::withHeaders([
+                "user-id" => $this->user_id
+            ])->get($url);
 
-        //         throw new Exception($message, $status);
-        //     }
+            /**
+             * Handle Response
+             *
+             */
+            if (!$resp->successful()) {
+                $status = $resp->status() ?? 400;
+                $message = $resp->getReasonPhrase() ?? 'Error Processing Request';
+                throw new \Exception($message, $status);
+            }
 
-        //     $investors = [];
-        //     $data = $response->object()->data ?? null;
+            $this->currencies = $resp->object()->data ?? null;
+        }
 
-        //     if ($data) {
-        //         /**
-        //          * Get Tokens
-        //          *
-        //          */
-        //         // foreach ($data->data as $key => $investor) {
-        //         //     $tokens = Purchase::where([
-        //         //         'user_id' => $investor->id
-        //         //     ])->sum("token_amount");
+        if (sizeof($this->currencies)) {
+            // Search for rates of currencies using symbol
+            $from_key = array_search(mb_strtoupper($from), array_column($this->currencies, "currency"));
+            $from_rate = $this->currencies[$from_key]->rate;
 
-        //         //     $investor->tokens = $tokens;
-        //         //     $investors[] = $investor;
-        //         // }
+            $to_key = array_search(mb_strtoupper($to), array_column($this->currencies, "currency"));
+            $to_rate = $this->currencies[$to_key]->rate;
 
-        //         /**
-        //          * Client Response
-        //          *
-        //          */
-        //         $data->data = $investors;
-        //     }
-        // } catch (Exception $e) {
-        // }
+            $rate = $from_rate / $to_rate;
+
+            return $rate;
+        }
     }
 }
