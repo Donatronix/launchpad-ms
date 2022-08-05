@@ -14,7 +14,6 @@ use Sumra\SDK\Services\JsonApiResponse;
 
 class ProductController extends Controller
 {
-    private const RECEIVER_LISTENER = 'CreateCurrency';
     /**
      * @param Product $model
      */
@@ -214,7 +213,7 @@ class ProductController extends Controller
             $product = $this->model->create($request->all());
 
             // send product to the reference-books-ms
-            PubSub::publish(self::RECEIVER_LISTENER, [
+            PubSub::publish('CreateCurrency', [
                 'currency_code' => $product->ticker,
                 'title' => $product->title,
             ], config('pubsub.queue.reference_books'));

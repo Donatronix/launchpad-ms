@@ -16,8 +16,6 @@ class PurchaseController extends Controller
 {
     use CryptoConversionTrait;
 
-    private const RECEIVER_LISTENER = 'PurchaseToken';
-
     /**
      * @param Purchase $purchase
      */
@@ -190,7 +188,7 @@ class PurchaseController extends Controller
             if(!$product){
                 throw new Exception("Product not found", 400);
             }
-            
+
             // get rate of token
             $rate = $this->getTokenExchangeRate("usd", $request->currency_ticker);
 
@@ -210,13 +208,6 @@ class PurchaseController extends Controller
                 'token_amount' => $token_amount,
             ]);
 
-            // send token purchased to wallet
-            // PubSub::publish(self::RECEIVER_LISTENER, [
-            //     'amount' => $purchase->token_amount,
-            //     'token' => $product->ticker,
-            //     'user_id' => $this->user_id,
-            // ], config('pubsub.queue.crypto_wallets'));
-
             // Return response to client
             return response()->jsonApi([
                 'title' => 'Creating new token purchase order',
@@ -226,7 +217,7 @@ class PurchaseController extends Controller
                     'currency' => $purchase->currency_ticker,
                     'document' => [
                         'id' => $purchase->id,
-                        'object' => 'Purchase',
+                        'object' => class_basename(get_class($purchase)),
                         'service' => env('RABBITMQ_EXCHANGE_NAME'),
                         'meta' => $purchase
                     ]]
@@ -333,7 +324,7 @@ class PurchaseController extends Controller
             if(!$product){
                 throw new Exception("Product not found", 400);
             }
-            
+
             // get rate of token
             $rate = $this->getTokenExchangeRate("usd", $request->currency_ticker);
 

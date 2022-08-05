@@ -12,7 +12,10 @@ class EventServiceProvider extends ServiceProvider
      * @var array
      */
     protected $listen = [
-        //
+        'PaymentUpdateRequest' => [
+            'App\Listeners\DepositStatusUpdateRequestListener',
+            'App\Listeners\PurchaseStatusUpdateRequestListener',
+        ]
     ];
 
     /**
