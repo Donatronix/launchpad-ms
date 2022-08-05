@@ -19,7 +19,7 @@ class PurchaseFactory extends Factory
             "currency_type"  => "crypto",
             "token_amount"  => 25312.046,
             "currency_ticker" => "btc",
-            "payment_status"  => true
+            "status"  => 0
         ];
     }
 }

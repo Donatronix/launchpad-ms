@@ -16,8 +16,6 @@ class PurchaseController extends Controller
 {
     use CryptoConversionTrait;
 
-    private const RECEIVER_LISTENER = 'PurchaseToken';
-
     /**
      * @param Purchase $purchase
      */
@@ -107,18 +105,23 @@ class PurchaseController extends Controller
      *     description="Create a token purchase order. Currency ticker should be btc, eth, usd, gbp or eur. Only currency type of fiat and crypto is required",
      *     tags={"Application | Purchases"},
      *
+     *     security={{
+     *         "bearerAuth": {},
+     *         "apiKey": {}
+     *     }},
+     *
      *     @OA\RequestBody(
      *         required=true,
      *         @OA\JsonContent(ref="#/components/schemas/Purchase")
      *     ),
      *     @OA\Response(
      *         response="200",
-     *         description="Getting product list for start presale",
+     *         description="Ok",
      *         @OA\JsonContent(ref="#/components/schemas/OkResponse")
      *     ),
      *     @OA\Response(
      *         response="201",
-     *         description="New record addedd successfully",
+     *         description="Created",
      *         @OA\JsonContent(ref="#/components/schemas/OkResponse")
      *     ),
      *     @OA\Response(
@@ -161,11 +164,11 @@ class PurchaseController extends Controller
 
             if($request->currency_type == "fiat"){
                 $rules += [
-                    "payment_amount" => 'required|integer|min:250|max:1000',
+                    "payment_amount" => 'required|numeric|min:250|max:1000',
                 ];
             } else if($request->currency_type == "crypto"){
                 $rules += [
-                    "payment_amount" => 'required|integer',
+                    "payment_amount" => 'required|numeric',
                 ];
             }
 
@@ -186,13 +189,20 @@ class PurchaseController extends Controller
                 throw new Exception("Product not found", 400);
             }
 
-            $token_amount = $this->getTokenWorth($request->currency_ticker, $request->payment_amount, $product->ticker);
+            // get rate of token
+            $rate = $this->getTokenExchangeRate("usd", $request->currency_ticker);
+
+            // get payment_amount
+            $payment_amount = $rate * $request->payment_amount;
+
+            // get token amount
+            $token_amount = $this->getTokenWorth($request->currency_ticker, $payment_amount, $product->ticker);
 
             // Create new token purchase order
             $purchase = $this->purchase::create([
                 'product_id' => $request->get('product_id'),
                 'user_id' => $this->user_id,
-                'payment_amount' => $request->get('payment_amount'),
+                'payment_amount' => $payment_amount,
                 'currency_ticker' => $request->get('currency_ticker'),
                 'currency_type' => $request->get('currency_type'),
                 'token_amount' => $token_amount,
@@ -214,7 +224,7 @@ class PurchaseController extends Controller
                     'currency' => $purchase->currency_ticker,
                     'document' => [
                         'id' => $purchase->id,
-                        'object' => 'Purchase',
+                        'object' => class_basename(get_class($purchase)),
                         'service' => env('RABBITMQ_EXCHANGE_NAME'),
                         'meta' => $purchase
                     ]]
@@ -230,20 +240,31 @@ class PurchaseController extends Controller
     /**
      * Get token worth
      *
-     * @OA\Get(
+     * @OA\Post(
      *     path="/app/purchases/token-worth",
      *     summary="Get token worth",
      *     description="Get token worth",
+     *     description="Get token worth. Currency ticker should be btc, eth, usd, gbp or eur. Only currency type of fiat and crypto is required",
      *     tags={"Application | Purchases"},
+     *
+     *     security={{
+     *         "bearerAuth": {},
+     *         "apiKey": {}
+     *     }},
+     *
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(ref="#/components/schemas/Purchase")
+     *     ),
      *
      *     @OA\Response(
      *         response="200",
-     *         description="Getting product list for start presale",
+     *         description="ok",
      *         @OA\JsonContent(ref="#/components/schemas/OkResponse")
      *     ),
      *     @OA\Response(
      *         response="201",
-     *         description="New record addedd successfully",
+     *         description="Created",
      *         @OA\JsonContent(ref="#/components/schemas/OkResponse")
      *     ),
      *     @OA\Response(
@@ -286,11 +307,11 @@ class PurchaseController extends Controller
 
             if($request->currency_type == "fiat"){
                 $rules += [
-                    "payment_amount" => 'required|integer|min:250|max:1000',
+                    "payment_amount" => 'required|numeric|min:250|max:1000',
                 ];
             } else if($request->currency_type == "crypto"){
                 $rules += [
-                    "payment_amount" => 'required|integer',
+                    "payment_amount" => 'required|numeric',
                 ];
             }
 
@@ -311,13 +332,25 @@ class PurchaseController extends Controller
                 throw new Exception("Product not found", 400);
             }
 
-            $token_amount = $this->getTokenWorth($request->currency_ticker, $request->payment_amount, $product->ticker);
+            // get rate of token
+            $rate = $this->getTokenExchangeRate("usd", $request->currency_ticker);
+
+            // get payment_amount
+            $payment_amount = $rate * $request->payment_amount;
+
+            // get token amount
+            $token_amount = $this->getTokenWorth($request->currency_ticker, $payment_amount, $product->ticker);
 
             // Return response to client
             return response()->jsonApi([
                 'title' => 'Get token worth',
                 'message' => "Get token worth",
-                'data' => $token_amount
+                'data' => [
+                    "currency_ticker" => $request->currency_ticker,
+                    "rate" => $rate,
+                    "payment_amount" => $payment_amount,
+                    "token_amount" => $token_amount,
+                ]
             ]);
         } catch (Exception $e) {
             return response()->jsonApi([
