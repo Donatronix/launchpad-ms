@@ -69,7 +69,7 @@ class Purchase extends Model
         'token_amount',
         'payment_amount',
         'product_id',
-        'payment_status',
+        'status',
         'user_id',
     ];
 
