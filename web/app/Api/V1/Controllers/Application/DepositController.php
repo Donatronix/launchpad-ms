@@ -203,8 +203,8 @@ class DepositController extends Controller
                     'currency' => $request->get('currency'),
                     'document' => [
                         'id' => $deposit->id,
-                        'object' => 'Deposit',
-                        'service' => 'CryptoLaunchpadMS',
+                        'object' => class_basename(get_class($deposit)),
+                        'service' => env('RABBITMQ_EXCHANGE_NAME'),
                     ]
                 ]
             ], 201);

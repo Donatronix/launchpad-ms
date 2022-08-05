@@ -141,7 +141,7 @@ class InvestmentController extends Controller
                     'currency' => $request->get('currency'),
                     'document' => [
                         'id' => $deposit->id,
-                        'object' => 'Deposit',
+                        'object' => class_basename(get_class($deposit)),
                         'service' => env('RABBITMQ_EXCHANGE_NAME'),
                     ]
                 ]
@@ -160,7 +160,7 @@ class InvestmentController extends Controller
             return response()->jsonApi([
                 'title' => 'Application for participation in the presale',
                 'message' => $e->getMessage(),
-            ], $e->getCode());
+            ], 500);
         }
     }
 }

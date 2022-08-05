@@ -21,7 +21,7 @@ class CreatePurchasesTable extends Migration
             $table->decimal('token_amount', 50, 12);
             $table->string('currency_ticker');
             $table->enum('currency_type', ['fiat', 'crypto', 'token', 'virtual']);
-            $table->boolean('payment_status')->default(0);
+            $table->smallInteger('status')->default(0)->index();
 
             $table->foreignUuid('user_id');
 

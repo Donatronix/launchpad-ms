@@ -22,14 +22,14 @@ class PurchasesTableSeeder extends Seeder
                     "currency_type"  => "crypto",
                     "token_amount"  => 25312.046,
                     "currency_ticker" => "btc",
-                    "payment_status"  => true
+                    "status"  => 0
                 ],
                 [
                     "payment_amount" => 5000,
                     "currency_type"  => "crypto",
                     "token_amount"  => 25312.046,
                     "currency_ticker" => "btc",
-                    "payment_status"  => true
+                    "status"  => 0
                 ],
             ],
 
@@ -39,14 +39,14 @@ class PurchasesTableSeeder extends Seeder
                     "currency_type"  => "crypto",
                     "token_amount"  => 25312.046,
                     "currency_ticker" => "btc",
-                    "payment_status"  => true
+                    "status"  => 0
                 ],
                 [
                     "payment_amount" => 5000,
                     "currency_type"  => "crypto",
                     "token_amount"  => 25312.046,
                     "currency_ticker" => "btc",
-                    "payment_status"  => true
+                    "status"  => 0
                 ],
             ]
         ];

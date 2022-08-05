@@ -8,6 +8,7 @@ use App\Models\Purchase;
 use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
 use Sumra\SDK\Services\JsonApiResponse;
 
