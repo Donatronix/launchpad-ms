@@ -195,8 +195,8 @@ class PurchaseController extends Controller
             // get payment_amount
             $payment_amount = $rate * $request->payment_amount;
 
-            // get token amount
-            $token_amount = $this->getTokenWorth($request->currency_ticker, $payment_amount, $product->ticker);
+            // get token worth
+            $token_worth = $this->getTokenWorth($request->payment_amount, $product->ticker);
 
             // Create new token purchase order
             $purchase = $this->purchase::create([
@@ -205,7 +205,9 @@ class PurchaseController extends Controller
                 'payment_amount' => $payment_amount,
                 'currency_ticker' => $request->get('currency_ticker'),
                 'currency_type' => $request->get('currency_type'),
-                'token_amount' => $token_amount,
+                "token_amount" => $token_worth["token_amount"],
+                "bonus" => $token_worth["bonus"],
+                "total_token" => $token_worth["total_token"],
             ]);
 
             // Return response to client
@@ -331,8 +333,8 @@ class PurchaseController extends Controller
             // get payment_amount
             $payment_amount = $rate * $request->payment_amount;
 
-            // get token amount
-            $token_amount = $this->getTokenWorth($request->currency_ticker, $payment_amount, $product->ticker);
+            // get token worth
+            $token_worth = $this->getTokenWorth($request->payment_amount, $product->ticker);
 
             // Return response to client
             return response()->jsonApi([
@@ -342,7 +344,9 @@ class PurchaseController extends Controller
                     "currency_ticker" => $request->currency_ticker,
                     "rate" => $rate,
                     "payment_amount" => $payment_amount,
-                    "token_amount" => $token_amount,
+                    "token_amount" => $token_worth["token_amount"],
+                    "bonus" => $token_worth["bonus"],
+                    "total_token" => $token_worth["total_token"],
                 ]
             ]);
         } catch (Exception $e) {

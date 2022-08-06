@@ -19,6 +19,8 @@ class CreatePurchasesTable extends Migration
             $table->string('number', 15);
             $table->decimal('payment_amount', 12, 5);
             $table->decimal('token_amount', 50, 12);
+            $table->decimal('bonus', 50, 12);
+            $table->decimal('total_token', 50, 12);
             $table->string('currency_ticker');
             $table->enum('currency_type', ['fiat', 'crypto', 'token', 'virtual']);
             $table->smallInteger('status')->default(0)->index();
