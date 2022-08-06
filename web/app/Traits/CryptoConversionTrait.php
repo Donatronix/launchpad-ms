@@ -16,10 +16,10 @@ trait CryptoConversionTrait
      *
      * @return object
      */
-    protected function getTokenWorth($currency_ticker, $amount, $token): mixed
+    protected function getTokenWorth($amount, $token): mixed
     {
         // get the sol equivalent for the currency
-        $sol_rate = $this->getTokenExchangeRate($currency_ticker, "sol");
+        $sol_rate = $this->getTokenExchangeRate("usd", "sol");
 
         $sol_equivalent = $sol_rate * $amount;
 
@@ -37,8 +37,13 @@ trait CryptoConversionTrait
 
         $token_amount = $dol_equivalent / $token_stage4_price;
 
-        // Calculate token 10% bonus
-        $bonus = 0.1 * $token_amount;
+        // Give 10% bonus for amount greater than 1000
+        if ($amount < 1000) {
+            $bonus = 0;
+        } else {
+            // Calculate token 10% bonus
+            $bonus = 0.1 * $token_amount;
+        }
 
         // get total token
         $total_token = $token_amount + $bonus;

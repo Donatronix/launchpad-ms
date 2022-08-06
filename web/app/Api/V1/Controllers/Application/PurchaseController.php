@@ -196,7 +196,7 @@ class PurchaseController extends Controller
             $payment_amount = $rate * $request->payment_amount;
 
             // get token worth
-            $token_worth = $this->getTokenWorth($request->currency_ticker, $payment_amount, $product->ticker);
+            $token_worth = $this->getTokenWorth($request->payment_amount, $product->ticker);
 
             // Create new token purchase order
             $purchase = $this->purchase::create([
@@ -334,7 +334,7 @@ class PurchaseController extends Controller
             $payment_amount = $rate * $request->payment_amount;
 
             // get token worth
-            $token_worth = $this->getTokenWorth($request->currency_ticker, $payment_amount, $product->ticker);
+            $token_worth = $this->getTokenWorth($request->payment_amount, $product->ticker);
 
             // Return response to client
             return response()->jsonApi([
