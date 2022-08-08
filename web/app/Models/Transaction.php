@@ -2,10 +2,10 @@
 
 namespace App\Models;
 
-use Sumra\SDK\Traits\NumeratorTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Sumra\SDK\Traits\NumeratorTrait;
 use Sumra\SDK\Traits\OwnerTrait;
 use Sumra\SDK\Traits\UuidTrait;
 
@@ -49,17 +49,6 @@ class Transaction extends Model
         self::TYPE_CONTRACT,
         self::TYPE_PAYMENT_RECHARGE
     ];
-
-    /**
-     * Get the numerator prefix for the model.
-     *
-     * @return string
-     */
-    protected function getNumeratorPrefix(): string
-    {
-        return 'TR';
-    }
-
     /**
      * The attributes that are mass assignable.
      *
@@ -83,7 +72,6 @@ class Transaction extends Model
         'sol_received',
         'amount_received',
     ];
-
     /**
      * The attributes excluded from the model's JSON form.
      *
@@ -94,12 +82,21 @@ class Transaction extends Model
         'updated_at',
         'deleted_at'
     ];
-
     /**
      * Auto relations for transaction Model
      */
 
     protected $with = ['creditCardType'];
+
+    /**
+     * Get the numerator prefix for the model.
+     *
+     * @return string
+     */
+    protected function getNumeratorPrefix(): string
+    {
+        return 'TRX';
+    }
 
     /**
      * Get the owning transactionable model.

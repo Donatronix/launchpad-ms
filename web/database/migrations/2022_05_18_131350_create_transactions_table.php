@@ -15,8 +15,11 @@ class CreateTransactionsTable extends Migration
     {
         Schema::create('transactions', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->string('number', 15);
+            $table->string('number', 20)->index();
+
             $table->unsignedTinyInteger('payment_type_id');  // fiat/crypto ID
+            $table->foreign('payment_type_id')->references('id')->on('payment_types');
+
             $table->string('wallet_address', 256)->nullable();
             $table->string('card_number', 21)->nullable();
             $table->string('payment_gateway', 100)->nullable();
@@ -28,17 +31,18 @@ class CreateTransactionsTable extends Migration
             $table->decimal('total_amount', 12, 2, true);
             $table->decimal('bonus', 12, 2, true);
             $table->decimal('sol_received', 12, 2, true);
-            $table->enum('status', ['0','1','2','3'])->default(1);
+
+            $table->unsignedTinyInteger('status')->default(1);
+
             $table->string('admin_id', 100)->nullable();
             $table->string('user_id', 100)->nullable();
 
-            $table->uuid('order_id')->nullable();
+            $table->foreignUuid('order_id')
+                ->constrained()
+                ->onUpdate('cascade')
+                ->onDelete('cascade');
 
             $table->unsignedTinyInteger('credit_card_type_id')->default(0);
-
-            $table->foreign('payment_type_id')->references('id')->on('payment_types');
-
-            $table->foreign('order_id')->references('id')->on('orders');
 
             $table->timestamps();
             $table->softDeletes();

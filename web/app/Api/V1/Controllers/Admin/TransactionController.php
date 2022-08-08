@@ -248,6 +248,7 @@ class TransactionController extends Controller
      */
     public function store(Request $request)
     {
+        // Do validate input data
         $validator = Validator::make($request->all(), [
             'token_stage' => 'required|string',
             'currency_code' => 'required|string',
@@ -264,7 +265,7 @@ class TransactionController extends Controller
             ], 400);
         }
 
-        // create a new transaction
+        // Create a new transaction
         try {
             $paramsTransactions = $request->all();
             $transaction = (new TransactionService())->store($paramsTransactions);

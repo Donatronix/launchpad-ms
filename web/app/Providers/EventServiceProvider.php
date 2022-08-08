@@ -13,8 +13,7 @@ class EventServiceProvider extends ServiceProvider
      */
     protected $listen = [
         'PaymentUpdateRequest' => [
-            'App\Listeners\DepositUpdateRequestListener',
-            'App\Listeners\PurchaseUpdateRequestListener',
+            'App\Listeners\PaymentUpdateRequestListener',
         ]
     ];
 

@@ -19,7 +19,6 @@ class TransactionFactory extends Factory
     public function definition(): array
     {
         return [
-            'id' => $this->faker->uuid,
             'number' => $this->faker->randomNumber(),
             'payment_type_id' => $this->faker->numberBetween(1, 3),
             'wallet_address' => uniqid('WKSHA273FSHS'),
@@ -33,8 +32,8 @@ class TransactionFactory extends Factory
             'total_amount' => $this->faker->numberBetween(5, 1000001),
             'bonus' => $this->faker->numberBetween(5, 1000001),
             'sol_received' => $this->faker->numberBetween(5, 1000001),
-            'status' => 1,
-            'order_id' => $this->faker->randomElement(Order::all()),
+            'status' => $this->faker->randomElement(Transaction::$statuses),
+            'order_id' => $this->faker->randomElement(Order::all())->id,
             'admin_id' => $this->faker->randomElement(config('settings.default_users_ids')),
             'user_id' => $this->faker->randomElement(config('settings.default_users_ids')),
         ];

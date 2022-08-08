@@ -144,10 +144,8 @@ class OrderController extends Controller
      */
     public function store(Request $request): mixed
     {
-        // Try to save received data
         try {
-
-            // Validate input
+            // Do validate input data
             $validator = Validator::make($request->all(), $this->model::validationRules());
 
             if ($validator->fails()) {

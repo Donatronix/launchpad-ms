@@ -193,7 +193,7 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
-        // Validate input
+        // Do validate input data
         $validator = Validator::make($request->all(), $this->model::validationRules());
         if ($validator->fails()) {
             throw new Exception($validator->errors()->first());
@@ -371,7 +371,7 @@ class ProductController extends Controller
      */
     public function update(Request $request, $id)
     {
-        // Validate input
+        // Do validate input data
         $validator = Validator::make($request->all(), [
             'title' => 'string',
             'ticker' => 'string|unique:products,ticker',
@@ -380,7 +380,6 @@ class ProductController extends Controller
             'start_date' => 'string',
             'end_date' => 'string',
         ]);
-
         if ($validator->fails()) {
             throw new Exception($validator->errors()->first());
         }

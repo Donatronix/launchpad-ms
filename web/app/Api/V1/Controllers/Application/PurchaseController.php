@@ -172,7 +172,7 @@ class PurchaseController extends Controller
                 ];
             }
 
-            // Validate input
+            // Do validate input data
             $validator = Validator::make($request->all(), $rules);
 
             if ($validator->fails()) {
@@ -310,7 +310,7 @@ class PurchaseController extends Controller
                 ];
             }
 
-            // Validate input
+            // Do validate input data
             $validator = Validator::make($request->all(), $rules);
 
             if ($validator->fails()) {
