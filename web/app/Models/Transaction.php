@@ -55,13 +55,11 @@ class Transaction extends Model
      * @var array
      */
     protected $fillable = [
-        'payment_type_id',
         'total_amount',
         'order_id',
         'user_id',
         'admin_id',
         'payment_system',
-        'credit_card_type_id',
         'wallet_address',
         'currency_code',
         'payment_date',
@@ -82,11 +80,6 @@ class Transaction extends Model
         'updated_at',
         'deleted_at'
     ];
-    /**
-     * Auto relations for transaction Model
-     */
-
-    protected $with = ['creditCardType'];
 
     /**
      * Get the numerator prefix for the model.
@@ -114,25 +107,5 @@ class Transaction extends Model
     public function order()
     {
         return $this->belongsTo(Order::class, 'order_id', 'id');
-    }
-
-    /**
-     * One Transaction have One Payment Type relation
-     *
-     * @return BelongsTo
-     */
-    public function payment_type()
-    {
-        return $this->belongsTo(PaymentType::class, 'payment_type_id', 'id');
-    }
-
-    /**
-     * One Transaction have One Credit Card Type relation
-     *
-     * @return BelongsTo
-     */
-    public function creditCardType()
-    {
-        return $this->belongsTo(CreditCardType::class, 'credit_card_type_id', 'id');
     }
 }

@@ -20,7 +20,6 @@ class TransactionFactory extends Factory
     {
         return [
             'number' => $this->faker->randomNumber(),
-            'payment_type_id' => $this->faker->numberBetween(1, 3),
             'wallet_address' => uniqid('WKSHA273FSHS'),
             'card_number' => $this->faker->creditCardNumber(),
             'payment_gateway' => $this->faker->creditCardNumber(),

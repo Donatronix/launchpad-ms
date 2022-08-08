@@ -40,19 +40,19 @@ class InvestmentController extends Controller
      *             @OA\Property(
      *                 property="investment_amount",
      *                 type="number",
-     *                 description="Investment amount",
+     *                 description="Investment amount in USD/EUR/GBP",
      *                 example="100000"
      *             ),
      *             @OA\Property(
      *                 property="deposit_percentage",
      *                 type="number",
-     *                 description="Deposit percentage",
+     *                 description="Deposit percentage from investment amount",
      *                 example="10"
      *             ),
      *             @OA\Property(
      *                 property="currency",
      *                 type="string",
-     *                 description="Deposit currency code",
+     *                 description="Currency in which the deposit is made",
      *                 example="usd"
      *             )
      *         )
@@ -109,6 +109,9 @@ class InvestmentController extends Controller
             // Calculate deposit amount
             $deposit_amount = ($inputData->investment_amount * $inputData->deposit_percentage) / 100;
 
+            // Convert currency
+            $currency = strtolower($inputData->currency);
+
             // Check minimal deposit sum
             if($deposit_amount < 250) {
                 return response()->jsonApi([
@@ -118,11 +121,16 @@ class InvestmentController extends Controller
             }
 
             // Check maximum deposit sum in Fiat
-            if(in_array($inputData->currency, ['usd', 'eur', 'gbp']) && $deposit_amount > 1000){
+            if(in_array($currency, ['usd', 'eur', 'gbp']) && $deposit_amount > 1000){
                 return response()->jsonApi([
                     'title' => 'Application for participation in the presale',
-                    'message' => "You can't make deposit more more 1000 USD/EUR/GBP"
+                    'message' => "You can't make deposit more more 1000 USD/EUR/GBP. Use crypto payment"
                 ], 400);
+            }
+
+            // If deposit currency not fiat, then convert by market rate
+            if(!in_array($currency, ['usd', 'eur', 'gbp'])){
+                //
             }
 
             // Create new order
@@ -138,7 +146,7 @@ class InvestmentController extends Controller
             // Create deposit
             $deposit = Deposit::create([
                 'amount' => $deposit_amount,
-                'currency_code' => $inputData->currency,
+                'currency_code' => $currency,
                 'order_id' => $order->id,
                 'status' => Deposit::STATUS_CREATED,
                 'user_id' => Auth::user()->getAuthIdentifier(),
@@ -150,7 +158,7 @@ class InvestmentController extends Controller
                 'message' => "Application for participation in the presale has been successfully created",
                 'data' => [
                     'amount' => $deposit->amount,
-                    'currency' => $inputData->currency,
+                    'currency' => $currency,
                     'document' => [
                         'id' => $deposit->id,
                         'object' => class_basename(get_class($deposit)),

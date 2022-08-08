@@ -280,38 +280,4 @@ class DepositController extends Controller
             ], $e->getCode());
         }
     }
-
-    /**
-     * @param $transaction_id
-     * @return \Illuminate\Http\Response
-     */
-    public function generatePdfForTransaction($transaction_id)
-    {
-        try {
-            $transaction = (new TransactionService())->getOne($transaction_id);
-            $deposit = $transaction->deposit;
-            $transaction->date = $transaction->created_at->toDayDateTimeString();
-
-            if ($transaction->payment_type_id == PaymentType::DEBIT_CARD) {
-                $pdf = PDF::loadView('pdf.receipt.deposit-card', $transaction->toArray());
-                return $pdf->download('pdf.receipt.deposit-card');
-            } elseif ($transaction->payment_type_id == PaymentType::CRYPTO
-                || $transaction->payment_type_id == PaymentType::FIAT) {
-                $pdf = PDF::loadView('pdf.receipt.deposit-wallet', $transaction->toArray());
-                return $pdf->download('pdf.receipt.deposit-wallet');
-            }
-
-            return response()->jsonApi([
-                'title' => 'Deposit details data',
-                'message' => "Deposit detail data has been received",
-                'data' => $transaction->toArray()
-            ]);
-
-        } catch (ModelNotFoundException $e) {
-            return response()->jsonApi([
-                'title' => "Get deposit",
-                'message' => "Transaction with id #{$transaction_id} not found: {$e->getMessage()}",
-            ], 404);
-        }
-    }
 }

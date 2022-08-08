@@ -9,13 +9,6 @@ use Illuminate\Support\Facades\Auth;
 
 class TransactionService
 {
-    protected $model;
-
-    public function __construct()
-    {
-        $this->model = new Transaction();
-    }
-
     public function store($params)
     {
         $total_amount = "";
@@ -53,8 +46,7 @@ class TransactionService
         }
 
         try {
-            $transaction = $this->model::create([
-                'payment_type_id' => $params['transaction_type_id'],
+            $transaction = Transaction::create([
                 'payment_date' => $params['transaction_date'],
                 'total_amount' => $total_amount,
                 'wallet_address' => $params['wallet_address'],
@@ -73,13 +65,8 @@ class TransactionService
         } catch (Exception $e) {
             return response()->jsonApi([
                 'title' => "Error adding transactions",
-                'message' => $e->getMessage->toArray(),
+                'message' => $e->getMessage(),
             ], 404);
         }
-    }
-
-    public function getOne($transaction_id)
-    {
-        return $this->model::findOrFail($transaction_id);
     }
 }

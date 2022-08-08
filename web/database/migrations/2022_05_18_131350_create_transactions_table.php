@@ -17,9 +17,6 @@ class CreateTransactionsTable extends Migration
             $table->uuid('id')->primary();
             $table->string('number', 20)->index();
 
-            $table->unsignedTinyInteger('payment_type_id');  // fiat/crypto ID
-            $table->foreign('payment_type_id')->references('id')->on('payment_types');
-
             $table->string('wallet_address', 256)->nullable();
             $table->string('card_number', 21)->nullable();
             $table->string('payment_gateway', 100)->nullable();
@@ -41,8 +38,6 @@ class CreateTransactionsTable extends Migration
                 ->constrained()
                 ->onUpdate('cascade')
                 ->onDelete('cascade');
-
-            $table->unsignedTinyInteger('credit_card_type_id')->default(0);
 
             $table->timestamps();
             $table->softDeletes();
