@@ -19,8 +19,7 @@ class DatabaseSeeder extends Seeder
         $this->call([
             ProductsTableSeeder::class,
             PricesTableSeeder::class,
-            TokenRewardsTableSeeder::class,
-            PaymentTypesTableSeeder::class
+            TokenRewardsTableSeeder::class
         ]);
 
         // Seeds for local and staging

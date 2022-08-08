@@ -132,6 +132,24 @@ class DashboardController extends Controller
     }
 
     /**
+     * Get product object
+     *
+     * @param $id
+     * @return mixed
+     */
+    private function getProduct($id): mixed
+    {
+        try {
+            return $this->product::findOrFail($id);
+        } catch (ModelNotFoundException $e) {
+            return response()->jsonApi([
+                'title' => "Get product",
+                'message' => "Product with id #{$id} not found: {$e->getMessage()}",
+            ], 404);
+        }
+    }
+
+    /**
      * List Token investors
      *
      * @OA\Get(
@@ -260,24 +278,6 @@ class DashboardController extends Controller
                 'title' => 'Token investors',
                 'message' => $e->getMessage(),
             ], 500);
-        }
-    }
-
-    /**
-     * Get product object
-     *
-     * @param $id
-     * @return mixed
-     */
-    private function getProduct($id): mixed
-    {
-        try {
-            return $this->product::findOrFail($id);
-        } catch (ModelNotFoundException $e) {
-            return response()->jsonApi([
-                'title' => "Get product",
-                'message' => "Product with id #{$id} not found: {$e->getMessage()}",
-            ], 404);
         }
     }
 }

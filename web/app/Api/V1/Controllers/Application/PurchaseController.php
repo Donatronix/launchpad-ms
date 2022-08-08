@@ -10,7 +10,6 @@ use Auth;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
-use PubSub;
 
 class PurchaseController extends Controller
 {
@@ -162,11 +161,11 @@ class PurchaseController extends Controller
                 'currency_ticker' => 'required|string'
             ];
 
-            if($request->currency_type == "fiat"){
+            if ($request->currency_type == "fiat") {
                 $rules += [
                     "payment_amount" => 'required|numeric|min:250|max:1000',
                 ];
-            } else if($request->currency_type == "crypto"){
+            } else if ($request->currency_type == "crypto") {
                 $rules += [
                     "payment_amount" => 'required|numeric',
                 ];
@@ -183,9 +182,9 @@ class PurchaseController extends Controller
                 ], 422);
             }
 
-           // get product details
+            // get product details
             $product = $this->product::find($request->product_id);
-            if(!$product){
+            if (!$product) {
                 throw new Exception("Product not found", 400);
             }
 
@@ -300,11 +299,11 @@ class PurchaseController extends Controller
                 'currency_ticker' => 'required|string',
             ];
 
-            if($request->currency_type == "fiat"){
+            if ($request->currency_type == "fiat") {
                 $rules += [
                     "payment_amount" => 'required|numeric|min:250|max:1000',
                 ];
-            } else if($request->currency_type == "crypto"){
+            } else if ($request->currency_type == "crypto") {
                 $rules += [
                     "payment_amount" => 'required|numeric',
                 ];
@@ -323,7 +322,7 @@ class PurchaseController extends Controller
 
             // get product details
             $product = $this->product::find($request->product_id);
-            if(!$product){
+            if (!$product) {
                 throw new Exception("Product not found", 400);
             }
 

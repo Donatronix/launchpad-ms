@@ -3,10 +3,7 @@
 namespace App\Api\V1\Controllers\Application;
 
 use App\Api\V1\Controllers\Controller;
-use App\Api\V1\Services\TransactionService;
 use App\Models\Deposit;
-use App\Models\PaymentType;
-use Barryvdh\DomPDF\Facade\Pdf;
 use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;

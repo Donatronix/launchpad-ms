@@ -113,7 +113,7 @@ class InvestmentController extends Controller
             $currency = strtolower($inputData->currency);
 
             // Check minimal deposit sum
-            if($deposit_amount < 250) {
+            if ($deposit_amount < 250) {
                 return response()->jsonApi([
                     'title' => 'Application for participation in the presale',
                     'message' => "Minimum deposit amount 250 USD/EUR/GBP or equivalent"
@@ -121,7 +121,7 @@ class InvestmentController extends Controller
             }
 
             // Check maximum deposit sum in Fiat
-            if(in_array($currency, ['usd', 'eur', 'gbp']) && $deposit_amount > 1000){
+            if (in_array($currency, ['usd', 'eur', 'gbp']) && $deposit_amount > 1000) {
                 return response()->jsonApi([
                     'title' => 'Application for participation in the presale',
                     'message' => "You can't make deposit more more 1000 USD/EUR/GBP. Use crypto payment"
@@ -129,7 +129,7 @@ class InvestmentController extends Controller
             }
 
             // If deposit currency not fiat, then convert by market rate
-            if(!in_array($currency, ['usd', 'eur', 'gbp'])){
+            if (!in_array($currency, ['usd', 'eur', 'gbp'])) {
                 //
             }
 
