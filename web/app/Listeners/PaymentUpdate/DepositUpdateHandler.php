@@ -2,8 +2,6 @@
 
 namespace App\Listeners\PaymentUpdate;
 
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
 use Sumra\SDK\Facades\PubSub;
 
 /**
@@ -18,7 +16,7 @@ class DepositUpdateHandler
      */
     public static function exec($document){
         // Send request to wallet for update balance
-        PubSub::publish('updateBalance', [
+        PubSub::publish('UpdateBalance', [
             'type' => 'charge',
             'amount' => $document->amount,
             'currency' => $document->currency_code,

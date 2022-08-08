@@ -2,8 +2,6 @@
 
 namespace App\Listeners\PaymentUpdate;
 
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
 use Sumra\SDK\Facades\PubSub;
 
 /**

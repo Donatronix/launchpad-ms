@@ -50,12 +50,6 @@ class InvestmentController extends Controller
      *                 example="10"
      *             ),
      *             @OA\Property(
-     *                 property="deposit_amount",
-     *                 type="number",
-     *                 description="Deposit amount",
-     *                 example="10000"
-     *             ),
-     *             @OA\Property(
      *                 property="currency",
      *                 type="string",
      *                 description="Deposit currency code",
@@ -102,31 +96,49 @@ class InvestmentController extends Controller
         // Try to save received data
         try {
             // Validate input
-            $this->validate($request, [
+            $inputData = (object)$this->validate($request, [
                 'product_id' => 'required|string|min:36|max:36',
                 'investment_amount' => 'required|integer|min:2500',
                 'deposit_percentage' => 'required|integer|min:10|max:100',
-                'deposit_amount' => 'required|integer|min:250',
                 'currency' => 'required|string|min:3',
             ]);
 
             // Get / checking current product
-            $product = Product::findOrFail($request->get('product_id', config('settings.empty_uuid')));
+            $product = Product::findOrFail($inputData->product_id);
+
+            // Calculate deposit amount
+            $deposit_amount = ($inputData->investment_amount * $inputData->deposit_percentage) / 100;
+
+            // Check minimal deposit sum
+            if($deposit_amount < 250) {
+                return response()->jsonApi([
+                    'title' => 'Application for participation in the presale',
+                    'message' => "Minimum deposit amount 250 USD/EUR/GBP or equivalent"
+                ], 400);
+            }
+
+            // Check maximum deposit sum in Fiat
+            if(in_array($inputData->currency, ['usd', 'eur', 'gbp']) && $deposit_amount > 1000){
+                return response()->jsonApi([
+                    'title' => 'Application for participation in the presale',
+                    'message' => "You can't make deposit more more 1000 USD/EUR/GBP"
+                ], 400);
+            }
 
             // Create new order
             $order = Order::create([
                 'product_id' => $product->id,
-                'investment_amount' => $request->get('investment_amount'),
-                'deposit_percentage' => $request->get('deposit_percentage'),
-                'deposit_amount' => $request->get('deposit_amount'),
+                'investment_amount' => $inputData->investment_amount,
+                'deposit_percentage' => $inputData->deposit_percentage,
+                'deposit_amount' => $deposit_amount,
                 'user_id' => Auth::user()->getAuthIdentifier(),
                 'status' => Order::STATUS_NEW
             ]);
 
             // Create deposit
             $deposit = Deposit::create([
-                'amount' => $request->get('deposit_amount'),
-                'currency_code' => $request->get('currency'),
+                'amount' => $deposit_amount,
+                'currency_code' => $inputData->currency,
                 'order_id' => $order->id,
                 'status' => Deposit::STATUS_CREATED,
                 'user_id' => Auth::user()->getAuthIdentifier(),
@@ -138,7 +150,7 @@ class InvestmentController extends Controller
                 'message' => "Application for participation in the presale has been successfully created",
                 'data' => [
                     'amount' => $deposit->amount,
-                    'currency' => $request->get('currency'),
+                    'currency' => $inputData->currency,
                     'document' => [
                         'id' => $deposit->id,
                         'object' => class_basename(get_class($deposit)),
