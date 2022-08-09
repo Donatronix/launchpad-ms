@@ -23,7 +23,7 @@ trait CryptoConversionTrait
 
         $sol_equivalent = $sol_rate * $amount;
 
-        // devalue sol by 66% 
+        // devalue sol by 66%
         $devalue = (66 * $sol_equivalent) / 100;
         $new_sol_value = $sol_equivalent - $devalue;
 
