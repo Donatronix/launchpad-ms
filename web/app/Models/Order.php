@@ -2,12 +2,12 @@
 
 namespace App\Models;
 
-use App\Traits\NumeratorTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Sumra\SDK\Traits\NumeratorTrait;
 use Sumra\SDK\Traits\OwnerTrait;
 use Sumra\SDK\Traits\UuidTrait;
 
@@ -68,11 +68,6 @@ class Order extends Model
     const STATUS_FAILED = 4;
     const STATUS_CANCELED = 5;
 
-    // prefixes
-    const ORD = "orders";
-    const DEP = "deposits";
-    const PRS = "purchases";
-
     /**
      * Order statuses array
      *
@@ -113,23 +108,6 @@ class Order extends Model
     ];
 
     /**
-     * Order create rules
-     *
-     * @return string[]
-     */
-    public static function validationRules(): array
-    {
-        return [
-            'product_id' => 'required|string',
-            'investment_amount' => 'required|integer|min:2500',
-            'deposit_percentage' => 'required|integer|min:10|max:100',
-            'deposit_amount' => 'required|integer|min:250',
-        ];
-    }
-
-    // run on model boot
-
-    /**
      * One Order have One Product relation
      *
      * @return BelongsTo
@@ -138,6 +116,8 @@ class Order extends Model
     {
         return $this->belongsTo(Product::class, 'product_id', 'id');
     }
+
+    // run on model boot
 
     /**
      * One Order have One Product relation
@@ -166,6 +146,21 @@ class Order extends Model
      */
     protected function getNumeratorPrefix(): string
     {
-        return 'OR';
+        return 'ORD';
+    }
+
+    /**
+     * Order create rules
+     *
+     * @return string[]
+     */
+    public static function validationRules(): array
+    {
+        return [
+            'product_id' => 'required|string',
+            'investment_amount' => 'required|integer|min:2500',
+            'deposit_percentage' => 'required|integer|min:10|max:100',
+            'deposit_amount' => 'required|integer|min:250',
+        ];
     }
 }

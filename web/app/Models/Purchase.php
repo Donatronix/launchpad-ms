@@ -2,11 +2,11 @@
 
 namespace App\Models;
 
-use App\Traits\NumeratorTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Sumra\SDK\Traits\NumeratorTrait;
 use Sumra\SDK\Traits\UuidTrait;
 
 /**
@@ -40,7 +40,7 @@ use Sumra\SDK\Traits\UuidTrait;
  *         type="string",
  *         description="Type of currency. Either Fiat or Crypto",
  *         example="fiat/crypto"
- *     ),
+ *     )
  * )
  */
 class Purchase extends Model
@@ -51,28 +51,48 @@ class Purchase extends Model
     use UuidTrait;
 
     /**
-     * Get the numerator prefix for the model.
-     *
-     * @return string
+     * Deposit status
      */
-    protected function getNumeratorPrefix(): string
-    {
-        return 'PR';
-    }
+    const STATUS_CREATED = 10;
+    const STATUS_PROCESSING = 20;
+    const STATUS_PARTIALLY_FUNDED = 30;
+    const STATUS_SUCCEEDED = 40;
+    const STATUS_FAILED = 50;
+    const STATUS_CONFIRMED = 60;
+    const STATUS_DELAYED = 70;
+    const STATUS_CANCELED = 80;
+
+    /**
+     * Deposit statuses array
+     *
+     * @var int[]
+     */
+    public static array $statuses = [
+        'created' => self::STATUS_CREATED,
+        'processing' => self::STATUS_PROCESSING,
+        'partially_funded' => self::STATUS_PARTIALLY_FUNDED,
+        'confirmed' => self::STATUS_CONFIRMED,
+        'delayed' => self::STATUS_DELAYED,
+        'failed' => self::STATUS_FAILED,
+        'succeeded' => self::STATUS_SUCCEEDED,
+        'canceled' => self::STATUS_CANCELED
+    ];
 
     /**
      * @var string[]
      */
     protected $fillable = [
-        'currency_type',
-        'currency_ticker',
-        'token_amount',
-        'payment_amount',
         'product_id',
-        'status',
+        'payment_amount',
+        'token_amount',
+        'bonus',
+        'total_token',
+        'currency_ticker',
+        'currency_type',
         'user_id',
+        'status',
+        'payment_order_id'
     ];
-
     /**
      * The attributes excluded from the model's JSON form.
      *
@@ -83,6 +103,16 @@ class Purchase extends Model
         'updated_at',
         'deleted_at'
     ];
+
+    /**
+     * Get the numerator prefix for the model.
+     *
+     * @return string
+     */
+    protected function getNumeratorPrefix(): string
+    {
+        return 'PRS';
+    }
 
     /**
      * @return BelongsTo

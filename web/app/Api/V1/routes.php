@@ -80,7 +80,6 @@ $router->group([
             $router->get('/', 'DepositController@index');
             $router->get('/{id}', 'DepositController@show');
             $router->post('/', 'DepositController@store');
-            $router->get('/get-pdf/{transaction_id}', 'DepositController@generatePdfForTransaction');
         });
 
         /**
