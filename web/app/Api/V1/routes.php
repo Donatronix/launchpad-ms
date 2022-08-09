@@ -94,6 +94,11 @@ $router->group([
         });
 
         /**
+         * Calculation of the purchased token
+         */
+        $router->post('/token-calculate', 'TokenCalculateController');
+
+        /**
          * Token Investors
          */
         $router->get('/token-investors', 'DashboardController@tokenInvestors');
