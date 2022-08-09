@@ -14,16 +14,6 @@ use Sumra\SDK\Services\JsonApiResponse;
 
 class DashboardController extends Controller
 {
-    private Purchase $purchase;
-    private Product $product;
-
-    public function __construct(Purchase $purchase, Product $product)
-    {
-        $this->purchase = $purchase;
-        $this->product = $product;
-        $this->user_id = auth()->user()->getAuthIdentifier();
-    }
-
     /**
      * Token Sales Progress
      *
@@ -105,7 +95,7 @@ class DashboardController extends Controller
             }
 
             // Sum all purchases for this token
-            $total_sales = $this->purchase::where('product_id', $request->get("product_id"))->sum("token_amount");
+            $total_sales = Purchase::where('product_id', $request->get("product_id"))->sum("token_amount");
 
             // Create new token purchase order
             $data = [
@@ -140,7 +130,7 @@ class DashboardController extends Controller
     private function getProduct($id): mixed
     {
         try {
-            return $this->product::findOrFail($id);
+            return Product::findOrFail($id);
         } catch (ModelNotFoundException $e) {
             return response()->jsonApi([
                 'title' => "Get product",
@@ -217,7 +207,7 @@ class DashboardController extends Controller
             $investors = [];
 
             // Get unique user_id for the product
-            $paginator = $this->purchase::where('product_id', $request->get('product_id'))
+            $paginator = Purchase::where('product_id', $request->get('product_id'))
                 ->select("user_id")->distinct()->latest()->paginate(20);
 
             if ($paginator->items()) {
@@ -254,7 +244,7 @@ class DashboardController extends Controller
                 foreach ($data[0] as $key => $investor) {
 
                     // Sum the tokens for the user
-                    $tokens = $this->purchase::where([
+                    $tokens = Purchase::where([
                         'product_id' => $request->get('product_id'),
                         'user_id' => $investor->id
                     ])->sum("token_amount");

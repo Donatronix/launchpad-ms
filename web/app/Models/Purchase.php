@@ -24,7 +24,7 @@ use Sumra\SDK\Traits\UuidTrait;
  *         example="9a778e5d-61aa-4a2b-b511-b445f6a67909"
  *     ),
  *     @OA\Property(
- *         property="payment amount",
+ *         property="payment_amount",
  *         type="integer",
  *         description="Amount to pay",
  *         example="5000"
@@ -34,12 +34,6 @@ use Sumra\SDK\Traits\UuidTrait;
  *         type="string",
  *         description="currency to pay with",
  *         example="btc/usd/eur"
- *     ),
- *     @OA\Property(
- *         property="currency_type",
- *         type="string",
- *         description="Type of currency. Either Fiat or Crypto",
- *         example="fiat/crypto"
  *     )
  * )
  */

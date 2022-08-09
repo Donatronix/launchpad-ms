@@ -59,7 +59,7 @@ class OrderController extends Controller
         try {
             // Get order
             $order = Order::byOwner()
-                ->where('status', Order::STATUS_NEW)
+                ->where('status', Order::STATUS_CREATED)
                 ->with([
                     'transaction' => function ($query) {
                         $query->select('id', 'order_id', 'wallet_address', 'card_number');
@@ -162,7 +162,7 @@ class OrderController extends Controller
                 'deposit_percentage' => $request->get('deposit_percentage'),
                 'deposit_amount' => $request->get('deposit_amount'),
                 'user_id' => Auth::user()->getAuthIdentifier(),
-                'status' => Order::STATUS_NEW,
+                'status' => Order::STATUS_CREATED,
                 'amount_token' => $request->get('investment_amount'),
                 'amount_usd' => $request->get('investment_amount'),
             ]);

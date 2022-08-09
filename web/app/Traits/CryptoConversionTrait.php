@@ -2,8 +2,6 @@
 
 namespace App\Traits;
 
-use Exception;
-use Illuminate\Support\Str;
 use App\Models\Product;
 use Illuminate\Support\Facades\Http;
 
@@ -19,11 +17,11 @@ trait CryptoConversionTrait
     protected function getTokenWorth($amount, $token): mixed
     {
         // get the sol equivalent for the currency
-        $sol_rate = $this->getTokenExchangeRate("usd", "sol");
+        $sol_rate = $this->getTokenExchangeRate('usd', "sol");
 
         $sol_equivalent = $sol_rate * $amount;
 
-        // devalue sol by 66% 
+        // devalue sol by 66%
         $devalue = (66 * $sol_equivalent) / 100;
         $new_sol_value = $sol_equivalent - $devalue;
 
@@ -45,16 +43,12 @@ trait CryptoConversionTrait
             $bonus = 0.1 * $token_amount;
         }
 
-        // get total token
-        $total_token = $token_amount + $bonus;
-
-        $data = [
-            "token_amount" => $token_amount,
-            "bonus" => $bonus,
-            "total_token" => $total_token
+        // Return result
+        return [
+            'amount' => $token_amount,
+            'bonus' => $bonus,
+            'total' => $token_amount + $bonus
         ];
-
-        return $data;
     }
 
     /**
@@ -77,7 +71,7 @@ trait CryptoConversionTrait
              *
              */
             $resp = Http::withHeaders([
-                "user-id" => $this->user_id
+                "user-id" => auth()->user()->getAuthIdentifier()
             ])->get($url);
 
             /**
@@ -87,6 +81,7 @@ trait CryptoConversionTrait
             if (!$resp->successful()) {
                 $status = $resp->status() ?? 400;
                 $message = $resp->getReasonPhrase() ?? 'Error Processing Request';
+
                 throw new \Exception($message, $status);
             }
 

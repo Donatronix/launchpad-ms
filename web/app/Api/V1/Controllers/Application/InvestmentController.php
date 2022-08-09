@@ -6,6 +6,7 @@ use App\Api\V1\Controllers\Controller;
 use App\Models\Deposit;
 use App\Models\Order;
 use App\Models\Product;
+use App\Traits\CryptoConversionTrait;
 use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
@@ -14,6 +15,8 @@ use Illuminate\Validation\ValidationException;
 
 class InvestmentController extends Controller
 {
+    use CryptoConversionTrait;
+
     /**
      * Create a first investment after registration
      *
@@ -130,8 +133,14 @@ class InvestmentController extends Controller
 
             // If deposit currency not fiat, then convert by market rate
             if (!in_array($currency, ['usd', 'eur', 'gbp'])) {
-                //
+                $rate = $this->getTokenExchangeRate('usd', $currency);
+
+                // get payment_amount
+                $deposit_amount = $rate * $deposit_amount;
             }
+
+            // get token worth
+            $token_worth = $this->getTokenWorth($inputData->investment_amount, $product->ticker);
 
             // Create new order
             $order = Order::create([
@@ -140,7 +149,7 @@ class InvestmentController extends Controller
                 'deposit_percentage' => $inputData->deposit_percentage,
                 'deposit_amount' => $deposit_amount,
                 'user_id' => Auth::user()->getAuthIdentifier(),
-                'status' => Order::STATUS_NEW
+                'status' => Order::STATUS_CREATED
             ]);
 
             // Create deposit
@@ -163,7 +172,8 @@ class InvestmentController extends Controller
                         'id' => $deposit->id,
                         'object' => class_basename(get_class($deposit)),
                         'service' => env('RABBITMQ_EXCHANGE_NAME'),
-                    ]
+                    ],
+                    'token' => $token_worth
                 ]
             ], 201);
         } catch (ValidationException $e) {

@@ -62,7 +62,7 @@ class Order extends Model
     /**
      * Order status
      */
-    const STATUS_NEW = 1;
+    const STATUS_CREATED = 1;
     const STATUS_PARTLY_PAID = 2;
     const STATUS_COMPLETED = 3;
     const STATUS_FAILED = 4;
@@ -74,7 +74,7 @@ class Order extends Model
      * @var int[]
      */
     public static array $statuses = [
-        self::STATUS_NEW,
+        self::STATUS_CREATED,
         self::STATUS_PARTLY_PAID,
         self::STATUS_COMPLETED,
         self::STATUS_FAILED,
