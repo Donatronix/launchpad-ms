@@ -22,7 +22,8 @@ class DepositUpdateHandler
             'currency' => $document->currency_code,
             'user_id' => $document->user_id,
             'document_id' => $document->id,
-            'document_object' => 'Deposit',
+            'document_object' => class_basename(get_class($document)),
+            'document_service' => env('RABBITMQ_EXCHANGE_NAME')
         ], config('pubsub.queue.crypto_wallets'));
     }
 }

@@ -98,7 +98,7 @@ class InvestmentController extends Controller
             // Validate input
             $inputData = (object)$this->validate($request, [
                 'product_id' => 'required|string|min:36|max:36',
-                'investment_amount' => 'required|integer|min:2500',
+                'investment_amount' => 'required|integer|min:1000',
                 'deposit_percentage' => 'required|integer|min:10|max:100',
                 'currency' => 'required|string|min:3',
             ]);
@@ -116,16 +116,16 @@ class InvestmentController extends Controller
             if ($deposit_amount < 250) {
                 return response()->jsonApi([
                     'title' => 'Application for participation in the presale',
-                    'message' => "Minimum deposit amount 250 USD/EUR/GBP or equivalent"
-                ], 400);
+                    'message' => "Minimum deposit amount in the equivalent of 250 USD/EUR/GBP. Increase your investment"
+                ], 422);
             }
 
             // Check maximum deposit sum in Fiat
             if (in_array($currency, ['usd', 'eur', 'gbp']) && $deposit_amount > 1000) {
                 return response()->jsonApi([
                     'title' => 'Application for participation in the presale',
-                    'message' => "You can't make deposit more more 1000 USD/EUR/GBP. Use crypto payment"
-                ], 400);
+                    'message' => "You can't make fiat deposit more 1000 USD/EUR/GBP. Use crypto payment"
+                ], 422);
             }
 
             // If deposit currency not fiat, then convert by market rate
@@ -169,7 +169,8 @@ class InvestmentController extends Controller
         } catch (ValidationException $e) {
             return response()->jsonApi([
                 'title' => 'Application for participation in the presale',
-                'message' => "Validation error: " . $e->getMessage()
+                'message' => "Validation error: " . $e->getMessage(),
+                'data' => $e->errors()
             ], 422);
         } catch (ModelNotFoundException $e) {
             return response()->jsonApi([
