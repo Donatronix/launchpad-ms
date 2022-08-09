@@ -16,13 +16,11 @@ class PurchaseUpdateHandler
      * @param $document
      */
     public static function exec($document) {
-
         // Get product
         $product = $document->product;
 
         /**
          * Increase total Purchased
-         *
          */
         $product = Product::where('ticker', $document->ticker)->first();
         $product->sold = $product->sold + $document->total_token;
