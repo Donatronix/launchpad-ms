@@ -4,11 +4,10 @@ namespace App\Api\V1\Controllers\Admin;
 
 use App\Api\V1\Controllers\Controller;
 use App\Models\Purchase;
-use Auth;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
 
 class InvestorController extends Controller
@@ -97,7 +96,7 @@ class InvestorController extends Controller
              *
              */
             $response = Http::withToken($request->bearerToken())->withHeaders([
-                'User-Id' => Auth::user()->getAuthIdentifier()
+                'user-id' => Auth::user()->getAuthIdentifier()
             ])->get($url);
 
             /**

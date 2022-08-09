@@ -35,7 +35,8 @@ class PurchaseUpdateHandler
             'token' => $product->ticker,
             'user_id' => $document->user_id,
             'document_id' => $document->id,
-            'document_object' => 'Purchase',
+            'document_object' => class_basename(get_class($document)),
+            'document_service' => env('RABBITMQ_EXCHANGE_NAME')
         ], config('pubsub.queue.crypto_wallets'));
     }
 }

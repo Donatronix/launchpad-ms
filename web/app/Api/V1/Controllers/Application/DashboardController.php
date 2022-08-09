@@ -231,7 +231,7 @@ class DashboardController extends Controller
                  *
                  */
                 $response = Http::withToken($request->bearerToken())->withHeaders([
-                    'User-Id' => Auth::user()->getAuthIdentifier()
+                    'user-id' => Auth::user()->getAuthIdentifier()
                 ])->post($url, [
                     'users' => $paginator->items()
                 ]);
