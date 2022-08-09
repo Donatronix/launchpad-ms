@@ -6,7 +6,6 @@ use App\Api\V1\Controllers\Controller;
 use App\Models\Product;
 use App\Models\Purchase;
 use App\Traits\CryptoConversionTrait;
-use Auth;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -14,18 +13,6 @@ use Illuminate\Support\Facades\Validator;
 class PurchaseController extends Controller
 {
     use CryptoConversionTrait;
-
-    /**
-     * @param Purchase $purchase
-     */
-    private Purchase $purchase;
-
-    public function __construct(Purchase $purchase, Product $product)
-    {
-        $this->purchase = $purchase;
-        $this->product = $product;
-        $this->user_id = auth()->user()->getAuthIdentifier();
-    }
 
     /**
      * Display list of all purchase - shopping List
@@ -155,64 +142,24 @@ class PurchaseController extends Controller
     {
         // Try to save purchased token data
         try {
-            $rules = [
-                'currency_type' => "required|in:fiat,crypto",
-                'product_id' => 'required|string',
-                'currency_ticker' => 'required|string'
-            ];
-
-            if ($request->currency_type == "fiat") {
-                $rules += [
-                    "payment_amount" => 'required|numeric|min:250|max:1000',
-                ];
-            } else if ($request->currency_type == "crypto") {
-                $rules += [
-                    "payment_amount" => 'required|numeric',
-                ];
-            }
-
-            // Do validate input data
-            $validator = Validator::make($request->all(), $rules);
-
-            if ($validator->fails()) {
-                return response()->jsonApi([
-                    'title' => 'Creating new token purchase order',
-                    'message' => "Validation error occurred!",
-                    'data' => $validator->errors()
-                ], 422);
-            }
-
-            // get product details
-            $product = $this->product::find($request->product_id);
-            if (!$product) {
-                throw new Exception("Product not found", 400);
-            }
-
-            // get rate of token
-            $rate = $this->getTokenExchangeRate("usd", $request->currency_ticker);
-
-            // get payment_amount
-            $payment_amount = $rate * $request->payment_amount;
-
-            // get token worth
-            $token_worth = $this->getTokenWorth($request->payment_amount, $product->ticker);
+            $result = $this->handle($request);
 
             // Create new token purchase order
-            $purchase = $this->purchase::create([
+            $purchase = Purchase::create([
                 'product_id' => $request->get('product_id'),
-                'user_id' => $this->user_id,
-                'payment_amount' => $payment_amount,
+                'user_id' => auth()->user()->getAuthIdentifier(),
+                'payment_amount' => $result['payment_amount'],
                 'currency_ticker' => $request->get('currency_ticker'),
-                'currency_type' => $request->get('currency_type'),
-                "token_amount" => $token_worth["token_amount"],
-                "bonus" => $token_worth["bonus"],
-                "total_token" => $token_worth["total_token"],
+                'currency_type' => $result['currency_type'],
+                "token_amount" => $result['token']['amount'],
+                "bonus" => $result['token']['bonus'],
+                "total_token" => $result['token']['total'],
             ]);
 
             // Return response to client
             return response()->jsonApi([
                 'title' => 'Creating new token purchase order',
-                'message' => "New token purchase order has been created successfully",
+                'message' => "New purchase order has been created successfully",
                 'data' => [
                     'amount' => $purchase->payment_amount,
                     'currency' => $purchase->currency_ticker,
@@ -293,47 +240,7 @@ class PurchaseController extends Controller
     {
         // Try to save purchased token data
         try {
-            $rules = [
-                'currency_type' => "required|in:fiat,crypto",
-                'product_id' => 'required|string',
-                'currency_ticker' => 'required|string',
-            ];
-
-            if ($request->currency_type == "fiat") {
-                $rules += [
-                    "payment_amount" => 'required|numeric|min:250|max:1000',
-                ];
-            } else if ($request->currency_type == "crypto") {
-                $rules += [
-                    "payment_amount" => 'required|numeric',
-                ];
-            }
-
-            // Do validate input data
-            $validator = Validator::make($request->all(), $rules);
-
-            if ($validator->fails()) {
-                return response()->jsonApi([
-                    'title' => 'Get token worth',
-                    'message' => "Validation error occurred!",
-                    'data' => $validator->errors()
-                ], 422);
-            }
-
-            // get product details
-            $product = $this->product::find($request->product_id);
-            if (!$product) {
-                throw new Exception("Product not found", 400);
-            }
-
-            // get rate of token
-            $rate = $this->getTokenExchangeRate("usd", $request->currency_ticker);
-
-            // get payment_amount
-            $payment_amount = $rate * $request->payment_amount;
-
-            // get token worth
-            $token_worth = $this->getTokenWorth($request->payment_amount, $product->ticker);
+            $result = $this->handle($request);
 
             // Return response to client
             return response()->jsonApi([
@@ -341,11 +248,11 @@ class PurchaseController extends Controller
                 'message' => "Get token worth",
                 'data' => [
                     "currency_ticker" => $request->currency_ticker,
-                    "rate" => $rate,
-                    "payment_amount" => $payment_amount,
-                    "token_amount" => $token_worth["token_amount"],
-                    "bonus" => $token_worth["bonus"],
-                    "total_token" => $token_worth["total_token"],
+                    "rate" => $result['rate'],
+                    "payment_amount" => $result['payment_amount'],
+                    "token_amount" => $result['token']['amount'],
+                    "bonus" => $result['token']['bonus'],
+                    "total_token" => $result['token']['total'],
                 ]
             ]);
         } catch (Exception $e) {
@@ -354,5 +261,64 @@ class PurchaseController extends Controller
                 'message' => $e->getMessage()
             ], 400);
         }
+    }
+
+    /**
+     * @param $request
+     * @return array
+     * @throws Exception
+     */
+    private function handle($request): array
+    {
+        $rules = [
+            'product_id' => 'required|string',
+            'currency_ticker' => 'required|string'
+        ];
+
+        // Convert currency
+        $currency = strtolower($request->get('currency_ticker'));
+        if (in_array($currency, ['usd', 'eur', 'gbp'])) {
+            $result['currency_type'] = 'fiat';
+
+            $rules += [
+                "payment_amount" => 'required|numeric|min:250|max:1000',
+            ];
+        }else{
+            $result['currency_type'] = 'crypto';
+
+            $rules += [
+                "payment_amount" => 'required|numeric',
+            ];
+        }
+
+        // Do validate input data
+        $validator = Validator::make($request->all(), $rules);
+
+        if ($validator->fails()) {
+            return response()->jsonApi([
+                'title' => 'Get token worth',
+                //'title' => 'Creating new token purchase order',
+                'message' => "Validation error occurred!",
+                'data' => $validator->errors()
+            ], 422);
+        }
+
+        // get product details
+        $product = Product::find($request->product_id);
+        if (!$product) {
+            throw new Exception("Product not found", 400);
+        }
+
+        // get rate of token
+        $result['rate'] = $this->getTokenExchangeRate('usd', $request->currency_ticker);
+
+        // get payment_amount
+        $result['payment_amount'] = $result['rate'] * $request->payment_amount;
+
+        // Get token worth
+        $result['token'] = $this->getTokenWorth($request->payment_amount, $product->ticker);
+
+        // return response
+        return $result;
     }
 }
