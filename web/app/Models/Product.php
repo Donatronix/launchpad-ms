@@ -7,7 +7,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Support\Facades\Auth;
 use Sumra\SDK\Traits\UuidTrait;
 
 /**
@@ -101,24 +100,6 @@ class Product extends Model
     ];
 
     /**
-     * Product create rules
-     *
-     * @return string[]
-     */
-    public static function validationRules(): array
-    {
-        return [
-            'title' => 'required|string',
-            'ticker' => 'required|string|unique:products,ticker',
-            'supply' => 'required|integer',
-            'presale_percentage' => 'required|string',
-            'start_date' => 'required|string',
-            'end_date' => 'required|string',
-            'icon' => 'required|string',
-        ];
-    }
-
-    /**
      * @return HasMany
      */
     public function prices(): HasMany
@@ -150,8 +131,26 @@ class Product extends Model
      */
     public function scopeByStage($query, int $stage = 1): mixed
     {
-        return $query->with('price', function ($q) use ($stage){
-             return $q->where('stage', $stage);
+        return $query->with('price', function ($q) use ($stage) {
+            return $q->where('stage', $stage);
         });
+    }
+
+    /**
+     * Product create rules
+     *
+     * @return string[]
+     */
+    public static function validationRules(): array
+    {
+        return [
+            'title' => 'required|string',
+            'ticker' => 'required|string|unique:products,ticker',
+            'supply' => 'required|integer',
+            'presale_percentage' => 'required|string',
+            'start_date' => 'required|string',
+            'end_date' => 'required|string',
+            'icon' => 'required|string',
+        ];
     }
 }

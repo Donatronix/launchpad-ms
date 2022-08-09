@@ -2,16 +2,16 @@
 
 namespace App\Models;
 
-use App\Traits\NumeratorTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Sumra\SDK\Traits\NumeratorTrait;
 use Sumra\SDK\Traits\OwnerTrait;
 use Sumra\SDK\Traits\UuidTrait;
 
 /**
- * Deposit Scheme
+ * Deposit User Access Scheme
  *
  * @package App\Models
  *
@@ -35,8 +35,9 @@ use Sumra\SDK\Traits\UuidTrait;
  *     ),
  * )
  */
+
 /**
- * Deposit Scheme
+ * Deposit Admin Access Scheme
  *
  * @package App\Models
  *
@@ -83,32 +84,30 @@ class Deposit extends Model
     /**
      * Deposit status
      */
-    const STATUS_CREATED = 1;
-    const STATUS_PAID = 2;
-    const STATUS_FAILED = 3;
-    const STATUS_CANCELED = 4;
+    const STATUS_CREATED = 10;
+    const STATUS_PROCESSING = 20;
+    const STATUS_PARTIALLY_FUNDED = 30;
+    const STATUS_SUCCEEDED = 40;
+    const STATUS_FAILED = 50;
+    const STATUS_CONFIRMED = 60;
+    const STATUS_DELAYED = 70;
+    const STATUS_CANCELED = 80;
 
     /**
-     * Order statuses array
+     * Deposit statuses array
      *
      * @var int[]
      */
     public static array $statuses = [
-        self::STATUS_CREATED,
-        self::STATUS_PAID,
-        self::STATUS_FAILED,
-        self::STATUS_CANCELED
+        'created' => self::STATUS_CREATED,
+        'processing' => self::STATUS_PROCESSING,
+        'partially_funded' => self::STATUS_PARTIALLY_FUNDED,
+        'confirmed' => self::STATUS_CONFIRMED,
+        'delayed' => self::STATUS_DELAYED,
+        'failed' => self::STATUS_FAILED,
+        'succeeded' => self::STATUS_SUCCEEDED,
+        'canceled' => self::STATUS_CANCELED
     ];
-
-    /**
-     * Get the numerator prefix for the model.
-     *
-     * @return string
-     */
-    protected function getNumeratorPrefix(): string
-    {
-        return 'DE';
-    }
 
     /**
      * @var string[]
@@ -117,10 +116,10 @@ class Deposit extends Model
         'amount',
         'currency_code',
         'order_id',
-        'status',
         'user_id',
+        'status',
+        'payment_order_id'
     ];
-
     /**
      * The attributes excluded from the model's JSON form.
      *
@@ -133,16 +132,13 @@ class Deposit extends Model
     ];
 
     /**
-     * Deposit create rules
+     * Get the numerator prefix for the model.
      *
-     * @return string[]
+     * @return string
      */
-    public static function validationRules(): array
+    protected function getNumeratorPrefix(): string
     {
-        return [
-            'amount' => 'required|integer|min:250',
-            'currency' => 'required|string|min:3',
-        ];
+        return 'DEP';
     }
 
     /**
@@ -153,5 +149,18 @@ class Deposit extends Model
     public function order()
     {
         return $this->belongsTo(Order::class, 'order_id', 'id');
+    }
+
+    /**
+     * Deposit create rules
+     *
+     * @return string[]
+     */
+    public static function validationRules(): array
+    {
+        return [
+            'amount' => 'required|integer|min:250',
+            'currency' => 'required|string|min:3',
+        ];
     }
 }

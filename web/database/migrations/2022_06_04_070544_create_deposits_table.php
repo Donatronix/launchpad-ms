@@ -16,12 +16,22 @@ class CreateDepositsTable extends Migration
         Schema::create('deposits', function (Blueprint $table) {
             $table->uuid('id')->primary();
 
-            $table->string('number', 15);
+            $table->string('number', 20)->index();
             $table->decimal('amount', 12, 0);
             $table->string('currency_code', 10)->index();
-            $table->string('order_id')->nullable()->index();
-            $table->smallInteger('status')->default(0)->index();
+
+            $table->string('order_id')
+                ->default(config('settings.empty_uuid'))
+                ->index();
+
             $table->uuid('user_id')->index();
+
+            $table->unsignedTinyInteger('status')
+                ->default(0)
+                ->index();
+            $table->uuid('payment_order_id')
+                ->default(config('settings.empty_uuid'))
+                ->index();
 
             $table->timestamps();
             $table->softDeletes();

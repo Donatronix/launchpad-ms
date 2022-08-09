@@ -4,14 +4,12 @@ namespace App\Api\V1\Controllers\Application;
 
 use App\Api\V1\Controllers\Controller;
 use App\Models\Order;
-use App\Models\Product;
 use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\Validator;
-use Sumra\SDK\Services\JsonApiResponse;
+use Illuminate\Validation\ValidationException;
 
 /**
  * Class OrderController
@@ -62,9 +60,10 @@ class OrderController extends Controller
             // Get order
             $order = Order::byOwner()
                 ->where('status', Order::STATUS_NEW)
-                ->with(['transaction' => function ($query) {
-                    $query->select('id', 'order_id', 'wallet_address', 'card_number', 'payment_type_id');
-                }, 'transaction.payment_type'])
+                ->with([
+                    'transaction' => function ($query) {
+                        $query->select('id', 'order_id', 'wallet_address', 'card_number');
+                    }])
                 ->get();
 
             if (!empty($order) && $order != null) {
@@ -144,10 +143,8 @@ class OrderController extends Controller
      */
     public function store(Request $request): mixed
     {
-        // Try to save received data
         try {
-
-            // Validate input
+            // Do validate input data
             $validator = Validator::make($request->all(), $this->model::validationRules());
 
             if ($validator->fails()) {

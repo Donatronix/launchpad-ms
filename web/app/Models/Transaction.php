@@ -2,10 +2,10 @@
 
 namespace App\Models;
 
-use App\Traits\NumeratorTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Sumra\SDK\Traits\NumeratorTrait;
 use Sumra\SDK\Traits\OwnerTrait;
 use Sumra\SDK\Traits\UuidTrait;
 
@@ -49,30 +49,17 @@ class Transaction extends Model
         self::TYPE_CONTRACT,
         self::TYPE_PAYMENT_RECHARGE
     ];
-
-    /**
-     * Get the numerator prefix for the model.
-     *
-     * @return string
-     */
-    protected function getNumeratorPrefix(): string
-    {
-        return 'TR';
-    }
-
     /**
      * The attributes that are mass assignable.
      *
      * @var array
      */
     protected $fillable = [
-        'payment_type_id',
         'total_amount',
         'order_id',
         'user_id',
         'admin_id',
         'payment_system',
-        'credit_card_type_id',
         'wallet_address',
         'currency_code',
         'payment_date',
@@ -83,7 +70,6 @@ class Transaction extends Model
         'sol_received',
         'amount_received',
     ];
-
     /**
      * The attributes excluded from the model's JSON form.
      *
@@ -96,10 +82,14 @@ class Transaction extends Model
     ];
 
     /**
-     * Auto relations for transaction Model
+     * Get the numerator prefix for the model.
+     *
+     * @return string
      */
-
-    protected $with = ['creditCardType'];
+    protected function getNumeratorPrefix(): string
+    {
+        return 'TRX';
+    }
 
     /**
      * Get the owning transactionable model.
@@ -117,25 +107,5 @@ class Transaction extends Model
     public function order()
     {
         return $this->belongsTo(Order::class, 'order_id', 'id');
-    }
-
-    /**
-     * One Transaction have One Payment Type relation
-     *
-     * @return BelongsTo
-     */
-    public function payment_type()
-    {
-        return $this->belongsTo(PaymentType::class, 'payment_type_id', 'id');
-    }
-
-    /**
-     * One Transaction have One Credit Card Type relation
-     *
-     * @return BelongsTo
-     */
-    public function creditCardType()
-    {
-        return $this->belongsTo(CreditCardType::class, 'credit_card_type_id', 'id');
     }
 }

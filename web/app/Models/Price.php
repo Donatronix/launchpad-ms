@@ -76,6 +76,14 @@ class Price extends Model
         'deleted_at'
     ];
 
+    /**
+     * @return BelongsTo
+     */
+    public function product(): BelongsTo
+    {
+        return $this->belongsTo(Product::class);
+    }
+
     public static function validationRules()
     {
         return [
@@ -87,13 +95,5 @@ class Price extends Model
             'percent_profit' => 'required',
             'status' => 'required',
         ];
-    }
-
-    /**
-     * @return BelongsTo
-     */
-    public function product(): BelongsTo
-    {
-        return $this->belongsTo(Product::class);
     }
 }

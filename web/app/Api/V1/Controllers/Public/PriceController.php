@@ -42,7 +42,8 @@ class PriceController extends Controller
     public function index(Request $request): mixed
     {
         // Get order
-        $order = Price::where('status', true)
+        $order = Price::query()
+            ->where('status', true)
             ->select(['stage', 'price', 'period_in_days', 'percent_profit', 'amount'])
             ->where('product_id', $request->product_id)
             ->paginate($request->get('limit', config('settings.pagination_limit')));
@@ -90,18 +91,38 @@ class PriceController extends Controller
     {
         try {
             // Get prices
-            if ($request->has("product_id")) {
-                $prices = Price::where(['stage' => $stage, 'product_id' => $request->get("product_id")])
+            if ($request->has('product_id')) {
+                $prices = Price::where([
+                    'stage' => $stage,
+                    'product_id' => $request->get('product_id')
+                ])
                     ->first();
             } else {
-                $prices = Price::where('stage', $stage)
+                $prices = Price::query()
+                    ->select(['stage', 'price', 'product_id'])
+                    ->where('stage', $stage)
+                    ->where('status', true)
+                    ->with('product')
                     ->paginate($request->get('limit', config('settings.pagination_limit')));
+
+                // Transform collection objects
+                $prices->getCollection()->transform(function ($object) {
+                    $productData = collect($object->product)
+                        ->only(['id', 'title', 'ticker'])
+                        ->toArray();
+
+                    unset($object->product_id, $object->product);
+
+                    $object->setAttribute('product', $productData);
+
+                    return $object;
+                });
             }
 
             return response()->jsonApi([
                 'title' => 'Product prices list by stage',
                 'message' => "Product prices list by stage has been received",
-                'data' => $prices->toArray(),
+                'data' => $prices,
             ]);
         } catch (Exception $e) {
             return response()->jsonApi([

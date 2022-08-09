@@ -10,7 +10,6 @@ use Auth;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
-use PubSub;
 
 class PurchaseController extends Controller
 {
@@ -162,17 +161,17 @@ class PurchaseController extends Controller
                 'currency_ticker' => 'required|string'
             ];
 
-            if($request->currency_type == "fiat"){
+            if ($request->currency_type == "fiat") {
                 $rules += [
                     "payment_amount" => 'required|numeric|min:250|max:1000',
                 ];
-            } else if($request->currency_type == "crypto"){
+            } else if ($request->currency_type == "crypto") {
                 $rules += [
                     "payment_amount" => 'required|numeric',
                 ];
             }
 
-            // Validate input
+            // Do validate input data
             $validator = Validator::make($request->all(), $rules);
 
             if ($validator->fails()) {
@@ -185,7 +184,7 @@ class PurchaseController extends Controller
 
            // Get product details
             $product = $this->product::find($request->product_id);
-            if(!$product){
+            if (!$product) {
                 throw new Exception("Product not found", 400);
             }
 
@@ -195,8 +194,8 @@ class PurchaseController extends Controller
             // get payment_amount
             $payment_amount = $rate * $request->payment_amount;
 
-            // get token amount
-            $token_amount = $this->getTokenWorth($request->currency_ticker, $payment_amount, $product->ticker);
+            // get token worth
+            $token_worth = $this->getTokenWorth($request->payment_amount, $product->ticker);
 
             // Create new token purchase order
             $purchase = $this->purchase::create([
@@ -205,7 +204,9 @@ class PurchaseController extends Controller
                 'payment_amount' => $payment_amount,
                 'currency_ticker' => $request->get('currency_ticker'),
                 'currency_type' => $request->get('currency_type'),
-                'token_amount' => $token_amount,
+                "token_amount" => $token_worth["token_amount"],
+                "bonus" => $token_worth["bonus"],
+                "total_token" => $token_worth["total_token"],
             ]);
 
             // Send token purchased to wallet
@@ -305,17 +306,17 @@ class PurchaseController extends Controller
                 'currency_ticker' => 'required|string',
             ];
 
-            if($request->currency_type == "fiat"){
+            if ($request->currency_type == "fiat") {
                 $rules += [
                     "payment_amount" => 'required|numeric|min:250|max:1000',
                 ];
-            } else if($request->currency_type == "crypto"){
+            } else if ($request->currency_type == "crypto") {
                 $rules += [
                     "payment_amount" => 'required|numeric',
                 ];
             }
 
-            // Validate input
+            // Do validate input data
             $validator = Validator::make($request->all(), $rules);
 
             if ($validator->fails()) {
@@ -328,7 +329,7 @@ class PurchaseController extends Controller
 
             // get product details
             $product = $this->product::find($request->product_id);
-            if(!$product){
+            if (!$product) {
                 throw new Exception("Product not found", 400);
             }
 
@@ -338,8 +339,8 @@ class PurchaseController extends Controller
             // get payment_amount
             $payment_amount = $rate * $request->payment_amount;
 
-            // get token amount
-            $token_amount = $this->getTokenWorth($request->currency_ticker, $payment_amount, $product->ticker);
+            // get token worth
+            $token_worth = $this->getTokenWorth($request->payment_amount, $product->ticker);
 
             // Return response to client
             return response()->jsonApi([
@@ -349,7 +350,9 @@ class PurchaseController extends Controller
                     "currency_ticker" => $request->currency_ticker,
                     "rate" => $rate,
                     "payment_amount" => $payment_amount,
-                    "token_amount" => $token_amount,
+                    "token_amount" => $token_worth["token_amount"],
+                    "bonus" => $token_worth["bonus"],
+                    "total_token" => $token_worth["total_token"],
                 ]
             ]);
         } catch (Exception $e) {
