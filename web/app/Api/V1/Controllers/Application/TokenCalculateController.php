@@ -113,7 +113,7 @@ class TokenCalculateController extends Controller
                 'message' => 'Validation error occurred!',
                 'data' => $e->getMessage()
             ], 422);
-        }catch (Exception $e) {
+        } catch (Exception $e) {
             return response()->jsonApi([
                 'title' => 'Token purchase calculation',
                 'message' => $e->getMessage()
@@ -153,7 +153,7 @@ class TokenCalculateController extends Controller
         $validator = Validator::make($request->all(), $rules);
 
         if ($validator->fails()) {
-            throw new ValidationException('fdfdf', 422);
+            throw new ValidationException('Validation error occurred!', 422);
 
             //json_encode($validator->errors())
 //            return response()->jsonApi([

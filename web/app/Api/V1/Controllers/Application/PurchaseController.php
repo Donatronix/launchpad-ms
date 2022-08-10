@@ -9,6 +9,7 @@ use App\Traits\CryptoConversionTrait;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\ValidationException;
 
 class PurchaseController extends Controller
 {
@@ -268,7 +269,7 @@ class PurchaseController extends Controller
      * @return array
      * @throws Exception
      */
-    private function handle($request): array
+    private function handle($request): mixed
     {
         $rules = [
             'product_id' => 'required|string',
@@ -281,13 +282,13 @@ class PurchaseController extends Controller
             $result['currency_type'] = 'fiat';
 
             $rules += [
-                "payment_amount" => 'required|numeric|min:250|max:1000',
+                'payment_amount' => 'required|numeric|min:250|max:1000',
             ];
-        }else{
+        } else {
             $result['currency_type'] = 'crypto';
 
             $rules += [
-                "payment_amount" => 'required|numeric',
+                'payment_amount' => 'required|numeric',
             ];
         }
 
@@ -295,27 +296,29 @@ class PurchaseController extends Controller
         $validator = Validator::make($request->all(), $rules);
 
         if ($validator->fails()) {
-            return response()->jsonApi([
-                'title' => 'Get token worth',
-                //'title' => 'Creating new token purchase order',
-                'message' => "Validation error occurred!",
-                'data' => $validator->errors()
-            ], 422);
+            throw new ValidationException('Validation error occurred!', 422);
+
+//            return response()->jsonApi([
+//                'title' => 'Get token worth',
+//                //'title' => 'Creating new token purchase order',
+//                'message' => "Validation error occurred!",
+//                'data' => $validator->errors()
+//            ], 422);
         }
 
         // get product details
-        $product = Product::find($request->product_id);
+        $product = Product::find($request->get('product_id'));
         if (!$product) {
-            throw new Exception("Product not found", 400);
+            throw new Exception('Product not found', 400);
         }
 
         // get rate of token
-        $result['rate'] = $this->getTokenExchangeRate('usd', $request->currency_ticker);
+        $result['rate'] = $this->getTokenExchangeRate('usd', $currency);
 
-        // get payment_amount
+        // Get payment_amount
         $result['payment_amount'] = $result['rate'] * $request->payment_amount;
 
-        // Get token worth
+        // Get calculated token worth
         $result['token'] = $this->getTokenWorth($request->payment_amount, $product->ticker);
 
         // return response
