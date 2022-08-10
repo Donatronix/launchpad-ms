@@ -129,7 +129,7 @@ use Laravel\Lumen\Routing\Controller as BaseController;
  *      @OA\Property(
  *          property="type",
  *          type="string",
- *          description="Type of response",
+ *          description="Type of response - info",
  *          example="info"
  *      ),
  *      @OA\Property(
