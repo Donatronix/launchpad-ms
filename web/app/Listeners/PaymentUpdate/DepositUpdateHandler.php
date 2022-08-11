@@ -17,7 +17,7 @@ class DepositUpdateHandler
     public static function exec($document){
         // Send request to wallet for update balance
         PubSub::publish('UpdateBalanceRequest', [
-            'type' => 'charge',
+            'type' => 'debit',
             'amount' => $document->amount,
             'currency' => $document->currency_code,
             'user_id' => $document->user_id,

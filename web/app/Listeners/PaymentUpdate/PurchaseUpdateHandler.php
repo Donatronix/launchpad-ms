@@ -23,14 +23,14 @@ class PurchaseUpdateHandler
          * Increase total Purchased
          */
         $product = Product::where('ticker', $document->ticker)->first();
-        $product->sold = $product->sold + $document->total_token;
+        $product->sold += $document->total_token;
         $product->save();
 
         // Send request to wallet for add token to user
         PubSub::publish('PurchaseTokenRequest', [
-            'type' => 'charge',
+            'type' => 'debit',
             'amount' => $document->total_token,
-            'token' => $product->ticker,
+            'currency' => $product->ticker,
             'user_id' => $document->user_id,
             'document_id' => $document->id,
             'document_object' => class_basename(get_class($document)),

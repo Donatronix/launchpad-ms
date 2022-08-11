@@ -24,9 +24,10 @@ class PaymentUpdateRequestListener
         // Do validate input data
         $validation = Validator::make($inputData, [
             'status' => 'string|required',
+            'payment_order_id' => 'string|required',
             'document_id' => 'string|required',
             'document_object' => 'string|required',
-            'payment_order_id' => 'string|required',
+            'document_meta' => 'array|sometimes',
         ]);
 
         // If validation error, the stop

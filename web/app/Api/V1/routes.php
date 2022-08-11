@@ -125,7 +125,9 @@ $router->group([
         /**
          * Products
          */
-        $router->group(['prefix' => 'products'], function ($router) {
+        $router->group([
+            'prefix' => 'products'
+        ], function ($router) {
             $router->get('/', 'ProductController@index');
             $router->post('/', 'ProductController@store');
             $router->get('/{id:[a-fA-F0-9\-]{36}}', 'ProductController@show');
@@ -136,7 +138,9 @@ $router->group([
         /**
          * Price
          */
-        $router->group(['prefix' => 'price'], function ($router) {
+        $router->group([
+            'prefix' => 'price'
+        ], function ($router) {
             $router->get('/', 'PriceController@index');
             $router->post('/', 'PriceController@store');
             $router->get('/{id}', 'PriceController@show');
@@ -209,7 +213,6 @@ $router->group([
 
         /**
          * Investors
-         *
          */
         $router->group([
             'prefix' => 'investors',
@@ -223,7 +226,6 @@ $router->group([
 
         /**
          * Admins
-         *
          */
         $router->group([], function ($router) {
             $router->get('/',       'AdminController@index');

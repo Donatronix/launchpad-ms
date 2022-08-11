@@ -35,9 +35,6 @@ use Laravel\Lumen\Routing\Controller as BaseController;
  *         flow="implicit",
  *         authorizationUrl="https://sumraid.com/oauth2",
  *         scopes={
- *             "ManagerRead"="Manager can read",
- *             "User":"User access",
- *             "ManagerWrite":"Manager can write"
  *         }
  *     )
  * )
@@ -208,4 +205,6 @@ use Laravel\Lumen\Routing\Controller as BaseController;
  *
  * @package App\Api\V1\Controllers
  */
-class Controller extends BaseController{}
+class Controller extends BaseController
+{
+}
