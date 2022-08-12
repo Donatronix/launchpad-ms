@@ -297,13 +297,6 @@ class PurchaseController extends Controller
 
         if ($validator->fails()) {
             throw new ValidationException('Validation error occurred!', 422);
-
-//            return response()->jsonApi([
-//                'title' => 'Get token worth',
-//                //'title' => 'Creating new token purchase order',
-//                'message' => "Validation error occurred!",
-//                'data' => $validator->errors()
-//            ], 422);
         }
 
         // get product details

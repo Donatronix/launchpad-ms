@@ -3,6 +3,7 @@
 namespace App\Traits;
 
 use App\Models\Product;
+use App\Models\TokenReward;
 use Illuminate\Support\Facades\Http;
 
 trait CryptoConversionTrait
@@ -35,13 +36,14 @@ trait CryptoConversionTrait
 
         $token_amount = $dol_equivalent / $token_stage4_price;
 
-        // Give 10% bonus for amount greater than 1000
-        if ($amount < 1000) {
-            $bonus = 0;
-        } else {
-            // Calculate token 10% bonus
-            $bonus = 0.1 * $token_amount;
+        // Give token reward bonus based on gross solana equivalent
+        $reward = TokenReward::where("swap", "<=", intval($sol_equivalent))->where("deposit_amount", ">=", intval($sol_equivalent))->value("reward_bonus");
+        if (!$reward) {
+            $reward = TokenReward::where("swap", "<=", intval($sol_equivalent))->where("deposit_amount", "+++")->value("reward_bonus");
         }
+
+        // Calculate token 10% bonus
+        $bonus = ($reward / 100) * $token_amount;
 
         // Return result
         return [
