@@ -21,7 +21,7 @@ class CreateProductsTable extends Migration
             $table->unsignedBigInteger('supply');
             $table->unsignedBigInteger('sold')->default(0);
             $table->float('presale_percentage', 3, 2, true)->default(0);
-            $table->mediumText('icon')->nullable();
+            $table->string('icon', 200)->nullable();
             $table->date('start_date')->nullable();
             $table->date('end_date')->nullable();
             $table->boolean('status')->default(true);
