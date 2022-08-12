@@ -63,11 +63,12 @@ class PurchaseController extends Controller
     public function index(Request $request): mixed
     {
         try {
-            $allPurchase = Purchase::orderBy('created_at', 'Desc')
+            $allPurchase = Purchase::byOwner()
                 ->with(['product' => function ($query) {
                     $query->select('title', 'ticker', 'supply', 'presale_percentage', 'start_date', 'end_date', 'icon');
                 }])
-                ->paginate($request->get('limit', 20));
+                ->orderBy('created_at', 'desc')
+                ->paginate($request->get('limit', config('settings.pagination_limit')));
 
             // Return response
             return response()->jsonApi([

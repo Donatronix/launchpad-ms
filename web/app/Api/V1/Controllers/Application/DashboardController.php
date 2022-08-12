@@ -88,10 +88,13 @@ class DashboardController extends Controller
             }
 
             // Read product model
-            $product = $this->getProduct($request->get("product_id"));
-
-            if ($product instanceof JsonApiResponse) {
-                return $product;
+            try {
+                $product = Product::findOrFail($request->get("product_id"));
+            } catch (ModelNotFoundException $e) {
+                return response()->jsonApi([
+                    'title' => "Get product",
+                    'message' => "Product with id #{$request->get('product_id')} not found: {$e->getMessage()}",
+                ], 404);
             }
 
             // Sum all purchases for this token
@@ -118,24 +121,6 @@ class DashboardController extends Controller
                 'title' => 'Creating new token purchase order',
                 'message' => $e->getMessage(),
             ], 400);
-        }
-    }
-
-    /**
-     * Get product object
-     *
-     * @param $id
-     * @return mixed
-     */
-    private function getProduct($id): mixed
-    {
-        try {
-            return Product::findOrFail($id);
-        } catch (ModelNotFoundException $e) {
-            return response()->jsonApi([
-                'title' => "Get product",
-                'message' => "Product with id #{$id} not found: {$e->getMessage()}",
-            ], 404);
         }
     }
 

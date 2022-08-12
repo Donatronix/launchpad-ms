@@ -148,6 +148,11 @@ class DepositController extends Controller
      *         description="Unauthorized"
      *     ),
      *     @OA\Response(
+     *         response="404",
+     *         description="Not Found",
+     *         @OA\JsonContent(ref="#/components/schemas/WarningResponse")
+     *     ),
+     *     @OA\Response(
      *         response="422",
      *         description="Validation Failed",
      *         @OA\JsonContent(ref="#/components/schemas/WarningResponse")
