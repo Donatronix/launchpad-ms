@@ -27,7 +27,7 @@ class PaymentUpdateRequestListener
             'payment_order_id' => 'string|required',
             'document_id' => 'string|required',
             'document_object' => 'string|required',
-            'document_meta' => 'array|sometimes',
+            'document_meta' => 'sometimes',
         ]);
 
         // If validation error, the stop

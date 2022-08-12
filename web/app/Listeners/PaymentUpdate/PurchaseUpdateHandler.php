@@ -2,6 +2,7 @@
 
 namespace App\Listeners\PaymentUpdate;
 
+use Illuminate\Support\Facades\Log;
 use Sumra\SDK\Facades\PubSub;
 use App\Models\Product;
 
@@ -22,7 +23,6 @@ class PurchaseUpdateHandler
         /**
          * Increase total Purchased
          */
-        $product = Product::where('ticker', $document->ticker)->first();
         $product->sold += $document->total_token;
         $product->save();
 

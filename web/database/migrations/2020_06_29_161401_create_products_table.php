@@ -19,7 +19,7 @@ class CreateProductsTable extends Migration
             $table->string('title');
             $table->string('ticker', 7);
             $table->unsignedBigInteger('supply');
-            $table->unsignedBigInteger('sold')->default(0);
+            $table->double('sold', 20, 9)->default((double)0);
             $table->float('presale_percentage', 3, 2, true)->default(0);
             $table->mediumText('icon')->nullable();
             //$table->string('icon', 200)->nullable();
