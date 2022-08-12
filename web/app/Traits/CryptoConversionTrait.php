@@ -11,11 +11,25 @@ trait CryptoConversionTrait
     protected $currencies = [];
 
     /**
-     * Get the token worth for a particular crypt.
+     * Get the token worth for a purchase.
      *
      * @return object
      */
-    protected function getTokenWorth($amount, $token): mixed
+    protected function getTokenWorth($amount, $token, $currency_type): mixed
+    {
+        if ($currency_type == "crypto"){
+            return $this->getCryptoTokenWorth($amount, $token);
+        }else if ($currency_type == "fiat"){
+            return $this->getFiatTokenWorth($amount, $token);
+        }
+    }
+
+    /**
+     * Get the token worth for a particular crypto.
+     *
+     * @return object
+     */
+    protected function getCryptoTokenWorth($amount, $token): mixed
     {
         // get the sol equivalent for the currency
         $sol_rate = $this->getTokenExchangeRate('usd', "sol");
@@ -31,10 +45,10 @@ trait CryptoConversionTrait
         $dol_equivalent = $sol_dol_rate * $new_sol_value;
 
         // convert dollar value to required token
-        $product = Product::query()->where("ticker", $token)->byStage(4)->first();
-        $token_stage4_price = $product->price->price;
+        $product = Product::query()->where("ticker", $token)->byStage(5)->first();
+        $token_stage5_price = $product->price->price;
 
-        $token_amount = $dol_equivalent / $token_stage4_price;
+        $token_amount = $dol_equivalent / $token_stage5_price;
 
         // Give token reward bonus based on gross solana equivalent
         $reward = TokenReward::where("swap", "<=", intval($sol_equivalent))->where("deposit_amount", ">=", intval($sol_equivalent))->value("reward_bonus");
@@ -50,6 +64,27 @@ trait CryptoConversionTrait
             'amount' => $token_amount,
             'bonus' => $bonus,
             'total' => $token_amount + $bonus
+        ];
+    }
+
+    /**
+     * Get the token worth for a particular crypto.
+     *
+     * @return object
+     */
+    protected function getFiatTokenWorth($amount, $token): mixed
+    {
+        // convert dollar value to required token
+        $product = Product::query()->where("ticker", $token)->byStage(5)->first();
+        $token_stage5_price = $product->price->price;
+
+        $token_amount = $amount / $token_stage5_price;
+
+        // Return result
+        return [
+            'amount' => $token_amount,
+            'bonus' => 0,
+            'total' => $token_amount
         ];
     }
 
