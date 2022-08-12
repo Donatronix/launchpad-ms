@@ -20,7 +20,7 @@ class OrdersTableSeeder extends Seeder
 
         foreach ($products as $product) {
             // Create orders
-            Order::factory()->count(10)->create([
+            Order::factory()->count(1)->create([
                 'product_id' => $product->id
             ]);
         }

@@ -20,7 +20,7 @@ class DepositsTableSeeder extends Seeder
 
          foreach($orders as $order){
              // Create Deposits
-             Deposit::factory()->count(10)->create([
+             Deposit::factory()->count(1)->create([
                  'order_id' => $order->id
              ]);
          }
