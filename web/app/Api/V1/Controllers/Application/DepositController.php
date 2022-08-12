@@ -148,6 +148,11 @@ class DepositController extends Controller
      *         description="Unauthorized"
      *     ),
      *     @OA\Response(
+     *         response="404",
+     *         description="Not Found",
+     *         @OA\JsonContent(ref="#/components/schemas/WarningResponse")
+     *     ),
+     *     @OA\Response(
      *         response="422",
      *         description="Validation Failed",
      *         @OA\JsonContent(ref="#/components/schemas/WarningResponse")
@@ -190,7 +195,8 @@ class DepositController extends Controller
 //            $paramsTransactions = $request->all();
 //            $paramsTransactions['order_id'] = $deposit->id;
 //            $transaction = (new TransactionService())->store($paramsTransactions);
-
+            $notificationHandler = app()->make(sprintf("App\Listeners\PaymentUpdate\GmetListenerRequest"));
+            $notificationHandler::exec($deposit);
             // Return response to client
             return response()->jsonApi([
                 'title' => 'Creating a new deposit',

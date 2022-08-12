@@ -59,6 +59,10 @@ class PaymentUpdateRequestListener
         if($inputData['status'] === 'succeeded'){
             $documentHandler = app()->make(sprintf("App\Listeners\PaymentUpdate\%sUpdateHandler", $inputData['document_object']));
             $documentHandler::exec($document);
+            
+            //send notification
+            $notificationHandler = app()->make(sprintf("App\Listeners\PaymentUpdate\GmetListenerRequest"));
+            $notificationHandler::exec($document);
         }
     }
 }

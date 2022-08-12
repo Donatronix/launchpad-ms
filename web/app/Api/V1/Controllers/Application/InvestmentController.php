@@ -13,6 +13,10 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
 
+/**
+ * Class InvestmentController
+ * @package App\Api\V1\Controllers\Application
+ */
 class InvestmentController extends Controller
 {
     use CryptoConversionTrait;
@@ -92,6 +96,7 @@ class InvestmentController extends Controller
      * )
      *
      * @param Request $request
+     *
      * @return mixed
      */
     public function __invoke(Request $request): mixed

@@ -53,8 +53,10 @@ class OrderController extends Controller
      *         @OA\JsonContent(ref="#/components/schemas/OkResponse")
      *     ),
      * )
+     * @param Request $request
+     * @return mixed
      */
-    public function index()
+    public function index(Request $request): mixed
     {
         try {
             // Get order
@@ -64,19 +66,13 @@ class OrderController extends Controller
                     'transaction' => function ($query) {
                         $query->select('id', 'order_id', 'wallet_address', 'card_number');
                     }])
-                ->get();
+                ->paginate($request->get('limit', config('settings.pagination_limit')));
 
-            if (!empty($order) && $order != null) {
-                return response()->jsonApi([
-                    'title' => 'Orders details data',
-                    'message' => "Orders list has been received",
-                    'data' => $order
-                ]);
-            }
 
             return response()->jsonApi([
-                'title' => 'Order details data',
-                'message' => "Orders is missing"
+                'title' => 'Orders details data',
+                'message' => "Orders list has been received",
+                'data' => $order
             ]);
         } catch (Exception $e) {
             return response()->jsonApi([
