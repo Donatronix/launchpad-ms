@@ -25,16 +25,7 @@ class PurchasesTableSeeder extends Seeder
                     "total_token"  => 25312.046,
                     "currency_ticker" => "btc",
                     "status"  => 0
-                ],
-                [
-                    "payment_amount" => 5000,
-                    "currency_type"  => "crypto",
-                    "token_amount"  => 25312.046,
-                    "bonus"  => 25312.046,
-                    "total_token"  => 25312.046,
-                    "currency_ticker" => "btc",
-                    "status"  => 0
-                ],
+                ]
             ],
 
             'divit' => [
@@ -46,16 +37,7 @@ class PurchasesTableSeeder extends Seeder
                     "total_token"  => 25312.046,
                     "currency_ticker" => "btc",
                     "status"  => 0
-                ],
-                [
-                    "payment_amount" => 5000,
-                    "currency_type"  => "crypto",
-                    "token_amount"  => 25312.046,
-                    "bonus"  => 25312.046,
-                    "total_token"  => 25312.046,
-                    "currency_ticker" => "btc",
-                    "status"  => 0
-                ],
+                ]
             ]
         ];
 
