@@ -170,7 +170,8 @@ class PurchaseController extends Controller
                         'object' => class_basename(get_class($purchase)),
                         'service' => env('RABBITMQ_EXCHANGE_NAME'),
                         'meta' => $purchase
-                    ]]
+                    ]
+                ]
             ]);
         } catch (Exception $e) {
             return response()->jsonApi([
@@ -280,13 +281,13 @@ class PurchaseController extends Controller
         // Convert currency
         $currency = strtolower($request->get('currency_ticker'));
         if (in_array($currency, ['usd', 'eur', 'gbp'])) {
-            $result['currency_type'] = 'fiat';
+            $currency_type = 'fiat';
 
             $rules += [
                 'payment_amount' => 'required|numeric|min:250|max:1000',
             ];
         } else {
-            $result['currency_type'] = 'crypto';
+            $currency_type = 'crypto';
 
             $rules += [
                 'payment_amount' => 'required|numeric',
@@ -298,19 +299,19 @@ class PurchaseController extends Controller
 
         if ($validator->fails()) {
             throw new ValidationException('Validation error occurred!', 422);
-
-//            return response()->jsonApi([
-//                'title' => 'Get token worth',
-//                //'title' => 'Creating new token purchase order',
-//                'message' => "Validation error occurred!",
-//                'data' => $validator->errors()
-//            ], 422);
         }
 
         // get product details
-        $product = Product::find($request->get('product_id'));
-        if (!$product) {
-            throw new Exception('Product not found', 400);
+        if ($request->has("product_ticker")) {
+            $product_ticker = $request->product_ticker;
+        } else if ($request->has("product_id")) {
+            $product = Product::find($request->get('product_id'));
+            if (!$product) {
+                throw new Exception('Product not found', 400);
+            }
+            $product_ticker = $product->ticker;
+        } else {
+            throw new Exception('Product is required', 400);
         }
 
         // get rate of token
@@ -320,8 +321,9 @@ class PurchaseController extends Controller
         $result['payment_amount'] = $result['rate'] * $request->payment_amount;
 
         // Get calculated token worth
-        $result['token'] = $this->getTokenWorth($request->payment_amount, $product->ticker);
+        $result['token'] = $this->getTokenWorth($request->payment_amount, $product_ticker, $currency_type);
 
+        $result['currency_type'] = $currency_type;
         // return response
         return $result;
     }
