@@ -142,10 +142,14 @@ class InvestmentController extends Controller
 
                 // get payment_amount
                 $deposit_amount = $rate * $deposit_amount;
+
+                $currency_type = 'crypto';
+            }else{
+                $currency_type = 'fiat';
             }
 
             // get token worth
-            $token_worth = $this->getTokenWorth($inputData->investment_amount, $product->ticker);
+            $token_worth = $this->getTokenWorth($inputData->investment_amount, $product->ticker, $currency_type);
 
             // Create new order
             $order = Order::create([

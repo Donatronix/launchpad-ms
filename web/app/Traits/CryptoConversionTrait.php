@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Http;
 trait CryptoConversionTrait
 {
     protected $currencies = [];
+    protected $stage = 5;
 
     /**
      * Get the token worth for a purchase.
@@ -45,7 +46,7 @@ trait CryptoConversionTrait
         $dol_equivalent = $sol_dol_rate * $new_sol_value;
 
         // convert dollar value to required token
-        $product = Product::query()->where("ticker", $token)->byStage(5)->first();
+        $product = Product::query()->where("ticker", $token)->byStage($this->stage)->first();
         $token_stage5_price = $product->price->price;
 
         $token_amount = $dol_equivalent / $token_stage5_price;
@@ -75,7 +76,7 @@ trait CryptoConversionTrait
     protected function getFiatTokenWorth($amount, $token): mixed
     {
         // convert dollar value to required token
-        $product = Product::query()->where("ticker", $token)->byStage(5)->first();
+        $product = Product::query()->where("ticker", $token)->byStage($this->stage)->first();
         $token_stage5_price = $product->price->price;
 
         $token_amount = $amount / $token_stage5_price;
