@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Sumra\SDK\Traits\NumeratorTrait;
+use Sumra\SDK\Traits\OwnerTrait;
 use Sumra\SDK\Traits\UuidTrait;
 
 /**
@@ -40,6 +41,7 @@ use Sumra\SDK\Traits\UuidTrait;
 class Purchase extends Model
 {
     use HasFactory;
+    use OwnerTrait;
     use NumeratorTrait;
     use SoftDeletes;
     use UuidTrait;
