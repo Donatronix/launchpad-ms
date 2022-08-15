@@ -64,9 +64,9 @@ class PurchaseController extends Controller
     {
         try {
             $allPurchase = Purchase::byOwner()
-                ->with(['product' => function ($query) {
-                    $query->select('title', 'ticker', 'supply', 'presale_percentage', 'start_date', 'end_date', 'icon');
-                }])
+                ->with('product', function ($query) {
+                    return $query->select('title', 'ticker', 'supply', 'presale_percentage', 'start_date', 'end_date', 'icon');
+                })
                 ->orderBy('created_at', 'desc')
                 ->paginate($request->get('limit', config('settings.pagination_limit')));
 
