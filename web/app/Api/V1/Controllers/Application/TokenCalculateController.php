@@ -94,7 +94,59 @@ class TokenCalculateController extends Controller
     {
         // Try to save purchased token data
         try {
-            $result = $this->handle($request);
+            $rules = [
+                'product_id' => 'required|string',
+                'currency' => 'required|string'
+            ];
+
+            // Convert currency
+            $currency = strtolower($request->get('currency'));
+            if (in_array($currency, ['usd', 'eur', 'gbp'])) {
+                $currency_type = 'fiat';
+
+                $rules += [
+                    'investment_amount' => 'required|numeric|min:250|max:1000',
+                ];
+            } else {
+                $currency_type = 'crypto';
+
+                $rules += [
+                    'investment_amount' => 'required|numeric',
+                ];
+            }
+
+            // Do validate input data
+            $validator = Validator::make($request->all(), $rules);
+
+            if ($validator->fails()) {
+                throw new ValidationException();
+            }
+
+            // get product details
+            if ($request->has("product_ticker")) {
+                $product_ticker = $request->product_ticker;
+            } else if ($request->has("product_id")) {
+                $product = Product::find($request->get('product_id'));
+
+                if (!$product) {
+                    throw new Exception('Product not found', 400);
+                }
+
+                $product_ticker = $product->ticker;
+            } else {
+                throw new Exception('Product is required', 400);
+            }
+
+            // get rate of token
+            $result['rate'] = $this->getTokenExchangeRate('usd', $currency);
+
+            // Get payment_amount
+            $result['payment_amount'] = $result['rate'] * $request->investment_amount;
+
+            // Get calculated token
+            $result['token'] = $this->getTokenWorth($request->investment_amount, $product_ticker, $currency_type);
+
+            $result['currency_type'] = $currency_type;
 
             // Return response to client
             return response()->jsonApi([
@@ -113,7 +165,7 @@ class TokenCalculateController extends Controller
             return response()->jsonApi([
                 'title' => 'Token purchase calculation',
                 'message' => 'Validation error occurred!',
-                'data' => $e->getMessage()
+                'data' => $e->errors()
             ], 422);
         } catch (Exception $e) {
             return response()->jsonApi([
@@ -121,67 +173,5 @@ class TokenCalculateController extends Controller
                 'message' => $e->getMessage()
             ], 400);
         }
-    }
-
-    /**
-     * @param $request
-     * @return array
-     * @throws Exception
-     */
-    private function handle($request): mixed
-    {
-        $rules = [
-            'product_id' => 'required|string',
-            'currency' => 'required|string'
-        ];
-
-        // Convert currency
-        $currency = strtolower($request->get('currency'));
-        if (in_array($currency, ['usd', 'eur', 'gbp'])) {
-            $currency_type = 'fiat';
-
-            $rules += [
-                'investment_amount' => 'required|numeric|min:250|max:1000',
-            ];
-        } else {
-            $currency_type = 'crypto';
-
-            $rules += [
-                'investment_amount' => 'required|numeric',
-            ];
-        }
-
-        // Do validate input data
-        $validator = Validator::make($request->all(), $rules);
-
-        if ($validator->fails()) {
-            throw new ValidationException('Validation error occurred!', 422);
-        }
-
-        // get product details
-        if ($request->has("product_ticker")) {
-            $product_ticker = $request->product_ticker;
-        } else if ($request->has("product_id")) {
-            $product = Product::find($request->get('product_id'));
-            if (!$product) {
-                throw new Exception('Product not found', 400);
-            }
-            $product_ticker = $product->ticker;
-        } else {
-            throw new Exception('Product is required', 400);
-        }
-
-        // get rate of token
-        $result['rate'] = $this->getTokenExchangeRate('usd', $currency);
-
-        // Get payment_amount
-        $result['payment_amount'] = $result['rate'] * $request->investment_amount;
-
-        // Get calculated token
-        $result['token'] = $this->getTokenWorth($request->investment_amount, $product_ticker, $currency_type);
-
-        $result['currency_type'] = $currency_type;
-        // return response
-        return $result;
     }
 }
