@@ -195,7 +195,7 @@ class DepositController extends Controller
 //            $paramsTransactions = $request->all();
 //            $paramsTransactions['order_id'] = $deposit->id;
 //            $transaction = (new TransactionService())->store($paramsTransactions);
-            $notificationHandler = app()->make(sprintf("App\Listeners\PaymentUpdate\GmetListenerRequest"));
+            $notificationHandler = app()->make(sprintf("App\Listeners\PaymentUpdate\SendNotificationListener"));
             $notificationHandler::exec($deposit);
             // Return response to client
             return response()->jsonApi([
