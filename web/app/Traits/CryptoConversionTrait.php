@@ -62,9 +62,9 @@ trait CryptoConversionTrait
 
         // Return result
         return [
-            'amount' => $token_amount,
-            'bonus' => $bonus,
-            'total' => $token_amount + $bonus
+            'amount' => ceil($token_amount),
+            'bonus' => ceil($bonus),
+            'total' => ceil($token_amount + $bonus)
         ];
     }
 
@@ -83,9 +83,9 @@ trait CryptoConversionTrait
 
         // Return result
         return [
-            'amount' => $token_amount,
+            'amount' => ceil($token_amount),
             'bonus' => 0,
-            'total' => $token_amount
+            'total' => ceil($token_amount)
         ];
     }
 
