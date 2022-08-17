@@ -104,9 +104,16 @@ class TokenCalculateController extends Controller
             if (in_array($currency, ['usd', 'eur', 'gbp'])) {
                 $currency_type = 'fiat';
 
-                $rules += [
-                    'investment_amount' => 'required|numeric|min:250|max:1000',
-                ];
+                // check if request coming from creditline
+                if ($request->has("product_ticker")) {
+                    $rules += [
+                        'investment_amount' => 'required|numeric',
+                    ];
+                } else {
+                    $rules += [
+                        'investment_amount' => 'required|numeric|min:250|max:1000',
+                    ];
+                }
             } else {
                 $currency_type = 'crypto';
 
@@ -119,7 +126,7 @@ class TokenCalculateController extends Controller
             $validator = Validator::make($request->all(), $rules);
 
             if ($validator->fails()) {
-                throw new ValidationException();
+                throw new ValidationException('Validation error occurred!', 422);
             }
 
             // get product details
@@ -164,8 +171,7 @@ class TokenCalculateController extends Controller
         } catch (ValidationException $e) {
             return response()->jsonApi([
                 'title' => 'Token purchase calculation',
-                'message' => 'Validation error occurred!',
-                'data' => $e->errors()
+                'message' => $e->getMessage()
             ], 422);
         } catch (Exception $e) {
             return response()->jsonApi([
