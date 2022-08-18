@@ -14,6 +14,9 @@ trait CryptoConversionTrait
     /**
      * Get the token worth for a purchase.
      *
+     * @param $amount
+     * @param $token
+     * @param $currency_type
      * @return object
      */
     protected function getTokenWorth($amount, $token, $currency_type): mixed
@@ -28,7 +31,10 @@ trait CryptoConversionTrait
     /**
      * Get the token worth for a particular crypto.
      *
+     * @param $amount
+     * @param $token
      * @return object
+     * @throws \Exception
      */
     protected function getCryptoTokenWorth($amount, $token): mixed
     {
@@ -71,6 +77,8 @@ trait CryptoConversionTrait
     /**
      * Get the token worth for a particular crypto.
      *
+     * @param $amount
+     * @param $token
      * @return object
      */
     protected function getFiatTokenWorth($amount, $token): mixed
@@ -90,7 +98,10 @@ trait CryptoConversionTrait
     }
 
     /**
+     * @param $from
+     * @param $to
      * @return string
+     * @throws \Exception
      */
     protected function getTokenExchangeRate($from, $to): mixed
     {

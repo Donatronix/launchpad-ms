@@ -156,6 +156,7 @@ class PurchaseController extends Controller
                 "token_amount" => $result['token']['amount'],
                 "bonus" => $result['token']['bonus'],
                 "total_token" => $result['token']['total'],
+                'status' => Purchase::STATUS_PROCESSING
             ]);
 
             // Return response to client
@@ -306,9 +307,11 @@ class PurchaseController extends Controller
             $product_ticker = $request->product_ticker;
         } else if ($request->has("product_id")) {
             $product = Product::find($request->get('product_id'));
+
             if (!$product) {
                 throw new Exception('Product not found', 400);
             }
+
             $product_ticker = $product->ticker;
         } else {
             throw new Exception('Product is required', 400);
@@ -324,6 +327,7 @@ class PurchaseController extends Controller
         $result['token'] = $this->getTokenWorth($request->payment_amount, $product_ticker, $currency_type);
 
         $result['currency_type'] = $currency_type;
+
         // return response
         return $result;
     }
