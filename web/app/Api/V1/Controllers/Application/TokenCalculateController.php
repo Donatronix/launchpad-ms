@@ -95,7 +95,7 @@ class TokenCalculateController extends Controller
         // Try to save purchased token data
         try {
             $rules = [
-                'product_id' => 'required|string',
+                'product_id' => 'string|min:36|max:36',
                 'currency' => 'required|string'
             ];
 
@@ -126,13 +126,13 @@ class TokenCalculateController extends Controller
             $validator = Validator::make($request->all(), $rules);
 
             if ($validator->fails()) {
-                throw new ValidationException('Validation error occurred!', 422);
+                throw new ValidationException($validator->errors(), 422);
             }
 
             // get product details
-            if ($request->has("product_ticker")) {
+            if ($request->has('product_ticker')) {
                 $product_ticker = $request->product_ticker;
-            } else if ($request->has("product_id")) {
+            } else if ($request->has('product_id')) {
                 $product = Product::find($request->get('product_id'));
 
                 if (!$product) {
@@ -171,7 +171,7 @@ class TokenCalculateController extends Controller
         } catch (ValidationException $e) {
             return response()->jsonApi([
                 'title' => 'Token purchase calculation',
-                'message' => $e->getMessage()
+                'message' => $e->validator->getMessageBag()->first()
             ], 422);
         } catch (Exception $e) {
             return response()->jsonApi([
