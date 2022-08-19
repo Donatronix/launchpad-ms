@@ -145,10 +145,11 @@ class TokenCalculateController extends Controller
             }
 
             // get rate of token
-            $result['rate'] = $this->getTokenExchangeRate('usd', $currency);
+            $rate = $this->getTokenExchangeRate('usd', $currency);
+            $result['rate'] = 1 / $rate;
 
             // Get payment_amount
-            $result['payment_amount'] = $result['rate'] * $request->investment_amount;
+            $result['payment_amount'] = $rate * $request->investment_amount;
 
             // Get calculated token
             $result['token'] = $this->getTokenWorth($request->investment_amount, $product_ticker, $currency_type);
