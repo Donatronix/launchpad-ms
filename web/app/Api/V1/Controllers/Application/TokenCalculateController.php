@@ -96,30 +96,17 @@ class TokenCalculateController extends Controller
         try {
             $rules = [
                 'product_id' => 'string|min:36|max:36',
-                'currency' => 'required|string'
+                'product_ticker' => 'string',
+                'currency' => 'required|string',
+                'investment_amount' => 'required|numeric'
             ];
 
             // Convert currency
             $currency = strtolower($request->get('currency'));
             if (in_array($currency, ['usd', 'eur', 'gbp'])) {
                 $currency_type = 'fiat';
-
-                // check if request coming from creditline
-                if ($request->has("product_ticker")) {
-                    $rules += [
-                        'investment_amount' => 'required|numeric',
-                    ];
-                } else {
-                    $rules += [
-                        'investment_amount' => 'required|numeric|min:250|max:1000',
-                    ];
-                }
             } else {
                 $currency_type = 'crypto';
-
-                $rules += [
-                    'investment_amount' => 'required|numeric',
-                ];
             }
 
             // Do validate input data
