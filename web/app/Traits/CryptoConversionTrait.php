@@ -108,12 +108,8 @@ trait CryptoConversionTrait
         if (!sizeof($this->currencies)) {
             /**
              * Prep reference books endpoint
-             *
              */
-            $endpoint = "/currencies/rates/";
-
-            $reference_books_url = env("API_REFERENCE_BOOKS_URL");
-            $url = $reference_books_url . $endpoint;
+            $url = config('settings.api.reference_books') . '/currencies/rates/';
 
             /**
              * verify the code
@@ -134,20 +130,14 @@ trait CryptoConversionTrait
                 throw new \Exception($message, $status);
             }
 
-            $this->currencies = $resp->object()->data ?? null;
+            $this->currencies = (array)$resp->object()->data ?? null;
         }
 
         if (sizeof($this->currencies)) {
-            // Search for rates of currencies using symbol
-            $from_key = array_search(mb_strtoupper($from), array_column($this->currencies, "currency"));
-            $from_rate = $this->currencies[$from_key]->rate;
+            $from_rate = $this->currencies[$from] ?? 1;
+            $to_rate = $this->currencies[$to] ?? 1;
 
-            $to_key = array_search(mb_strtoupper($to), array_column($this->currencies, "currency"));
-            $to_rate = $this->currencies[$to_key]->rate;
-
-            $rate = $from_rate / $to_rate;
-
-            return $rate;
+            return $from_rate / $to_rate;
         }
     }
 }
