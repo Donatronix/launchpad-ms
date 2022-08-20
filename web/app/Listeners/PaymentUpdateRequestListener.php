@@ -21,6 +21,11 @@ class PaymentUpdateRequestListener
      */
     public function handle(array $inputData)
     {
+        // Logging income data
+        if(env('APP_DEBUG')){
+            Log::info($inputData);
+        }
+
         // Do validate input data
         $validation = Validator::make($inputData, [
             'status' => 'string|required',
@@ -32,7 +37,7 @@ class PaymentUpdateRequestListener
 
         // If validation error, the stop
         if ($validation->fails()) {
-            Log::info('Validation error: ' . $validation->errors());
+            Log::error('Validation error: ' . $validation->errors());
             exit();
         }
 
@@ -59,9 +64,9 @@ class PaymentUpdateRequestListener
         if($inputData['status'] === 'succeeded'){
             $documentHandler = app()->make(sprintf("App\Listeners\PaymentUpdate\%sUpdateHandler", $inputData['document_object']));
             $documentHandler::exec($document);
-            
+
             //send notification
-            $notificationHandler = app()->make(sprintf("App\Listeners\PaymentUpdate\GmetListenerRequest"));
+            $notificationHandler = app()->make(sprintf("App\Listeners\PaymentUpdate\SendNotificationListener"));
             $notificationHandler::exec($document);
         }
     }

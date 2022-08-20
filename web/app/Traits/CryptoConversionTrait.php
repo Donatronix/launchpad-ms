@@ -14,6 +14,9 @@ trait CryptoConversionTrait
     /**
      * Get the token worth for a purchase.
      *
+     * @param $amount
+     * @param $token
+     * @param $currency_type
      * @return object
      */
     protected function getTokenWorth($amount, $token, $currency_type): mixed
@@ -28,7 +31,10 @@ trait CryptoConversionTrait
     /**
      * Get the token worth for a particular crypto.
      *
+     * @param $amount
+     * @param $token
      * @return object
+     * @throws \Exception
      */
     protected function getCryptoTokenWorth($amount, $token): mixed
     {
@@ -62,15 +68,17 @@ trait CryptoConversionTrait
 
         // Return result
         return [
-            'amount' => $token_amount,
-            'bonus' => $bonus,
-            'total' => $token_amount + $bonus
+            'amount' => ceil($token_amount),
+            'bonus' => ceil($bonus),
+            'total' => ceil($token_amount + $bonus)
         ];
     }
 
     /**
      * Get the token worth for a particular crypto.
      *
+     * @param $amount
+     * @param $token
      * @return object
      */
     protected function getFiatTokenWorth($amount, $token): mixed
@@ -83,26 +91,25 @@ trait CryptoConversionTrait
 
         // Return result
         return [
-            'amount' => $token_amount,
+            'amount' => ceil($token_amount),
             'bonus' => 0,
-            'total' => $token_amount
+            'total' => ceil($token_amount)
         ];
     }
 
     /**
+     * @param $from
+     * @param $to
      * @return string
+     * @throws \Exception
      */
     protected function getTokenExchangeRate($from, $to): mixed
     {
         if (!sizeof($this->currencies)) {
             /**
              * Prep reference books endpoint
-             *
              */
-            $endpoint = "/currencies/rates/";
-
-            $reference_books_url = env("API_REFERENCE_BOOKS_URL");
-            $url = $reference_books_url . $endpoint;
+            $url = config('settings.api.reference_books') . '/currencies/rates/';
 
             /**
              * verify the code
@@ -123,20 +130,14 @@ trait CryptoConversionTrait
                 throw new \Exception($message, $status);
             }
 
-            $this->currencies = $resp->object()->data ?? null;
+            $this->currencies = (array)$resp->object()->data ?? null;
         }
 
         if (sizeof($this->currencies)) {
-            // Search for rates of currencies using symbol
-            $from_key = array_search(mb_strtoupper($from), array_column($this->currencies, "currency"));
-            $from_rate = $this->currencies[$from_key]->rate;
+            $from_rate = $this->currencies[$from] ?? 1;
+            $to_rate = $this->currencies[$to] ?? 1;
 
-            $to_key = array_search(mb_strtoupper($to), array_column($this->currencies, "currency"));
-            $to_rate = $this->currencies[$to_key]->rate;
-
-            $rate = $from_rate / $to_rate;
-
-            return $rate;
+            return $from_rate / $to_rate;
         }
     }
 }

@@ -26,9 +26,10 @@ class PurchaseUpdateHandler
 
         // Send request to wallet for add token to user
         PubSub::publish('PurchaseTokenRequest', [
-            'type' => 'debit',
+            'posting' => 'increase',
             'amount' => $document->total_token,
             'currency' => $product->ticker,
+            'type' => 'main',
             'user_id' => $document->user_id,
             'document_id' => $document->id,
             'document_object' => class_basename(get_class($document)),
