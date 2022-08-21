@@ -100,10 +100,10 @@ trait CryptoConversionTrait
     /**
      * @param $from
      * @param $to
-     * @return string
+     * @return float|int
      * @throws \Exception
      */
-    protected function getTokenExchangeRate($from, $to): mixed
+    protected function getTokenExchangeRate($from, $to): float|int
     {
         if (!sizeof($this->currencies)) {
             /**
@@ -113,7 +113,6 @@ trait CryptoConversionTrait
 
             /**
              * verify the code
-             *
              */
             $resp = Http::withHeaders([
                 "user-id" => auth()->user()->getAuthIdentifier()
@@ -121,7 +120,6 @@ trait CryptoConversionTrait
 
             /**
              * Handle Response
-             *
              */
             if (!$resp->successful()) {
                 $status = $resp->status() ?? 400;
@@ -130,7 +128,7 @@ trait CryptoConversionTrait
                 throw new \Exception($message, $status);
             }
 
-            $this->currencies = (array)$resp->object()->data ?? null;
+            $this->currencies = (array)$resp->object()->data ?? [];
         }
 
         if (sizeof($this->currencies)) {
@@ -139,5 +137,7 @@ trait CryptoConversionTrait
 
             return $from_rate / $to_rate;
         }
+
+        return 0;
     }
 }
