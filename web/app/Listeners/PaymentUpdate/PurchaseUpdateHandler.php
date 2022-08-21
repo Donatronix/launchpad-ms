@@ -26,11 +26,12 @@ class PurchaseUpdateHandler
 
         // Send request to wallet for add token to user
         PubSub::publish('PurchaseTokenRequest', [
+            'title' => sprintf("Purchase %s token", $product->ticker),
             'posting' => 'increase',
             'amount' => $document->total_token,
             'currency' => $product->ticker,
             'type' => 'main',
-            'user_id' => $document->user_id,
+            'receiver_id' => $document->user_id,
             'document_id' => $document->id,
             'document_object' => class_basename(get_class($document)),
             'document_service' => env('RABBITMQ_EXCHANGE_NAME')
