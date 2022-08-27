@@ -44,26 +44,26 @@ class TransactionDashboardService
         ->selectRaw('token_stage, count(*) as total')->get();
         $newTransactionsByStagesPerYear = $newTransactionsByYear->groupBy('token_stage')
         ->selectRaw('token_stage, count(*) as total')->get();
-        
+
         return [
             'transactions_stat_by_day_count' => $newTransactionsByDay->count(),
             'transactions_stat_by_week_count' => $newTransactionsByWeek->count(),
             'transactions_stat_by_month_count' => $newTransactionsByMonth->count(),
             'transactions_stat_by_year_count' => $newTransactionsByYear->count(),
 
-            //Wallets
+            // Wallets
             'transactions_stat_by_wallets_per_day' => $newTransactionsByWalletPerDay,
             'transactions_stat_by_wallets_per_week' => $newTransactionsByWalletPerWeek,
             'transactions_stat_by_wallets_per_month' => $newTransactionsByWalletPerMonth,
             'transactions_stat_by_wallets_per_year' => $newTransactionsByWalletPerYear,
 
-            //PaymentGateways
+            // Payment Gateways
             'transactions_stat_by_payment_gateways_per_day' => $newTransactionsByPaymentGatewayPerDay,
             'transactions_stat_by_payment_gateways_per_week' => $newTransactionsByPaymentGatewayPerWeek,
             'transactions_stat_by_payment_gateways_per_month' => $newTransactionsByPaymentGatewayPerMonth,
             'transactions_stat_by_payment_gateways_per_year' => $newTransactionsByPaymentGatewayPerYear,
 
-            //PaymentGateways
+            // Payment Gateways
             'transactions_stat_by_stages_per_day' => $newTransactionsByStagesPerDay,
             'transactions_stat_by_stages_per_week' => $newTransactionsByStagesPerWeek,
             'transactions_stat_by_stages_per_month' => $newTransactionsByStagesPerMonth,
