@@ -24,10 +24,11 @@ class CreateTransactionsTable extends Migration
             $table->string('payment_token', 100)->nullable();
             $table->tinyInteger('token_stage');
             $table->date('payment_date')->nullable();
-            $table->decimal('amount_received', 12, 2, true);
-            $table->decimal('total_amount', 12, 2, true);
-            $table->decimal('bonus', 12, 2, true);
-            $table->decimal('sol_received', 12, 2, true);
+
+            $table->decimal('amount_received', 20, 9, true);
+            $table->decimal('total_amount', 20, 9, true);
+            $table->decimal('bonus', 20, 9, true);
+            $table->decimal('sol_received', 20, 9, true);
 
             $table->unsignedTinyInteger('status')->default(1);
 

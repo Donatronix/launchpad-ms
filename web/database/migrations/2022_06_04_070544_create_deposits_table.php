@@ -17,7 +17,7 @@ class CreateDepositsTable extends Migration
             $table->uuid('id')->primary();
 
             $table->string('number', 20)->index();
-            $table->decimal('amount', 12, 0);
+            $table->decimal('amount', 16, 9);
             $table->string('currency_code', 10)->index();
 
             $table->string('order_id')
@@ -29,6 +29,7 @@ class CreateDepositsTable extends Migration
             $table->unsignedTinyInteger('status')
                 ->default(0)
                 ->index();
+
             $table->uuid('payment_order_id')
                 ->default(config('settings.empty_uuid'))
                 ->index();

@@ -23,11 +23,11 @@ class CreatePurchasesTable extends Migration
                 ->onUpdate('cascade')
                 ->onDelete('cascade');
 
-            $table->decimal('token_amount', 50, 12);
-            $table->decimal('bonus', 50, 12);
-            $table->decimal('total_token', 50, 12);
+            $table->decimal('token_amount', 20, 9);
+            $table->decimal('bonus', 20, 9);
+            $table->decimal('total_token', 20, 9);
 
-            $table->decimal('payment_amount', 12, 5);
+            $table->decimal('payment_amount', 16, 9);
             $table->string('currency_ticker');
             $table->enum('currency_type', ['fiat', 'crypto', 'token', 'virtual']);
             $table->uuid('user_id')->index();
@@ -35,6 +35,7 @@ class CreatePurchasesTable extends Migration
             $table->unsignedTinyInteger('status')
                 ->default(0)
                 ->index();
+
             $table->uuid('payment_order_id')
                 ->default(config('settings.empty_uuid'))
                 ->index();
