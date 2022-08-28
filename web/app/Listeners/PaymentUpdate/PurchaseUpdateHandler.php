@@ -36,5 +36,12 @@ class PurchaseUpdateHandler
             'document_object' => class_basename(get_class($document)),
             'document_service' => env('RABBITMQ_EXCHANGE_NAME')
         ], config('pubsub.queue.crypto_wallets'));
+
+        // influencer earns 2% commission
+        PubSub::publish('EarnCommission', [
+            'user_id' => $document->user_id,
+            'earning_type' => 'token purchase',
+            'amount' => $document->payment_amount
+        ], config('pubsub.queue.g_met'));
     }
 }
