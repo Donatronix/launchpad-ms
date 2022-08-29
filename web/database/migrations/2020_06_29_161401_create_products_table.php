@@ -18,8 +18,8 @@ class CreateProductsTable extends Migration
 
             $table->string('title');
             $table->string('ticker', 7);
-            $table->decimal('supply', 30,9, true)->default(0);
-            $table->decimal('sold', 30, 9, true)->default(0);
+            $table->decimal('supply', 30,8, true)->default(0);
+            $table->decimal('sold', 30, 8, true)->default(0);
             $table->decimal('presale_percentage', 5, 2, true)->default(0);
             $table->mediumText('icon')->nullable();
             //$table->string('icon', 200)->nullable();

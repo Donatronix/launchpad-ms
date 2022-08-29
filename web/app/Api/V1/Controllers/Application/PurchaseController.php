@@ -153,16 +153,16 @@ class PurchaseController extends Controller
                 'payment_amount' => $result['payment_amount'],
                 'currency_ticker' => $request->get('currency_ticker'),
                 'currency_type' => $result['currency_type'],
-                "token_amount" => $result['token']['amount'],
-                "bonus" => $result['token']['bonus'],
-                "total_token" => $result['token']['total'],
+                'token_amount' => $result['token']['amount'],
+                'bonus' => $result['token']['bonus'],
+                'total_token' => $result['token']['total'],
                 'status' => Purchase::STATUS_PROCESSING
             ]);
 
             // Return response to client
             return response()->jsonApi([
                 'title' => 'Creating new token purchase order',
-                'message' => "New purchase order has been created successfully",
+                'message' => 'New purchase order has been created successfully',
                 'data' => [
                     'amount' => $purchase->payment_amount,
                     'currency' => $purchase->currency_ticker,
@@ -249,14 +249,14 @@ class PurchaseController extends Controller
             // Return response to client
             return response()->jsonApi([
                 'title' => 'Get token worth',
-                'message' => "Get token worth",
+                'message' => 'Get token worth',
                 'data' => [
-                    "currency_ticker" => $request->currency_ticker,
-                    "rate" => $result['rate'],
-                    "payment_amount" => $result['payment_amount'],
-                    "token_amount" => $result['token']['amount'],
-                    "bonus" => $result['token']['bonus'],
-                    "total_token" => $result['token']['total'],
+                    'currency_ticker' => $request->currency_ticker,
+                    'rate' => $result['rate'],
+                    'payment_amount' => $result['payment_amount'],
+                    'token_amount' => $result['token']['amount'],
+                    'bonus' => $result['token']['bonus'],
+                    'total_token' => $result['token']['total'],
                 ]
             ]);
         } catch (Exception $e) {
@@ -303,9 +303,9 @@ class PurchaseController extends Controller
         }
 
         // get product details
-        if ($request->has("product_ticker")) {
+        if ($request->has('product_ticker')) {
             $product_ticker = $request->product_ticker;
-        } else if ($request->has("product_id")) {
+        } else if ($request->has('product_id')) {
             $product = Product::find($request->get('product_id'));
 
             if (!$product) {
@@ -321,7 +321,7 @@ class PurchaseController extends Controller
         $result['rate'] = $this->getTokenExchangeRate('usd', $currency);
 
         // Get payment_amount
-        $result['payment_amount'] = $result['rate'] * $request->payment_amount;
+        $result['payment_amount'] = round($result['rate'] * $request->payment_amount, 8, PHP_ROUND_HALF_UP);
 
         // Get calculated token worth
         $result['token'] = $this->getTokenWorth($request->payment_amount, $product_ticker, $currency_type);

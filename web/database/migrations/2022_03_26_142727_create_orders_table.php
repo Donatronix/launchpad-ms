@@ -23,14 +23,14 @@ class CreateOrdersTable extends Migration
                 ->onUpdate('cascade')
                 ->onDelete('cascade');
 
-            $table->decimal('investment_amount', 12, 0);
+            $table->decimal('investment_amount', 16, 8);
             $table->unsignedTinyInteger('deposit_percentage')->default(0);
-            $table->decimal('deposit_amount', 12, 0);
+            $table->decimal('deposit_amount', 16, 8);
             $table->unsignedTinyInteger('filled')->default('0');
             $table->uuid('user_id')->index();
 
-            $table->decimal('amount_token', 20, 0)->nullable();
-            $table->decimal('amount_usd', 20, 0)->nullable();
+            $table->decimal('amount_token', 20, 8)->nullable();
+            $table->decimal('amount_usd', 20, 8)->nullable();
 
             $table->unsignedTinyInteger('status')
                 ->default(0)

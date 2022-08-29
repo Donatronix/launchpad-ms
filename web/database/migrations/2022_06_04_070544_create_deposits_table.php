@@ -17,7 +17,7 @@ class CreateDepositsTable extends Migration
             $table->uuid('id')->primary();
 
             $table->string('number', 20)->index();
-            $table->decimal('amount', 16, 9);
+            $table->decimal('amount', 16, 8);
             $table->string('currency_code', 10)->index();
 
             $table->string('order_id')

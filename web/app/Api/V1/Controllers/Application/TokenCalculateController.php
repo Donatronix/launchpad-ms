@@ -101,14 +101,6 @@ class TokenCalculateController extends Controller
                 'investment_amount' => 'required|numeric'
             ];
 
-            // Convert currency
-            $currency = strtolower($request->get('currency'));
-            if (in_array($currency, ['usd', 'eur', 'gbp'])) {
-                $currency_type = 'fiat';
-            } else {
-                $currency_type = 'crypto';
-            }
-
             // Do validate input data
             $validator = Validator::make($request->all(), $rules);
 
@@ -131,17 +123,21 @@ class TokenCalculateController extends Controller
                 throw new Exception('Product is required', 400);
             }
 
-            // get rate of token
-            $rate = $this->getTokenExchangeRate('usd', $currency);
-            $result['rate'] = 1 / $rate;
+            // Convert currency
+            $currency = strtolower($request->get('currency'));
+            if (in_array($currency, ['usd', 'eur', 'gbp'])) {
+                $currency_type = 'fiat';
 
-            // Get payment_amount
-            $result['payment_amount'] = $rate * $request->investment_amount;
+                $rate = 1;
+            } else {
+                $currency_type = 'crypto';
+
+                // get rate of token
+                $rate = $this->getTokenExchangeRate('usd', $currency);
+            }
 
             // Get calculated token
-            $result['token'] = $this->getTokenWorth($request->investment_amount, $product_ticker, $currency_type);
-
-            $result['currency_type'] = $currency_type;
+            $tokenWorth = $this->getTokenWorth($request->investment_amount, $product_ticker, $currency_type);
 
             // Return response to client
             return response()->jsonApi([
@@ -149,11 +145,11 @@ class TokenCalculateController extends Controller
                 'message' => 'Calculation completed successfully',
                 'data' => [
                     'currency' => $request->currency,
-                    'rate' => $result['rate'],
-                    'payment_amount' => $result['payment_amount'],
-                    "token_amount" => $result['token']['amount'],
-                    "bonus" => $result['token']['bonus'],
-                    "total_token" => $result['token']['total'],
+                    'rate' => round(1 / $rate, 2),
+                    'payment_amount' => round($rate * $request->investment_amount, 8, PHP_ROUND_HALF_UP),
+                    'token_amount' => $tokenWorth['amount'],
+                    'bonus' => $tokenWorth['bonus'],
+                    'total_token' => $tokenWorth['total'],
                 ]
             ]);
         } catch (ValidationException $e) {

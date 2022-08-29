@@ -111,25 +111,22 @@ class InvestmentController extends Controller
                 'currency' => 'required|string|min:3',
             ]);
 
-            // Get / checking current product
-            $product = Product::findOrFail($inputData->product_id);
-
-            // Calculate deposit amount
-            $deposit_amount = ($inputData->investment_amount * $inputData->deposit_percentage) / 100;
-
-            // Convert currency
-            $currency = strtolower($inputData->currency);
+            // Calculate payment amount IN FIAT
+            $payment_amount = ($inputData->investment_amount * $inputData->deposit_percentage) / 100;
 
             // Check minimal deposit sum
-            if ($deposit_amount < 250) {
+            if ($payment_amount < 250) {
                 return response()->jsonApi([
                     'title' => 'Application for participation in the presale',
                     'message' => "Minimum deposit amount in the equivalent of 250 USD/EUR/GBP. Increase your investment"
                 ], 422);
             }
 
+            // Convert currency
+            $currency = strtolower($inputData->currency);
+
             // Check maximum deposit sum in Fiat
-            if (in_array($currency, ['usd', 'eur', 'gbp']) && $deposit_amount > 1000) {
+            if (in_array($currency, ['usd', 'eur', 'gbp']) && $payment_amount > 1000) {
                 return response()->jsonApi([
                     'title' => 'Application for participation in the presale',
                     'message' => "You can't make fiat deposit more 1000 USD/EUR/GBP. Use crypto payment"
@@ -138,15 +135,13 @@ class InvestmentController extends Controller
 
             // If deposit currency not fiat, then convert by market rate
             if (!in_array($currency, ['usd', 'eur', 'gbp'])) {
-                $rate = $this->getTokenExchangeRate('usd', $currency);
-
-                // get payment_amount
-                $deposit_amount = $rate * $deposit_amount;
-
                 $currency_type = 'crypto';
             }else{
                 $currency_type = 'fiat';
             }
+
+            // Get / checking current product
+            $product = Product::findOrFail($inputData->product_id);
 
             // get token worth
             $token_worth = $this->getTokenWorth($inputData->investment_amount, $product->ticker, $currency_type);
@@ -156,14 +151,22 @@ class InvestmentController extends Controller
                 'product_id' => $product->id,
                 'investment_amount' => $inputData->investment_amount,
                 'deposit_percentage' => $inputData->deposit_percentage,
-                'deposit_amount' => $deposit_amount,
+                'deposit_amount' => $payment_amount,
                 'user_id' => Auth::user()->getAuthIdentifier(),
                 'status' => Order::STATUS_CREATED
             ]);
 
+            // If currency is crypto, then re-calculate payment amount
+            if($currency_type === 'crypto'){
+                $rate = $this->getTokenExchangeRate('usd', $currency);
+
+                // calculate crypto payment amount
+                $payment_amount = round($rate * $payment_amount, 8, PHP_ROUND_HALF_UP);
+            }
+
             // Create deposit
             $deposit = Deposit::create([
-                'amount' => $deposit_amount,
+                'amount' => $payment_amount,
                 'currency_code' => $currency,
                 'order_id' => $order->id,
                 'status' => Deposit::STATUS_CREATED,
