@@ -41,7 +41,8 @@ class PurchaseUpdateHandler
         PubSub::publish('EarnCommission', [
             'user_id' => $document->user_id,
             'earning_type' => 'token_purchase',
-            'amount' => $document->spent_amount_usd
+            'amount' => $document->spent_amount_usd,
+            'document_id' => $document->id,
         ], config('pubsub.queue.g_met'));
     }
 }
