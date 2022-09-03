@@ -85,6 +85,7 @@ class Purchase extends Model
         'total_token',
         'currency_ticker',
         'currency_type',
+        'spent_amount_usd',
         'user_id',
         'status',
         'payment_order_id'
