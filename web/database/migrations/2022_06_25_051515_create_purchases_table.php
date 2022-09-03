@@ -30,6 +30,7 @@ class CreatePurchasesTable extends Migration
             $table->decimal('payment_amount', 16, 8, true);
             $table->string('currency_ticker');
             $table->enum('currency_type', ['fiat', 'crypto', 'token', 'virtual']);
+            $table->decimal('spent_amount_usd', 16, 8, true);
             $table->uuid('user_id')->index();
 
             $table->unsignedTinyInteger('status')

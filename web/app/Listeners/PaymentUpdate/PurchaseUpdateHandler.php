@@ -40,8 +40,8 @@ class PurchaseUpdateHandler
         // influencer earns 2% commission
         PubSub::publish('EarnCommission', [
             'user_id' => $document->user_id,
-            'earning_type' => 'token purchase',
-            'amount' => $document->payment_amount
+            'earning_type' => 'token_purchase',
+            'amount' => $document->spent_amount_usd
         ], config('pubsub.queue.g_met'));
     }
 }

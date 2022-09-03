@@ -156,6 +156,7 @@ class PurchaseController extends Controller
                 'token_amount' => $result['token']['amount'],
                 'bonus' => $result['token']['bonus'],
                 'total_token' => $result['token']['total'],
+                'spent_amount_usd' => $result['spent_amount_usd'],
                 'status' => Purchase::STATUS_PROCESSING
             ]);
 
@@ -319,6 +320,9 @@ class PurchaseController extends Controller
 
         // get rate of token
         $result['rate'] = $this->getTokenExchangeRate('usd', $currency);
+
+        // Save spent amount in USD
+        $result['spent_amount_usd'] = $request->payment_amount;
 
         // Get payment_amount
         $result['payment_amount'] = round($result['rate'] * $request->payment_amount, 8, PHP_ROUND_HALF_UP);
