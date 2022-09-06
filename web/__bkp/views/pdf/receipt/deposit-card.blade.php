@@ -54,10 +54,6 @@
                     <span style="float: right;">{{$card_number}}</span>
                 </li>
                 <li class="list-group-item">
-                    <span class="span-label">Credit card type</span>
-                    <span style="float: right;">{{$credit_card_type['label']}}</span>
-                </li>
-                <li class="list-group-item">
                     <span class="span-label">Total amount</span>
                     <span style="float: right;">{{$total_amount}}</span>
                 </li>

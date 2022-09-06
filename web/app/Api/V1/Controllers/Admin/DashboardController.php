@@ -36,7 +36,7 @@ class DashboardController extends Controller
      *
      * @throws Exception
      */
-    public function index()
+    public function __invoke()
     {
         try {
             $transaction = new Transaction;

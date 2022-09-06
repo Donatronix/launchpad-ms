@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 
 /**
@@ -79,38 +80,38 @@ class DepositController extends Controller
      * )
      *
      * @param Request $request
+     *
+     * @return JsonResponse
      */
-    public function index(Request $request)
+    public function index(Request $request): mixed
     {
         try {
             // Validate status if need
             $this->validate($request, [
                 'status' => [
                     'sometimes',
-                    Rule::in(['created', 'paid', 'failed', 'canceled']),
+                    Rule::in(array_keys(Deposit::$statuses)),
                 ]
             ]);
 
             $result = Deposit::query()
                 ->with('order')
                 ->when($request->has('status'), function ($q) use ($request) {
-                    $status = "STATUS_" . mb_strtoupper($request->get('status'));
-
-                    return $q->where('status', intval(constant("App\Models\Deposit::{$status}")));
+                    return $q->where('status', intval(Deposit::$statuses[$request->get('status')]));
                 })
                 ->orderBy('created_at', 'desc')
                 ->paginate($request->get('limit', config('settings.pagination_limit')));
 
             // Return response
             return response()->jsonApi([
-                'title' => "List all deposits",
-                'message' => "List all deposits retrieved successfully.",
+                'title' => 'List all deposits',
+                'message' => 'List all deposits retrieved successfully',
                 'data' => $result
             ]);
         } catch (Exception $e) {
             return response()->jsonApi([
                 'title' => 'List all deposits',
-                'message' => 'Error in getting list of all deposits: ' . $e->getMessage()
+                'message' => $e->getMessage()
             ], $e->getCode());
         }
     }

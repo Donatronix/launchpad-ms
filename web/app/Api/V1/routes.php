@@ -123,6 +123,11 @@ $router->group([
         ]
     ], function ($router) {
         /**
+         * Dashboard
+         */
+        $router->get('dashboard',  'DashboardController');
+
+        /**
          * Products
          */
         $router->group([
@@ -175,16 +180,7 @@ $router->group([
         });
 
         /**
-         *Dashboard
-         */
-        $router->group([
-            'prefix' => 'dashboard',
-        ], function ($router) {
-            $router->get('/',  'DashboardController@index');
-        });
-
-        /**
-         * Admin/Deposit
+         * Deposits
          */
         $router->group([
             'prefix' => 'deposits',
@@ -197,7 +193,7 @@ $router->group([
         });
 
         /**
-         * Admin/Order
+         * Orders
          */
         $router->group([
             'prefix' => 'orders',
@@ -210,6 +206,11 @@ $router->group([
             $router->get('/{id}/approve', 'OrderController@approve');
             $router->get('/{id}/reject', 'OrderController@reject');
         });
+
+        /**
+         * Purchases
+         */
+        $router->get('purchases',  'PurchaseController@index');
 
         /**
          * Investors
