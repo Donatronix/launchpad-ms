@@ -119,7 +119,7 @@ $router->group([
         'namespace' => 'Admin',
         'middleware' => [
             'checkUser',
-            'checkAdmin'
+            //'checkAdmin'
         ]
     ], function ($router) {
         /**
