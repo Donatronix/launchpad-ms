@@ -4,6 +4,7 @@ namespace App\Api\V1\Controllers\Admin;
 
 use App\Api\V1\Controllers\Controller;
 use App\Models\Purchase;
+use App\Traits\UserResolvingTrait;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -17,6 +18,8 @@ use Illuminate\Validation\Rule;
  */
 class PurchaseController extends Controller
 {
+    use UserResolvingTrait;
+
     /**
      * Display list of all purchase - shopping List
      *
@@ -108,6 +111,12 @@ class PurchaseController extends Controller
                 })
                 ->orderBy('created_at', 'desc')
                 ->paginate($request->get('limit', config('settings.pagination_limit')));
+
+            // Transform objects
+            $purchases->map(function($object){
+                // Get User detail
+                $object->setAttribute('user', $this->getUserDetail($object->user_id));
+            });
 
             // Return response
             return response()->jsonApi([

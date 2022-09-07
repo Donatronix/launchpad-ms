@@ -5,6 +5,7 @@ namespace App\Api\V1\Controllers\Admin;
 use App\Api\V1\Controllers\Controller;
 use App\Models\Order;
 use App\Models\Product;
+use App\Traits\UserResolvingTrait;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -17,6 +18,8 @@ use Illuminate\Validation\ValidationException;
  */
 class OrderController extends Controller
 {
+    use UserResolvingTrait;
+
     /**
      * Display list of all orders
      *
@@ -31,13 +34,21 @@ class OrderController extends Controller
      *     }},
      *
      *     @OA\Parameter(
+     *         name="status",
+     *         in="query",
+     *         description="Deposits status (created, paid, failed, canceled)",
+     *         @OA\Schema(
+     *             type="string"
+     *         )
+     *     ),
+     *     @OA\Parameter(
      *         name="limit",
      *         description="Count of orders in response",
      *         in="query",
      *         required=false,
      *         @OA\Schema(
-     *              type="integer",
-     *              default=20,
+     *             type="integer",
+     *             default=20
      *         )
      *     ),
      *     @OA\Parameter(
@@ -46,30 +57,8 @@ class OrderController extends Controller
      *         in="query",
      *         required=false,
      *         @OA\Schema(
-     *              type="integer",
-     *              default=1,
-     *         )
-     *     ),
-     *
-     *     @OA\Parameter(
-     *         name="sort-by",
-     *         description="sort-by",
-     *         in="query",
-     *         required=false,
-     *         @OA\Schema(
-     *             type="string",
-     *             default="created_at",
-     *         )
-     *     ),
-     *
-     *     @OA\Parameter(
-     *         name="sort-order",
-     *         description="sort-order",
-     *         in="query",
-     *         required=false,
-     *         @OA\Schema(
-     *             type="string",
-     *             default="desc",
+     *             type="integer",
+     *             default=1
      *         )
      *     ),
      *     @OA\Parameter(
@@ -126,21 +115,28 @@ class OrderController extends Controller
     public function index(Request $request): JsonResponse
     {
         try {
-            $allOrders = Order::orderBy('created_at', 'Desc')
+            $orders = Order::orderBy('created_at', 'Desc')
                 ->with(['transaction', 'product'])
                 ->orderBy($request->get('sort-by', 'created_at'), $request->get('sort-order', 'desc'))
                 ->paginate($request->get('limit', config('settings.pagination_limit')));
 
+            // Transform objects
+            $orders->map(function($object){
+                // Get User detail
+                $object->setAttribute('user', $this->getUserDetail($object->user_id));
+            });
+
+            // Return response
             return response()->jsonApi([
-                'title' => "List all orders",
-                'message' => "List all orders",
-                'data' => $allOrders->toArray()
+                'title' => 'List all orders',
+                'message' => 'List all orders',
+                'data' => $orders->toArray()
             ]);
         } catch (Exception $e) {
             return response()->jsonApi([
                 'title' => 'List all orders',
-                'message' => 'Error in getting list of all orders: ' . $e->getMessage()
-            ], 400);
+                'message' => $e->getMessage()
+            ], 500);
         }
     }
 

@@ -5,6 +5,7 @@ namespace App\Api\V1\Controllers\Admin;
 use App\Api\V1\Controllers\Controller;
 use App\Models\Deposit;
 use App\Models\Order;
+use App\Traits\UserResolvingTrait;
 use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
@@ -20,6 +21,8 @@ use Illuminate\Validation\ValidationException;
  */
 class DepositController extends Controller
 {
+    use UserResolvingTrait;
+
     /**
      * Getting all data about deposits for all users
      *
@@ -76,7 +79,7 @@ class DepositController extends Controller
      *     @OA\Response(
      *         response="401",
      *         description="Unauthorized"
-     *     ),
+     *     )
      * )
      *
      * @param Request $request
@@ -94,7 +97,8 @@ class DepositController extends Controller
                 ]
             ]);
 
-            $result = Deposit::query()
+            // Get all deposits
+            $deposit = Deposit::query()
                 ->with('order')
                 ->when($request->has('status'), function ($q) use ($request) {
                     return $q->where('status', intval(Deposit::$statuses[$request->get('status')]));
@@ -102,17 +106,23 @@ class DepositController extends Controller
                 ->orderBy('created_at', 'desc')
                 ->paginate($request->get('limit', config('settings.pagination_limit')));
 
+            // Transform objects
+            $deposit->map(function($object){
+                // Get User detail
+                $object->setAttribute('user', $this->getUserDetail($object->user_id));
+            });
+
             // Return response
             return response()->jsonApi([
                 'title' => 'List all deposits',
                 'message' => 'List all deposits retrieved successfully',
-                'data' => $result
+                'data' => $deposit
             ]);
         } catch (Exception $e) {
             return response()->jsonApi([
                 'title' => 'List all deposits',
                 'message' => $e->getMessage()
-            ], $e->getCode());
+            ], 500);
         }
     }
 
