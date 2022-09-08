@@ -5,11 +5,12 @@ namespace App\Api\V1\Controllers\Admin;
 use App\Api\V1\Controllers\Controller;
 use App\Models\Order;
 use App\Models\Product;
-use App\Traits\UserResolvingTrait;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
+use Sumra\SDK\Traits\Resolve\IdentityResolveTrait;
 
 /**
  * Class OrderController
@@ -18,7 +19,7 @@ use Illuminate\Validation\ValidationException;
  */
 class OrderController extends Controller
 {
-    use UserResolvingTrait;
+    use IdentityResolveTrait;
 
     /**
      * Display list of all orders
@@ -105,7 +106,7 @@ class OrderController extends Controller
      *         response="404",
      *         description="Not Found",
      *         @OA\JsonContent(ref="#/components/schemas/WarningResponse")
-     *     ),
+     *     )
      * )
      *
      * @param Request $request
@@ -123,14 +124,24 @@ class OrderController extends Controller
             // Transform objects
             $orders->map(function($object){
                 // Get User detail
-                $object->setAttribute('user', $this->getUserDetail($object->user_id));
+                $user = [
+                    'id' => $object->user_id,
+                    'name' => $this->getUserDetail($object->user_id)
+                ];
+                $object->setAttribute('user', $user);
+                unset($object->user_id);
+
+                // Update date
+                $date = $object->created_at->format('d m Y h:i');
+                unset($object->created_at);
+                $object->setAttribute('created_date', $date);
             });
 
             // Return response
             return response()->jsonApi([
                 'title' => 'List all orders',
                 'message' => 'List all orders',
-                'data' => $orders->toArray()
+                'data' => $orders
             ]);
         } catch (Exception $e) {
             return response()->jsonApi([
@@ -141,7 +152,7 @@ class OrderController extends Controller
     }
 
     /**
-     * Create new orders
+     * Create a new orders
      *
      * @OA\Post(
      *     path="/admin/orders",
@@ -246,6 +257,7 @@ class OrderController extends Controller
 
             $orderSaved = Order::create($request->all());
 
+            // Return response
             return response()->jsonApi([
                 'title' => "Create new order",
                 'message' => "Order was created",
@@ -259,8 +271,8 @@ class OrderController extends Controller
         } catch (Exception $e) {
             return response()->jsonApi([
                 'title' => 'Create new order',
-                'message' => 'Error occurred when creating new order: ' . $e->getMessage()
-            ], 400);
+                'message' => $e->getMessage()
+            ], 500);
         }
     }
 

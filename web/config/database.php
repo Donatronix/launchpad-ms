@@ -21,5 +21,13 @@ return [
             'username' => env('DB2_USERNAME'),
             'password' => env('DB2_PASSWORD')
         ],
+        'payments' => [
+            'driver' => env('DB3_CONNECTION', 'mysql'),
+            'host' => env('DB3_HOST', 'localhost'),
+            'port' => env('DB3_PORT', '3306'),
+            'database' => env('DB3_DATABASE'),
+            'username' => env('DB3_USERNAME'),
+            'password' => env('DB3_PASSWORD')
+        ],
     ]
 ];

@@ -145,7 +145,7 @@ class Deposit extends Model
      *
      * @return BelongsTo
      */
-    public function order()
+    public function order(): BelongsTo
     {
         return $this->belongsTo(Order::class, 'order_id', 'id');
     }

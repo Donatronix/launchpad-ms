@@ -5,14 +5,16 @@ namespace App\Api\V1\Controllers\Admin;
 use App\Api\V1\Controllers\Controller;
 use App\Models\Deposit;
 use App\Models\Order;
-use App\Traits\UserResolvingTrait;
 use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
+use Sumra\SDK\Traits\Resolve\IdentityResolveTrait;
+use Sumra\SDK\Traits\Resolve\PaymentsResolveTrait;
 
 /**
  * Class DepositController
@@ -21,7 +23,8 @@ use Illuminate\Validation\ValidationException;
  */
 class DepositController extends Controller
 {
-    use UserResolvingTrait;
+    use IdentityResolveTrait;
+    use PaymentsResolveTrait;
 
     /**
      * Getting all data about deposits for all users
@@ -88,15 +91,25 @@ class DepositController extends Controller
      */
     public function index(Request $request): mixed
     {
-        try {
-            // Validate status if need
-            $this->validate($request, [
-                'status' => [
-                    'sometimes',
-                    Rule::in(array_keys(Deposit::$statuses)),
-                ]
-            ]);
+        // Validate status if need
+        $validation = Validator::make($request->all(), [
+            'status' => [
+                'sometimes',
+                'string',
+                Rule::in(array_keys(Deposit::$statuses)),
+            ]
+        ]);
 
+        // If validation error, the stop
+        if ($validation->fails()) {
+            return response()->jsonApi([
+                'title' => 'List all deposits',
+                'message' => $validation->errors()
+            ], 422);
+        }
+
+        // Try get data
+        try {
             // Get all deposits
             $deposit = Deposit::query()
                 ->with('order')
@@ -109,7 +122,31 @@ class DepositController extends Controller
             // Transform objects
             $deposit->map(function($object){
                 // Get User detail
-                $object->setAttribute('user', $this->getUserDetail($object->user_id));
+                $user = [
+                    'id' => $object->user_id,
+                    'name' => $this->getUserDetail($object->user_id)
+                ];
+                $object->setAttribute('user', $user);
+                unset($object->user_id);
+
+                // Get payment order detail
+                if($object->payment_order_id !== config('settings.empty_uuid')){
+                    $order = $this->getPaymentOrderDetail($object->payment_order_id);
+
+                    $payment_order = [
+                        'id' => $order->id,
+                        'number' => $order->number
+                    ];
+                }else{
+                    $payment_order = null;
+                }
+                $object->setAttribute('payment_order', $payment_order);
+                unset($object->payment_order_id);
+
+                // Update date
+                $date = $object->created_at->format('d m Y h:i');
+                unset($object->created_at);
+                $object->setAttribute('created_date', $date);
             });
 
             // Return response
@@ -165,7 +202,8 @@ class DepositController extends Controller
      *     ),
      *     @OA\Response(
      *         response="500",
-     *         description="Unknown error"
+     *         description="Server error",
+     *         @OA\JsonContent(ref="#/components/schemas/DangerResponse")
      *     )
      * )
      *
@@ -216,9 +254,8 @@ class DepositController extends Controller
         } catch (Exception $e) {
             return response()->jsonApi([
                 'title' => 'Create new deposit',
-                'message' => 'Error occurred when creating new deposit',
-                'data' => $e->getMessage()
-            ], 400);
+                'message' => $e->getMessage()
+            ], 500);
         }
     }
 
@@ -264,23 +301,22 @@ class DepositController extends Controller
         try {
             $deposit = Deposit::with('order')->findOrFail($id);
 
+            // Return response
             return response()->jsonApi([
                 'title' => 'Admin Deposit',
-                'message' => "Single admin deposits retrieved successfully.",
+                'message' => "Single admin deposits retrieved successfully",
                 'data' => $deposit
             ]);
-        } catch (Exception $e) {
-            return response()->jsonApi([
-                'title' => 'Get deposit',
-                'message' => 'Error in getting deposit',
-                'data' => $e->getMessage()
-            ], 400);
         } catch (ModelNotFoundException $ex) {
             return response()->jsonApi([
                 'title' => 'Single Admin Deposit',
-                'message' => 'Single admin deposit not found',
-                'data' => $ex->getMessage()
+                'message' => $ex->getMessage(),
             ], 404);
+        } catch (Exception $e) {
+            return response()->jsonApi([
+                'title' => 'Get deposit',
+                'message' => $e->getMessage()
+            ], 500);
         }
     }
 

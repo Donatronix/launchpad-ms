@@ -4,12 +4,17 @@ namespace App\Api\V1\Controllers\Admin;
 
 use App\Api\V1\Controllers\Controller;
 use App\Models\Purchase;
-use App\Traits\UserResolvingTrait;
+
 use Exception;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
+use Sumra\SDK\Traits\Resolve\IdentityResolveTrait;
+use Sumra\SDK\Traits\Resolve\PaymentsResolveTrait;
 
 /**
  * Class PurchaseController
@@ -18,7 +23,8 @@ use Illuminate\Validation\Rule;
  */
 class PurchaseController extends Controller
 {
-    use UserResolvingTrait;
+    use IdentityResolveTrait;
+    use PaymentsResolveTrait;
 
     /**
      * Display list of all purchase - shopping List
@@ -80,6 +86,8 @@ class PurchaseController extends Controller
      * )
      *
      * @param Request $request
+     *
+     * @return JsonResponse
      */
     public function index(Request $request): mixed
     {
@@ -103,9 +111,10 @@ class PurchaseController extends Controller
         // Try get data
         try {
             $purchases = Purchase::query()
-                ->with('product', function ($query) {
-                    return $query->select('title', 'ticker', 'icon');
-                })
+//                ->with('product', function ($query) {
+//                    return $query->select(['title', 'ticker', 'icon']);
+//                })
+                ->with('product')
                 ->when($request->has('status'), function ($q) use ($request) {
                     return $q->where('status', intval(Purchase::$statuses[$request->get('status')]));
                 })
@@ -115,7 +124,41 @@ class PurchaseController extends Controller
             // Transform objects
             $purchases->map(function($object){
                 // Get User detail
-                $object->setAttribute('user', $this->getUserDetail($object->user_id));
+                $user = [
+                    'id' => $object->user_id,
+                    'name' => $this->getUserDetail($object->user_id)
+                ];
+                $object->setAttribute('user', $user);
+                unset($object->user_id);
+
+                // Get product detail
+                $product = [
+                    'id' => $object->product_id,
+                    'title' => $object->product->title,
+                    'ticker' => $object->product->ticker,
+                    //'icon' => $object->product->icon
+                ];
+                unset($object->product, $object->product_id);
+                $object->setAttribute('product', $product);
+
+                // Get payment order detail
+                if($object->payment_order_id !== config('settings.empty_uuid')){
+                    $order = $this->getPaymentOrderDetail($object->payment_order_id);
+
+                    $payment_order = [
+                        'id' => $order->id,
+                        'number' => $order->number
+                    ];
+                }else{
+                    $payment_order = null;
+                }
+                $object->setAttribute('payment_order', $payment_order);
+                unset($object->payment_order_id);
+
+                // Update date
+                $date = $object->created_at->format('d m Y h:i');
+                unset($object->created_at);
+                $object->setAttribute('created_date', $date);
             });
 
             // Return response
@@ -128,7 +171,7 @@ class PurchaseController extends Controller
             return response()->jsonApi([
                 'title' => 'List all purchases',
                 'message' => $e->getMessage()
-            ], $e->getCode());
+            ], 500);
         }
     }
 }
