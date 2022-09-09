@@ -4,15 +4,11 @@ namespace App\Api\V1\Controllers\Admin;
 
 use App\Api\V1\Controllers\Controller;
 use App\Models\Purchase;
-
 use Exception;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
-use Illuminate\Validation\ValidationException;
 use Sumra\SDK\Traits\Resolve\IdentityResolveTrait;
 use Sumra\SDK\Traits\Resolve\PaymentsResolveTrait;
 
@@ -122,7 +118,7 @@ class PurchaseController extends Controller
                 ->paginate($request->get('limit', config('settings.pagination_limit')));
 
             // Transform objects
-            $purchases->map(function($object){
+            $purchases->map(function ($object) {
                 // Get User detail
                 $user = [
                     'id' => $object->user_id,
@@ -142,14 +138,14 @@ class PurchaseController extends Controller
                 $object->setAttribute('product', $product);
 
                 // Get payment order detail
-                if($object->payment_order_id !== config('settings.empty_uuid')){
+                if ($object->payment_order_id !== config('settings.empty_uuid')) {
                     $order = $this->getPaymentOrderDetail($object->payment_order_id);
 
                     $payment_order = [
                         'id' => $order->id,
                         'number' => $order->number
                     ];
-                }else{
+                } else {
                     $payment_order = null;
                 }
                 $object->setAttribute('payment_order', $payment_order);

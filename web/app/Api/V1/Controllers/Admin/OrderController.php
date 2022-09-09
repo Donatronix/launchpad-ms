@@ -5,7 +5,6 @@ namespace App\Api\V1\Controllers\Admin;
 use App\Api\V1\Controllers\Controller;
 use App\Models\Order;
 use App\Models\Product;
-use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -122,7 +121,7 @@ class OrderController extends Controller
                 ->paginate($request->get('limit', config('settings.pagination_limit')));
 
             // Transform objects
-            $orders->map(function($object){
+            $orders->map(function ($object) {
                 // Get User detail
                 $user = [
                     'id' => $object->user_id,

@@ -120,7 +120,7 @@ class DepositController extends Controller
                 ->paginate($request->get('limit', config('settings.pagination_limit')));
 
             // Transform objects
-            $deposit->map(function($object){
+            $deposit->map(function ($object) {
                 // Get User detail
                 $user = [
                     'id' => $object->user_id,
@@ -130,14 +130,14 @@ class DepositController extends Controller
                 unset($object->user_id);
 
                 // Get payment order detail
-                if($object->payment_order_id !== config('settings.empty_uuid')){
+                if ($object->payment_order_id !== config('settings.empty_uuid')) {
                     $order = $this->getPaymentOrderDetail($object->payment_order_id);
 
                     $payment_order = [
                         'id' => $order->id,
                         'number' => $order->number
                     ];
-                }else{
+                } else {
                     $payment_order = null;
                 }
                 $object->setAttribute('payment_order', $payment_order);
