@@ -14,12 +14,15 @@ class PurchaseFactory extends Factory
     {
         return [
             'product_id' => $this->faker->randomElement(Product::all()),
-            "payment_amount" => 5000,
+            'payment_amount' => 5000,
             'user_id' => $this->faker->randomElement(config('settings.default_users_ids')),
-            "currency_type"  => "crypto",
-            "token_amount"  => 25312.046,
-            "currency_ticker" => "btc",
-            "status"  => 0
+            'currency_type' => "crypto",
+            'token_amount' => 25312.046,
+            'bonus'  => 25312.046,
+            'total_token'  => 25312.046,
+            'currency_ticker' => "btc",
+            'spent_amount_usd' => $this->faker->randomDigit(),
+            "status" => $this->faker->randomElement(Purchase::$statuses),
         ];
     }
 }

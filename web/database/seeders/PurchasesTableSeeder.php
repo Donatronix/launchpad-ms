@@ -2,9 +2,9 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
-use App\Models\Purchase;
 use App\Models\Product;
+use App\Models\Purchase;
+use Illuminate\Database\Seeder;
 
 class PurchasesTableSeeder extends Seeder
 {
@@ -15,39 +15,13 @@ class PurchasesTableSeeder extends Seeder
      */
     public function run()
     {
-        $pricesList = [
-            'utta' => [
-                [
-                    "payment_amount" => 5000,
-                    "currency_type"  => "crypto",
-                    "token_amount"  => 25312.046,
-                    "bonus"  => 25312.046,
-                    "total_token"  => 25312.046,
-                    "currency_ticker" => "btc",
-                    "status"  => 0
-                ]
-            ],
-
-            'divit' => [
-                [
-                    "payment_amount" => 5000,
-                    "currency_type"  => "crypto",
-                    "token_amount"  => 25312.046,
-                    "bonus"  => 25312.046,
-                    "total_token"  => 25312.046,
-                    "currency_ticker" => "btc",
-                    "status"  => 0
-                ]
-            ]
-        ];
+        $pricesList = Product::all();
 
         // Create Prices
-        foreach ($pricesList as $code => $prices) {
-            $product = Product::where('ticker', $code)->first();
-
-            foreach ($prices as $price) {
-                Purchase::factory()->create(array_merge(['product_id' => $product->id], $price));
-            }
+        foreach ($pricesList as $product) {
+            Purchase::factory()->count(3)->create([
+                'product_id' => $product->id
+            ]);
         }
     }
 }
