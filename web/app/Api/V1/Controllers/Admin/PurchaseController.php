@@ -159,6 +159,10 @@ class PurchaseController extends Controller
                 $date = $object->created_at->format('d m Y h:i');
                 unset($object->created_at);
                 $object->setAttribute('created_date', $date);
+
+                // Add status label
+                $statuses = array_flip(Purchase::$statuses);
+                $object->setAttribute('status_label', $statuses[$object->status]);
             });
 
             // Return response

@@ -143,10 +143,22 @@ class DepositController extends Controller
                 $object->setAttribute('payment_order', $payment_order);
                 unset($object->payment_order_id);
 
+                // Update investment order
+                $investment_order = [
+                    'id' => $object->order->id,
+                    'number' => $object->order->number
+                ];
+                unset($object->order);
+                $object->setAttribute('investment_order', $investment_order);
+
                 // Update date
                 $date = $object->created_at->format('d m Y h:i');
                 unset($object->created_at);
                 $object->setAttribute('created_date', $date);
+
+                // Add status label
+                $statuses = array_flip(Deposit::$statuses);
+                $object->setAttribute('status_label', $statuses[$object->status]);
             });
 
             // Return response
