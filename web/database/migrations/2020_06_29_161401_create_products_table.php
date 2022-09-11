@@ -21,8 +21,7 @@ class CreateProductsTable extends Migration
             $table->decimal('supply', 30,8, true)->default(0);
             $table->decimal('sold', 30, 8, true)->default(0);
             $table->decimal('presale_percentage', 5, 2, true)->default(0);
-            $table->mediumText('icon')->nullable();
-            //$table->string('icon', 200)->nullable();
+            $table->string('icon', 200)->nullable();
             $table->date('start_date')->nullable();
             $table->date('end_date')->nullable();
             $table->boolean('status')->default(true);
