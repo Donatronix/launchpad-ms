@@ -337,8 +337,8 @@
 
                 // Return response
                 return response()->jsonApi([
-                    'title' => "List all deposits",
-                    'message' => "List all deposits retrieved successfully.",
+                    'title' => "List all paid deposits",
+                    'message' => "List all paid deposits retrieved successfully.",
                     'data' => [
                         'can_access_dashboard' => $result > 0,
                         'is_influencer' => DB::connection('identity')->table('users')->where('id', Auth::user()->getAuthIdentifier())->first()->hasRole(['Influencer', 'influencer']),
