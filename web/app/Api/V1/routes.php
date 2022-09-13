@@ -5,7 +5,7 @@
  */
 $router->group([
     'prefix' => env('APP_API_VERSION', ''),
-    'namespace' => '\App\Api\V1\Controllers',
+    'namespace' => '\App\Api\V1\Controllers'
 ], function ($router) {
     /**
      * PUBLIC ACCESS
@@ -13,7 +13,7 @@ $router->group([
      * level with free access to the endpoint
      */
     $router->group([
-        'namespace' => 'Public',
+        'namespace' => 'Public'
     ], function ($router) {
         /**
          * Products for public access
@@ -49,7 +49,7 @@ $router->group([
     $router->group([
         'prefix' => 'app',
         'namespace' => 'Application',
-        'middleware' => 'checkUser',
+        'middleware' => 'checkUser'
     ], function ($router) {
         /**
          * Init first Investment (registration)
@@ -113,15 +113,15 @@ $router->group([
     /**
      * ADMIN PANEL ACCESS
      *
-     * Admin | super admin access level (E.g CEO company)
+     * Admin / super admin access level (E.g CEO company)
      */
     $router->group([
         'prefix' => 'admin',
         'namespace' => 'Admin',
         'middleware' => [
             'checkUser',
-            //'checkAdmin'
-        ],
+            'checkAdmin'
+        ]
     ], function ($router) {
         /**
          * Dashboard
@@ -245,7 +245,7 @@ $router->group([
      */
     $router->group([
         'prefix' => 'webhooks',
-        'namespace' => 'Webhooks',
+        'namespace' => 'Webhooks'
     ], function ($router) {
         //
     });
