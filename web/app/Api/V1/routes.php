@@ -5,7 +5,7 @@
  */
 $router->group([
     'prefix' => env('APP_API_VERSION', ''),
-    'namespace' => '\App\Api\V1\Controllers'
+    'namespace' => '\App\Api\V1\Controllers',
 ], function ($router) {
     /**
      * PUBLIC ACCESS
@@ -13,7 +13,7 @@ $router->group([
      * level with free access to the endpoint
      */
     $router->group([
-        'namespace' => 'Public'
+        'namespace' => 'Public',
     ], function ($router) {
         /**
          * Products for public access
@@ -77,9 +77,10 @@ $router->group([
         $router->group([
             'prefix' => 'deposits',
         ], function ($router) {
-            $router->get('/', 'DepositController@index');
+            $router->get('/', 'DepositController@getPaidDeposits');
             $router->get('/{id}', 'DepositController@show');
             $router->post('/', 'DepositController@store');
+            $router->get('/paid-deposits', 'DepositController@index');
         });
 
         /**
@@ -120,18 +121,18 @@ $router->group([
         'middleware' => [
             'checkUser',
             //'checkAdmin'
-        ]
+        ],
     ], function ($router) {
         /**
          * Dashboard
          */
-        $router->get('dashboard',  'DashboardController');
+        $router->get('dashboard', 'DashboardController');
 
         /**
          * Products
          */
         $router->group([
-            'prefix' => 'products'
+            'prefix' => 'products',
         ], function ($router) {
             $router->get('/', 'ProductController@index');
             $router->post('/', 'ProductController@store');
@@ -144,7 +145,7 @@ $router->group([
          * Price
          */
         $router->group([
-            'prefix' => 'price'
+            'prefix' => 'price',
         ], function ($router) {
             $router->get('/', 'PriceController@index');
             $router->post('/', 'PriceController@store');
@@ -185,10 +186,10 @@ $router->group([
         $router->group([
             'prefix' => 'deposits',
         ], function ($router) {
-            $router->get('/',       'DepositController@index');
-            $router->post('/',      'DepositController@store');
-            $router->get('/{id}',    'DepositController@show');
-            $router->put('/{id}',    'DepositController@update');
+            $router->get('/', 'DepositController@index');
+            $router->post('/', 'DepositController@store');
+            $router->get('/{id}', 'DepositController@show');
+            $router->put('/{id}', 'DepositController@update');
             $router->delete('/{id}', 'DepositController@destroy');
         });
 
@@ -198,10 +199,10 @@ $router->group([
         $router->group([
             'prefix' => 'orders',
         ], function ($router) {
-            $router->get('/',       'OrderController@index');
-            $router->post('/',      'OrderController@store');
-            $router->get('/{id}',    'OrderController@show');
-            $router->put('/{id}',    'OrderController@update');
+            $router->get('/', 'OrderController@index');
+            $router->post('/', 'OrderController@store');
+            $router->get('/{id}', 'OrderController@show');
+            $router->put('/{id}', 'OrderController@update');
             $router->delete('/{id}', 'OrderController@destroy');
             $router->get('/{id}/approve', 'OrderController@approve');
             $router->get('/{id}/reject', 'OrderController@reject');
@@ -210,7 +211,7 @@ $router->group([
         /**
          * Purchases
          */
-        $router->get('purchases',  'PurchaseController@index');
+        $router->get('purchases', 'PurchaseController@index');
 
         /**
          * Investors
@@ -218,10 +219,10 @@ $router->group([
         $router->group([
             'prefix' => 'investors',
         ], function ($router) {
-            $router->get('/',       'InvestorController@index');
-            $router->post('/',      'InvestorController@store');
-            $router->get('{id}',    'InvestorController@show');
-            $router->put('{id}',    'InvestorController@update');
+            $router->get('/', 'InvestorController@index');
+            $router->post('/', 'InvestorController@store');
+            $router->get('{id}', 'InvestorController@show');
+            $router->put('{id}', 'InvestorController@update');
             $router->delete('{id}', 'InvestorController@destroy');
         });
 
@@ -229,10 +230,10 @@ $router->group([
          * Admins
          */
         $router->group([], function ($router) {
-            $router->get('/',       'AdminController@index');
-            $router->post('/',      'AdminController@store');
-            $router->get('{id}',    'AdminController@show');
-            $router->put('{id}',    'AdminController@update');
+            $router->get('/', 'AdminController@index');
+            $router->post('/', 'AdminController@store');
+            $router->get('{id}', 'AdminController@show');
+            $router->put('{id}', 'AdminController@update');
             $router->delete('{id}', 'AdminController@destroy');
         });
     });
@@ -244,7 +245,7 @@ $router->group([
      */
     $router->group([
         'prefix' => 'webhooks',
-        'namespace' => 'Webhooks'
+        'namespace' => 'Webhooks',
     ], function ($router) {
         //
     });

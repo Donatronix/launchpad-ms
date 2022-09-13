@@ -8,6 +8,7 @@ use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 
@@ -78,6 +79,7 @@ class DepositController extends Controller
      * )
      *
      * @param Request $request
+     *
      * @return mixed
      */
     public function index(Request $request): mixed
@@ -88,7 +90,7 @@ class DepositController extends Controller
                 'status' => [
                     'sometimes',
                     Rule::in(['created', 'paid', 'failed', 'canceled']),
-                ]
+                ],
             ]);
 
             $result = Deposit::byOwner()
@@ -104,12 +106,12 @@ class DepositController extends Controller
             return response()->jsonApi([
                 'title' => "List all deposits",
                 'message' => "List all deposits retrieved successfully.",
-                'data' => $result
+                'data' => $result,
             ]);
         } catch (Exception $e) {
             return response()->jsonApi([
                 'title' => 'List all deposits',
-                'message' => 'Error in getting list of all deposits: ' . $e->getMessage()
+                'message' => 'Error in getting list of all deposits: ' . $e->getMessage(),
             ], $e->getCode());
         }
     }
@@ -176,7 +178,7 @@ class DepositController extends Controller
             return response()->jsonApi([
                 'title' => 'Creating a new deposit',
                 'message' => "Validation error: " . $e->getMessage(),
-                'data' => $e->validator->errors()->first()
+                'data' => $e->validator->errors()->first(),
             ], 422);
         }
 
@@ -208,8 +210,8 @@ class DepositController extends Controller
                         'id' => $deposit->id,
                         'object' => class_basename(get_class($deposit)),
                         'service' => env('RABBITMQ_EXCHANGE_NAME'),
-                    ]
-                ]
+                    ],
+                ],
             ], 201);
         } catch (Exception $e) {
             return response()->jsonApi([
@@ -254,6 +256,7 @@ class DepositController extends Controller
      *     ),
      * )
      * @param $id
+     *
      * @return mixed
      */
     public function show($id): mixed
@@ -263,13 +266,13 @@ class DepositController extends Controller
 
             // Load linked relations data
             $deposit->load([
-                'order'
+                'order',
             ]);
 
             return response()->jsonApi([
                 'title' => 'Deposit details data',
                 'message' => "Deposit detail data has been received",
-                'data' => $deposit
+                'data' => $deposit,
             ]);
         } catch (ModelNotFoundException $e) {
             return response()->jsonApi([
@@ -280,6 +283,71 @@ class DepositController extends Controller
             return response()->jsonApi([
                 'title' => 'Deposit details data',
                 'message' => $e->getMessage(),
+            ], $e->getCode());
+        }
+    }
+
+    /**
+     * Get paid deposits by user if exist
+     *
+     * @OA\Get(
+     *     path="/app/paid-deposits",
+     *     summary="Get paid deposits by user if exist",
+     *     description="Get paid deposits by user if exist",
+     *     tags={"Application | Paid Deposits"},
+     *
+     *     security={{
+     *         "bearerAuth": {},
+     *         "apiKey": {}
+     *     }},
+     *
+     *     @OA\Response(
+     *         response="200",
+     *         description="Getting deposits list",
+     *         @OA\JsonContent(ref="#/components/schemas/OkResponse")
+     *     ),
+     *     @OA\Response(
+     *         response="400",
+     *         description="Error",
+     *         @OA\JsonContent(ref="#/components/schemas/DangerResponse")
+     *     ),
+     *     @OA\Response(
+     *         response="401",
+     *         description="Unauthorized"
+     *     ),
+     * )
+     *
+     * @param Request $request
+     *
+     * @return mixed
+     */
+    public function getPaidDeposits(Request $request): mixed
+    {
+        try {
+            // Validate status if need
+            $status = 'paid';
+
+            $result = Deposit::byOwner()
+                ->when($status, function ($q) use ($status) {
+                    $status = "STATUS_" . mb_strtoupper($status);
+
+                    return $q->where('status', (int)constant("App\Models\Deposit::{$status}"));
+                })->count();
+
+
+            // Return response
+            return response()->jsonApi([
+                'title' => "List all paid deposits",
+                'message' => "List all paid deposits retrieved successfully.",
+                'data' => [
+                    'can_access_dashboard' => $result > 0,
+                    'is_influencer' => DB::connection('identity')->table('users')->where('id', Auth::user()->getAuthIdentifier())->first()->hasRole(['Influencer', 'influencer']),
+                ],
+            ]);
+        } catch (Exception $e) {
+            return response()->jsonApi([
+                'title' => 'List all deposits',
+                'message' => 'Error in getting list of all deposits: ' . $e->getMessage(),
             ], $e->getCode());
         }
     }
