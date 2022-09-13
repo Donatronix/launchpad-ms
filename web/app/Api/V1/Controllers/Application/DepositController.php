@@ -332,9 +332,14 @@ class DepositController extends Controller
 
             $influencer = DB::connection('identity')
                 ->table('users')
-                ->where('id', Auth::user()->getAuthIdentifier())
-                ->first()
-                ->hasRole(['Influencer', 'influencer']);
+                ->leftJoin('model_has_roles', function ($join) {
+                    $join->on('users.id', '=', 'model_has_roles.model_id')
+                        ->where('model_has_roles.model_type', '=', 'App\Models\User');
+                })
+                ->leftJoin('roles', 'roles.id', '=', 'model_has_roles.role_id')
+                ->where('users.id', Auth::user()->getAuthIdentifier())
+                ->where('roles.name', '=', 'Influencer')
+                ->first();
 
             // Return response
             return response()->jsonApi([
@@ -342,14 +347,14 @@ class DepositController extends Controller
                 'message' => 'Statistics retrieved successfully',
                 'data' => [
                     'can_access_dashboard' => $depositsCount > 0,
-                    'is_influencer' => $influencer,
+                    'is_influencer' => $influencer ? true : false,
                 ],
             ]);
         } catch (Exception $e) {
             return response()->jsonApi([
                 'title' => 'List all deposits',
                 'message' => 'Error in getting list of all deposits: ' . $e->getMessage(),
-            ], $e->getCode());
+            ], 500);
         }
     }
 }
