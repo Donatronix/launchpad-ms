@@ -3,12 +3,14 @@
 namespace App\Api\V1\Controllers\Application;
 
 use App\Api\V1\Controllers\Controller;
+use App\Models\Deposit;
 use App\Models\Product;
 use App\Models\Purchase;
 use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Sumra\SDK\Services\JsonApiResponse;
 
@@ -18,7 +20,7 @@ class DashboardController extends Controller
      * Token Sales Progress
      *
      * @OA\Get(
-     *     path="/app/token-sales-progress",
+     *     path="/app/dashboard/token-sales-progress",
      *     summary="Token Sales Progress",
      *     description="Get the progress for the sales of tokens",
      *     tags={"Application | Dashboard"},
@@ -128,7 +130,7 @@ class DashboardController extends Controller
      * List Token investors
      *
      * @OA\Get(
-     *     path="/app/token-investors",
+     *     path="/app/dashboard/token-investors",
      *     description="List the users that have invested in a token",
      *     tags={"Application | Dashboard"},
      *
@@ -252,6 +254,74 @@ class DashboardController extends Controller
             return response()->jsonApi([
                 'title' => 'Token investors',
                 'message' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    /**
+     * Get user validate for using dashboard
+     *
+     * @OA\Get(
+     *     path="/app/dashboard/user-validate",
+     *     summary="Get user validate for using dashboard",
+     *     description="Get user validate for using dashboard",
+     *     tags={"Application | Dashboard"},
+     *
+     *     security={{
+     *         "bearerAuth": {},
+     *         "apiKey": {}
+     *     }},
+     *
+     *     @OA\Response(
+     *         response="200",
+     *         description="Getting deposits list",
+     *         @OA\JsonContent(ref="#/components/schemas/OkResponse")
+     *     ),
+     *     @OA\Response(
+     *         response="400",
+     *         description="Error",
+     *         @OA\JsonContent(ref="#/components/schemas/DangerResponse")
+     *     ),
+     *     @OA\Response(
+     *         response="401",
+     *         description="Unauthorized"
+     *     ),
+     * )
+     *
+     * @return mixed
+     */
+    public function getUserValidate(): mixed
+    {
+        try {
+            // Validate status if need
+            $depositsCount = Deposit::byOwner()
+                ->where('status', Deposit::STATUS_SUCCEEDED)
+                ->count();
+
+            $influencer = DB::connection('identity')
+                ->table('users')
+                ->leftJoin('model_has_roles', function ($join) {
+                    $join->on('users.id', '=', 'model_has_roles.model_id')
+                        ->where('model_has_roles.model_type', '=', 'App\Models\User');
+                })
+                ->leftJoin('roles', 'roles.id', '=', 'model_has_roles.role_id')
+                ->where('users.id', Auth::user()->getAuthIdentifier())
+                ->where('roles.name', '=', 'Influencer')
+                ->first();
+
+            // Return response
+            return response()->jsonApi([
+                'title' => 'User dashboard validation',
+                'message' => 'Validation retrieved successfully',
+                'data' => [
+                    'can_access_dashboard' => $depositsCount > 0,
+                    'is_influencer' => $influencer ? true : false,
+                ],
+            ]);
+        } catch (Exception $e) {
+            return response()->jsonApi([
+                'title' => 'List all deposits',
+                'message' => 'Error in getting list of all deposits: ' . $e->getMessage(),
             ], 500);
         }
     }

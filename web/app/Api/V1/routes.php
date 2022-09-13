@@ -95,19 +95,31 @@ $router->group([
         });
 
         /**
+         * Dashboard
+         */
+        $router->group([
+            'prefix' => 'dashboard',
+        ], function ($router) {
+            /**
+             * User Statistics
+             */
+            $router->get('/user-validate', 'DashboardController@getUserValidate');
+
+            /**
+             * Token Investors
+             */
+            $router->get('/token-investors', 'DashboardController@tokenInvestors');
+
+            /**
+             * Token Sales Progress
+             */
+            $router->get('/token-sales-progress', 'DashboardController@tokenSalesProgress');
+        });
+
+        /**
          * Calculation of the purchased token
          */
         $router->post('/token-calculate', 'TokenCalculateController');
-
-        /**
-         * Token Investors
-         */
-        $router->get('/token-investors', 'DashboardController@tokenInvestors');
-
-        /**
-         * Token Sales Progress
-         */
-        $router->get('/token-sales-progress', 'DashboardController@tokenSalesProgress');
     });
 
     /**
