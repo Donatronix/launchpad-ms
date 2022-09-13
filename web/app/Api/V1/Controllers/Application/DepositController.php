@@ -199,6 +199,7 @@ class DepositController extends Controller
 //            $transaction = (new TransactionService())->store($paramsTransactions);
             $notificationHandler = app()->make(sprintf("App\Listeners\PaymentUpdate\SendNotificationListener"));
             $notificationHandler::exec($deposit);
+
             // Return response to client
             return response()->jsonApi([
                 'title' => 'Creating a new deposit',
@@ -291,10 +292,10 @@ class DepositController extends Controller
      * Get paid deposits by user if exist
      *
      * @OA\Get(
-     *     path="/app/paid-deposits",
+     *     path="/app/deposits/paid",
      *     summary="Get paid deposits by user if exist",
      *     description="Get paid deposits by user if exist",
-     *     tags={"Application | Paid Deposits"},
+     *     tags={"Application | Deposits"},
      *
      *     security={{
      *         "bearerAuth": {},
@@ -325,23 +326,23 @@ class DepositController extends Controller
     {
         try {
             // Validate status if need
-            $status = 'paid';
+            $depositsCount = Deposit::byOwner()
+                ->where('status', Deposit::STATUS_SUCCEEDED)
+                ->count();
 
-            $result = Deposit::byOwner()
-                ->when($status, function ($q) use ($status) {
-                    $status = "STATUS_" . mb_strtoupper($status);
-
-                    return $q->where('status', (int)constant("App\Models\Deposit::{$status}"));
-                })->count();
-
+            $influencer = DB::connection('identity')
+                ->table('users')
+                ->where('id', Auth::user()->getAuthIdentifier())
+                ->first()
+                ->hasRole(['Influencer', 'influencer']);
 
             // Return response
             return response()->jsonApi([
-                'title' => "List all paid deposits",
-                'message' => "List all paid deposits retrieved successfully.",
+                'title' => 'Deposits statistics',
+                'message' => 'Statistics retrieved successfully',
                 'data' => [
-                    'can_access_dashboard' => $result > 0,
-                    'is_influencer' => DB::connection('identity')->table('users')->where('id', Auth::user()->getAuthIdentifier())->first()->hasRole(['Influencer', 'influencer']),
+                    'can_access_dashboard' => $depositsCount > 0,
+                    'is_influencer' => $influencer,
                 ],
             ]);
         } catch (Exception $e) {

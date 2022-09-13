@@ -77,10 +77,10 @@ $router->group([
         $router->group([
             'prefix' => 'deposits',
         ], function ($router) {
-            $router->get('/', 'DepositController@getPaidDeposits');
-            $router->get('/{id}', 'DepositController@show');
+            $router->get('/', 'DepositController@index');
             $router->post('/', 'DepositController@store');
-            $router->get('/paid-deposits', 'DepositController@index');
+            $router->get('/{id:[a-fA-F0-9\-]{36}}', 'DepositController@show');
+            $router->get('/paid', 'DepositController@getPaidDeposits');
         });
 
         /**
