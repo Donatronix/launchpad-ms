@@ -29,15 +29,9 @@ class CreateOrdersTable extends Migration
             $table->unsignedTinyInteger('filled')->default('0');
             $table->uuid('user_id')->index();
 
-            $table->decimal('amount_token', 20, 8, true)->nullable();
-            $table->decimal('amount_usd', 20, 8, true)->nullable();
-
             $table->unsignedTinyInteger('status')
                 ->default(0)
                 ->index();
-            $table->unsignedTinyInteger('percentage_completed')->nullable();
-
-            $table->text('payload')->nullable();
 
             $table->timestamps();
             $table->softDeletes();

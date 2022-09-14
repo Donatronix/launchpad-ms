@@ -25,8 +25,8 @@ $router->group([
     'prefix' => env('APP_API_PREFIX', '') . '/tests'
 ], function ($router) {
     $router->get('db-test', function () {
-        if (DB::connection()->getDatabaseName()) {
-            echo "Connected successfully to database: " . DB::connection()->getDatabaseName();
+        if (\Illuminate\Support\Facades\DB::connection()->getDatabaseName()) {
+            echo "Connected successfully to database: " . \Illuminate\Support\Facades\DB::connection()->getDatabaseName();
         }
     });
 });

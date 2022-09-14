@@ -89,12 +89,9 @@ class Order extends Model
         'investment_amount',
         'deposit_percentage',
         'deposit_amount',
+        'filled',
         'user_id',
-        'status',
-        'payload',
-        'number',
-        'amount_token',
-        'amount_usd'
+        'status'
     ];
     /**
      * The attributes excluded from the model's JSON form.

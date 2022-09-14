@@ -32,8 +32,7 @@ class OrderFactory extends Factory
             'deposit_percentage' => $percentage,
             'deposit_amount' => $deposit,
             'user_id' => $this->faker->randomElement(config('settings.default_users_ids')),
-            'status' => Order::STATUS_CREATED,
-            'payload' => ''
+            'status' => Order::STATUS_CREATED
         ];
     }
 }
