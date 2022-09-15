@@ -158,9 +158,7 @@ class OrderController extends Controller
                 'deposit_percentage' => $request->get('deposit_percentage'),
                 'deposit_amount' => $request->get('deposit_amount'),
                 'user_id' => Auth::user()->getAuthIdentifier(),
-                'status' => Order::STATUS_CREATED,
-                'amount_token' => $request->get('investment_amount'),
-                'amount_usd' => $request->get('investment_amount'),
+                'status' => Order::STATUS_CREATED
             ]);
 
             // create new transaction

@@ -195,18 +195,6 @@ class OrderController extends Controller
      *                 example="1"
      *             ),
      *             @OA\Property(
-     *                 property="amount_token",
-     *                 type="string",
-     *                 description="amount token",
-     *                 example="5590"
-     *             ),
-     *             @OA\Property(
-     *                 property="amount_usd",
-     *                 type="string",
-     *                 description="amount usd",
-     *                 example="5590"
-     *             ),
-     *             @OA\Property(
      *                 property="user_id",
      *                 type="string",
      *                 description="user id",
@@ -245,8 +233,6 @@ class OrderController extends Controller
                 'investment_amount' => 'required|numeric',
                 'deposit_amount' => 'required|numeric',
                 'deposit_percentage' => 'required|numeric',
-                'amount_token' => 'required|numeric',
-                'amount_usd' => 'required|numeric',
                 'user_id' => 'required|string',
             ]);
 
@@ -399,18 +385,6 @@ class OrderController extends Controller
      *                 example="1"
      *             ),
      *             @OA\Property(
-     *                 property="amount_token",
-     *                 type="string",
-     *                 description="amount token",
-     *                 example="5590"
-     *             ),
-     *             @OA\Property(
-     *                 property="amount_usd",
-     *                 type="string",
-     *                 description="amount usd",
-     *                 example="5590"
-     *             ),
-     *             @OA\Property(
      *                 property="user_id",
      *                 type="string",
      *                 description="user id",
@@ -454,8 +428,6 @@ class OrderController extends Controller
                 'investment_amount' => 'required|numeric',
                 'deposit_amount' => 'required|numeric',
                 'deposit_percentage' => 'required|string',
-                'amount_token' => 'required|string',
-                'amount_usd' => 'required|string',
                 'user_id' => 'required|string',
             ]);
 

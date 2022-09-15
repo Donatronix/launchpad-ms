@@ -11,6 +11,7 @@ use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 
 /**
@@ -46,20 +47,20 @@ class InvestmentController extends Controller
      *             ),
      *             @OA\Property(
      *                 property="investment_amount",
-     *                 type="number",
+     *                 type="integer",
      *                 description="Investment amount in USD/EUR/GBP",
      *                 example="100000"
      *             ),
      *             @OA\Property(
-     *                 property="deposit_percentage",
-     *                 type="number",
-     *                 description="Deposit percentage from investment amount",
-     *                 example="10"
+     *                 property="payment_amount",
+     *                 type="integer",
+     *                 description="Deposit payment amount",
+     *                 example="100000"
      *             ),
      *             @OA\Property(
-     *                 property="currency",
+     *                 property="payment_currency",
      *                 type="string",
-     *                 description="Currency in which the deposit is made",
+     *                 description="Payment currency in which the deposit is made",
      *                 example="usd"
      *             )
      *         )
@@ -101,32 +102,38 @@ class InvestmentController extends Controller
      */
     public function __invoke(Request $request): mixed
     {
+        // Validate status if need
+        $validation = Validator::make(
+            $request->all(),
+            [
+                'product_id' => 'required|string|min:36|max:36',
+                'investment_amount' => 'required|integer|min:1000',
+                'payment_amount' => 'required|integer|min:250',
+                'payment_currency' => 'required|string|min:3',
+            ],
+            [
+                'payment_amount' => 'Minimum deposit amount in the equivalent of 250 USD/EUR/GBP. Increase your investment',
+            ]
+        );
+
+        // If validation error, the stop
+        if ($validation->fails()) {
+            return response()->jsonApi([
+                'title' => 'Application for participation in the presale',
+                'message' => $validation->errors()
+            ], 422);
+        }
+
         // Try to save received data
         try {
             // Validate input
-            $inputData = (object)$this->validate($request, [
-                'product_id' => 'required|string|min:36|max:36',
-                'investment_amount' => 'required|integer|min:1000',
-                'deposit_percentage' => 'required|integer|min:10|max:100',
-                'currency' => 'required|string|min:3',
-            ]);
+            $inputData = (object) $validation->validated();
 
-            // Calculate payment amount IN FIAT
-            $payment_amount = ($inputData->investment_amount * $inputData->deposit_percentage) / 100;
-
-            // Check minimal deposit sum
-            if ($payment_amount < 250) {
-                return response()->jsonApi([
-                    'title' => 'Application for participation in the presale',
-                    'message' => "Minimum deposit amount in the equivalent of 250 USD/EUR/GBP. Increase your investment"
-                ], 422);
-            }
-
-            // Convert currency
-            $currency = strtolower($inputData->currency);
+            // Convert payment currency
+            $currency = strtolower($inputData->payment_currency);
 
             // Check maximum deposit sum in Fiat
-            if (in_array($currency, ['usd', 'eur', 'gbp']) && $payment_amount > 1000) {
+            if (in_array($currency, ['usd', 'eur', 'gbp']) && $inputData->payment_amount > 1000) {
                 return response()->jsonApi([
                     'title' => 'Application for participation in the presale',
                     'message' => "You can't make fiat deposit more 1000 USD/EUR/GBP. Use crypto payment"
@@ -136,7 +143,7 @@ class InvestmentController extends Controller
             // If deposit currency not fiat, then convert by market rate
             if (!in_array($currency, ['usd', 'eur', 'gbp'])) {
                 $currency_type = 'crypto';
-            }else{
+            } else {
                 $currency_type = 'fiat';
             }
 
@@ -150,18 +157,18 @@ class InvestmentController extends Controller
             $order = Order::create([
                 'product_id' => $product->id,
                 'investment_amount' => $inputData->investment_amount,
-                'deposit_percentage' => $inputData->deposit_percentage,
-                'deposit_amount' => $payment_amount,
+                'deposit_percentage' => ($inputData->payment_amount / $inputData->investment_amount) * 100,
+                'deposit_amount' => $inputData->payment_amount,
                 'user_id' => Auth::user()->getAuthIdentifier(),
                 'status' => Order::STATUS_CREATED
             ]);
 
             // If currency is crypto, then re-calculate payment amount
-            if($currency_type === 'crypto'){
+            if ($currency_type === 'crypto') {
                 $rate = $this->getTokenExchangeRate('usd', $currency);
 
                 // calculate crypto payment amount
-                $payment_amount = round($rate * $payment_amount, 8, PHP_ROUND_HALF_UP);
+                $payment_amount = round($rate * $inputData->payment_amount, 8, PHP_ROUND_HALF_UP);
             }
 
             // Create deposit
@@ -184,20 +191,15 @@ class InvestmentController extends Controller
                         'id' => $deposit->id,
                         'object' => class_basename(get_class($deposit)),
                         'service' => env('RABBITMQ_EXCHANGE_NAME'),
+                        'meta' => []
                     ],
                     'token' => $token_worth
                 ]
             ], 201);
-        } catch (ValidationException $e) {
-            return response()->jsonApi([
-                'title' => 'Application for participation in the presale',
-                'message' => "Validation error: " . $e->getMessage(),
-                'data' => $e->errors()
-            ], 422);
         } catch (ModelNotFoundException $e) {
             return response()->jsonApi([
                 'title' => 'Application for participation in the presale',
-                'message' => "This product does not exist",
+                'message' => 'This product does not exist',
             ], 404);
         } catch (Exception $e) {
             return response()->jsonApi([
