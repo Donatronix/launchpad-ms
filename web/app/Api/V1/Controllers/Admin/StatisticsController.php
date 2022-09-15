@@ -1,6 +1,6 @@
 <?php
 
-    namespace App\Api\V1\Controllers\Admin;
+namespace App\Api\V1\Controllers\Admin;
 
     use App\Api\V1\Controllers\Controller;
     use App\Models\Price;
