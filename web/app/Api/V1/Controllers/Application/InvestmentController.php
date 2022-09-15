@@ -168,12 +168,12 @@ class InvestmentController extends Controller
                 $rate = $this->getTokenExchangeRate('usd', $currency);
 
                 // calculate crypto payment amount
-                $payment_amount = round($rate * $inputData->payment_amount, 8, PHP_ROUND_HALF_UP);
+                $inputData->payment_amount = round($rate * $inputData->payment_amount, 8, PHP_ROUND_HALF_UP);
             }
 
             // Create deposit
             $deposit = Deposit::create([
-                'amount' => $payment_amount,
+                'amount' => $inputData->payment_amount,
                 'currency_code' => $currency,
                 'order_id' => $order->id,
                 'status' => Deposit::STATUS_CREATED,
