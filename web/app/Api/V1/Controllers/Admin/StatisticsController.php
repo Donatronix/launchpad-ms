@@ -6,18 +6,18 @@
     use App\Models\Price;
     use App\Models\Product;
     use Carbon\Carbon;
-    use Illuminate\Http\JsonResponse;
+    use Illuminate\Http\Request;
     use Throwable;
 
     class StatisticsController extends Controller
     {
         /**
-         * Display total number of new users
+         * Display token sales at the various stages
          *
          * @OA\Get(
          *     path="/admin/summary/token-sales",
-         *     summary="Count all new users",
-         *     description="Get the status count of all users in the system",
+         *     summary="Get token sales at the various stages",
+         *     description="Display token sales at the various stages",
          *     tags={"Admin | Statistics"},
          *
          *     security={{ "bearerAuth": {} }},
@@ -44,9 +44,11 @@
          *     )
          * )
          *
-         * @return JsonResponse
+         * @param Request $request
+         *
+         * @return mixed
          */
-        public function getTokenSales()
+        public function getTokenSales(Request $request): mixed
         {
             try {
                 $data = [];
@@ -54,14 +56,7 @@
 
                 for ($stage = 1; $stage <= $stages; $stage++) {
 
-                    $pricedProducts = Price::query()->where('stage', $stage)->get();
-
-                    $products = Product::distinct('ticker')->where('status', true)
-                        ->where('start_date', '<=', Carbon::now())
-                        ->where('end_date', '>=', Carbon::now())
-                        ->whereIn('id', $pricedProducts->pluck('product_id'))
-                        ->byStage($stage)
-                        ->get();
+                    $products = $this->getProducts($stage);
 
                     $data[] = $products->map(function ($product) use ($stage) {
                         $tokenAmount = $product->purchases()->sum('token_amount');
@@ -83,7 +78,7 @@
                     })->all();
                 }
 
-                return response()->json([
+                return response()->jsonApi([
                     'status' => 'success',
                     'title' => 'Launchpad Statistics',
                     'message' => 'Statistics',
@@ -91,9 +86,58 @@
                 ]);
             } catch (Throwable $e) {
                 return response()->jsonApi([
-                    'title' => 'Price Product List',
+                    'title' => 'Launchpad Statistics',
                     'message' => $e->getMessage(),
-                ], $e->getCode());
+                ], 500);
             }
+        }
+
+        public function getStageStatistics(Request $request): mixed
+        {
+            try {
+                $data = [];
+                $stages = 5;
+
+                for ($stage = 1; $stage <= $stages; $stage++) {
+
+                    $products = $this->getProducts($stage);
+
+                    $data[] = $products->map(function ($product) use ($stage) {
+                        $tokenAmount = $product->purchases()->sum('token_amount');
+                        return [
+                            'stage' => $stage,
+                            'token' => $product->ticker,
+                            'token_supply' => $product->supply,
+                            'sold' => $tokenAmount,
+                            'unsold' => $product->supply - $tokenAmount,
+                        ];
+                    })->all();
+                }
+
+                return response()->jsonApi([
+                    'status' => 'success',
+                    'title' => 'Launchpad Statistics',
+                    'message' => 'Statistics',
+                    'data' => $data,
+                ]);
+            } catch (Throwable $e) {
+                return response()->jsonApi([
+                    'status' => 'danger',
+                    'title' => 'Launchpad Statistics',
+                    'message' => $e->getMessage(),
+                ], 500);
+            }
+        }
+
+        protected function getProducts($stage)
+        {
+            $pricedProducts = Price::query()->where('stage', $stage)->get();
+
+            return Product::distinct('ticker')->where('status', true)
+                ->where('start_date', '<=', Carbon::now())
+                ->where('end_date', '>=', Carbon::now())
+                ->whereIn('id', $pricedProducts->pluck('product_id'))
+                ->byStage($stage)
+                ->get();
         }
     }

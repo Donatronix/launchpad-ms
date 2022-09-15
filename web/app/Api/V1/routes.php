@@ -5,7 +5,7 @@
      */
     $router->group([
         'prefix' => env('APP_API_VERSION', ''),
-        'namespace' => '\App\Api\V1\Controllers'
+        'namespace' => '\App\Api\V1\Controllers',
     ], function ($router) {
         /**
          * PUBLIC ACCESS
@@ -13,7 +13,7 @@
          * level with free access to the endpoint
          */
         $router->group([
-            'namespace' => 'Public'
+            'namespace' => 'Public',
         ], function ($router) {
             /**
              * Products for public access
@@ -49,7 +49,7 @@
         $router->group([
             'prefix' => 'app',
             'namespace' => 'Application',
-            'middleware' => 'checkUser'
+            'middleware' => 'checkUser',
         ], function ($router) {
             /**
              * Init first Investment (registration)
@@ -132,8 +132,8 @@
             'namespace' => 'Admin',
             'middleware' => [
                 'checkUser',
-                'checkAdmin'
-            ]
+                'checkAdmin',
+            ],
         ], function ($router) {
             /**
              * Dashboard
@@ -245,6 +245,7 @@
                 'prefix' => 'summary',
             ], function ($router) {
                 $router->get('/token-sales', 'StatisticsController@getTokenSales');
+                $router->get('/stages', 'StatisticsController@getStageStatistics');
 
             });
 
@@ -267,7 +268,7 @@
          */
         $router->group([
             'prefix' => 'webhooks',
-            'namespace' => 'Webhooks'
+            'namespace' => 'Webhooks',
         ], function ($router) {
             //
         });

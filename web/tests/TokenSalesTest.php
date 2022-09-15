@@ -54,7 +54,44 @@
                 })->all();
             }
 
-            dd($data[1]);
-            $this->assertTrue($products->count() > 0);
+            $this->assertTrue(count($data) > 0);
+        }
+
+        public function testTokenSalesDemo()
+        {
+            $data = [];
+            $stages = 5;
+
+            for ($stage = 1; $stage <= $stages; $stage++) {
+
+                $products = $this->getProducts($stage);
+
+                $data[] = $products->map(function ($product) use ($stage) {
+                    $tokenAmount = $product->purchases()->sum('token_amount');
+                    return [
+                        'stage' => $stage,
+                        'token' => $product->ticker,
+                        'token_supply' => $product->supply,
+                        'sold' => $tokenAmount,
+                        'unsold' => (float)$product->supply - (float)$tokenAmount,
+                    ];
+                })->all();
+            }
+            dd($data);
+
+            $this->assertTrue(count($data) > 0);
+        }
+
+
+        protected function getProducts($stage)
+        {
+            $pricedProducts = Price::query()->where('stage', $stage)->get();
+
+            return Product::distinct('ticker')->where('status', true)
+                ->where('start_date', '<=', Carbon::now())
+                ->where('end_date', '>=', Carbon::now())
+                ->whereIn('id', $pricedProducts->pluck('product_id'))
+                ->byStage($stage)
+                ->get();
         }
     }
