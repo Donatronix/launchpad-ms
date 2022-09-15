@@ -47,6 +47,7 @@ class PriceController extends Controller
      * )
      *
      * @param Request $request
+     *
      * @return mixed
      */
     public function index(Request $request): mixed
@@ -61,7 +62,7 @@ class PriceController extends Controller
             return response()->jsonApi([
                 'title' => 'Product prices list',
                 'message' => "Product prices list has been received",
-                'data' => $price
+                'data' => $price,
             ]);
         } catch (Exception $e) {
             return response()->jsonApi([
@@ -126,6 +127,7 @@ class PriceController extends Controller
      * )
      *
      * @param Request $request
+     *
      * @return mixed
      */
     public function store(Request $request)
@@ -139,13 +141,13 @@ class PriceController extends Controller
             return response()->jsonApi([
                 'title' => "Create new Price",
                 'message' => 'Price was successfully created',
-                'data' => $price->toArray()
+                'data' => $price->toArray(),
             ]);
         } catch (ValidationException $e) {
             return response()->jsonApi([
                 'title' => 'Saving new stage price',
                 'message' => 'Validation error',
-                'data' => $e->getMessage()
+                'data' => $e->getMessage(),
             ], 422);
         } catch (Exception $e) {
             return response()->jsonApi([
@@ -211,9 +213,9 @@ class PriceController extends Controller
      *     )
      * )
      *
-     * @param Request $request
-     * @return mixed
+     * @param $id
      *
+     * @return mixed
      */
     public function show($id)
     {
@@ -223,7 +225,7 @@ class PriceController extends Controller
             return response()->jsonApi([
                 'title' => 'Price Product List',
                 'message' => 'Price list received successfully',
-                'data' => $price
+                'data' => $price,
             ]);
         } catch (Exception $e) {
             return response()->jsonApi([
@@ -294,7 +296,7 @@ class PriceController extends Controller
      *
      *
      * @param Request $request
-     * @param $id
+     * @param         $id
      *
      * @return mixed
      */
@@ -309,12 +311,12 @@ class PriceController extends Controller
             return response()->jsonApi([
                 'title' => "Update Price",
                 'message' => 'Price was successful updated',
-                'data' => $price
+                'data' => $price,
             ]);
         } catch (Exception $e) {
             return response()->jsonApi([
                 'title' => 'Update Price',
-                'message' => $e->getMessage()
+                'message' => $e->getMessage(),
             ], $e->getCode());
         }
     }
@@ -364,6 +366,7 @@ class PriceController extends Controller
      *
      *
      * @param $id
+     *
      * @return Response
      */
     public function destroy($id)

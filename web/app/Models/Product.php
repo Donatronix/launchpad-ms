@@ -57,7 +57,7 @@ use Sumra\SDK\Traits\UuidTrait;
  *         property="icon",
  *         type="string",
  *         description="Icon",
- *         example="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAC1JREFUWEft0EERAAAAAUH6lxbDZxU4s815PffjAAECBAgQIECAAAECBAgQIDAaPwAh6O5R/QAAAABJRU5ErkJggg=="
+ *         example=""
  *     )
  * )
  *
@@ -96,7 +96,7 @@ class Product extends Model
     protected $hidden = [
         'created_at',
         'updated_at',
-        'deleted_at'
+        'deleted_at',
     ];
 
     /**
@@ -108,7 +108,6 @@ class Product extends Model
     }
 
     /**
-     * @param int $stage
      * @return HasOne
      */
     public function price(): HasOne
@@ -133,8 +132,9 @@ class Product extends Model
     }
 
     /**
-     * @param $query
+     * @param     $query
      * @param int $stage
+     *
      * @return mixed
      */
     public function scopeByStage($query, int $stage = 1): mixed
