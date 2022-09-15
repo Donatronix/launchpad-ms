@@ -57,7 +57,7 @@ use Sumra\SDK\Traits\UuidTrait;
  *         property="icon",
  *         type="string",
  *         description="Icon",
- *         example="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAC1JREFUWEft0EERAAAAAUH6lxbDZxU4s815PffjAAECBAgQIECAAAECBAgQIDAaPwAh6O5R/QAAAABJRU5ErkJggg=="
+ *         example=""
  *     )
  * )
  *
