@@ -107,7 +107,7 @@ class InvestmentController extends Controller
             $request->all(),
             [
                 'product_id' => 'required|string|min:36|max:36',
-                'investment_amount' => 'required|integer|min:1000',
+                'investment_amount' => 'required|integer|min:250',
                 'payment_amount' => 'required|integer|min:250',
                 'payment_currency' => 'required|string|min:3',
             ],
