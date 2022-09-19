@@ -107,12 +107,13 @@ class InvestmentController extends Controller
             $request->all(),
             [
                 'product_id' => 'required|string|min:36|max:36',
-                'investment_amount' => 'required|integer|min:1000',
+                'investment_amount' => 'required|integer|min:250',
                 'payment_amount' => 'required|integer|min:250',
                 'payment_currency' => 'required|string|min:3',
             ],
             [
-                'payment_amount' => 'Minimum deposit amount in the equivalent of 250 USD/EUR/GBP. Increase your investment',
+                'investment_amount' => 'Minimum investment amount in the equivalent of 250 USD/EUR/GBP',
+                'payment_amount' => 'Minimum deposit amount in the equivalent of 250 USD/EUR/GBP',
             ]
         );
 
